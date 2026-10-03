@@ -163,7 +163,18 @@ function showFlower(){
  schedule(()=>{const actor=desktopDancer();schedule(()=>{actor.remove();clearWindows();for(let i=0;i<3;i++)dancer('tayne',{x:60+i*293,y:17,w:282,h:500},'flarhgunnstow');},1700);},450);
 }
 function showPrintout(){if(!lastPrint){notify('No pages in the print queue.');return;}const t=windowBox({title:`Print Manager — ${lastPrint.character.toUpperCase()}`,x:340,y:84,w:280,h:357,className:'print-preview',id:'print'});const img=document.createElement('img');img.src=lastPrint.image;img.alt=`${identity} smiling as ${lastPrint.character}`;t.content.append(img);const label=document.createElement('small');label.textContent='1 page spooled • virtual printer';t.content.append(label);const b=document.createElement('button');b.className='classic-button';b.textContent='Save printout';b.onclick=()=>{const a=document.createElement('a');a.href=img.src;a.download=`${lastPrint!.character}-smiling.png`;a.click();};t.content.append(b);}
+function showNsfw(confirmed=false){
+ clearWindows();
+ const t=dancer('tayne',{x:confirmed?345:596,y:confirmed?16:18,w:282,h:501},'tayne-sway');
+ const video=t.content.querySelector('video');if(video&&confirmed)video.dataset.sequence='Tayne / NSFW preview';
+ // The source cuts to Paul's reaction after the warning. Keep that unseen reveal
+ // represented by the same retro censor window until the phone interrupts it.
+ const banner=windowBox({title:'Cinco Identity Generator 2.5',x:confirmed?218:325,y:278,w:525,h:162,className:'nsfw',id:'nsfw-banner'});
+ banner.content.textContent='NSFW';banner.win.setAttribute('aria-label',confirmed?'NSFW censored preview':'NSFW warning');
+}
 function showCall(){
+ const banner=desktop.querySelector('[data-id="nsfw-banner"]');if(banner)removeWindow(banner);
+ const preview=desktop.querySelector<HTMLVideoElement>('video[data-sequence="Tayne / NSFW preview"]');if(preview)preview.dataset.sequence='tayne';
  desktop.classList.add('alarm');const main=desktop.querySelector<HTMLElement>('.window:not(.terminal)');if(main)Object.assign(main.style,{left:'345px',top:'16px',width:'282px',height:'503px'});
  const t=windowBox({title:'',blue:true,menu:'INCOMING CALL',x:398,y:126,w:150,h:225,className:'phone',id:'call'});
  t.content.innerHTML='<div class="number">545-33448</div><div class="phone-screen"><svg class="receiver" viewBox="0 0 64 70" aria-label="Telephone"><path d="M15 14Q8 39 47 53" fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/><path d="M14 9L22 20M42 49L53 52" stroke="white" stroke-width="14" stroke-linecap="round"/><path d="M30 7L27 16M39 11L32 19M44 19L35 23" stroke="white" stroke-width="3"/></svg><div class="label">WIFE</div></div>';
@@ -212,8 +223,8 @@ async function apply(cmd:Command,acknowledged=false){
  if(cmd.action==='hat'){context.character='tayne';showHat();void type(cmd.response);}
  if(cmd.action==='flarhgunnstow'){showFlower();void type(cmd.response);}
  if(cmd.action==='repeat'){context.pending='repeat';void type(cmd.response);}
- if(cmd.action==='nsfw'){context.pending='nsfw';clearWindows();dancer('tayne',{x:596,y:18,w:282,h:501},'tayne-sway');const t=windowBox({title:'Cinco Identity Generator 2.5',x:325,y:278,w:525,h:162,className:'nsfw'});t.content.textContent='NSFW';}
- if(cmd.action==='confirm'){clearWindows();dancer('tayne',{x:345,y:16,w:282,h:503},'tayne-sway');desktop.classList.add('flash');schedule(()=>desktop.classList.remove('flash'),600);schedule(showCall,6900);}
+ if(cmd.action==='nsfw'){context.pending='nsfw';showNsfw();}
+ if(cmd.action==='confirm'){showNsfw(true);schedule(showCall,6900);}
  if(cmd.action==='call')showCall();
  if(cmd.action==='chaos')chaos();
  if(cmd.action==='pause'||cmd.action==='resume'){paused=cmd.action==='pause';desktop.classList.toggle('paused',paused);desktop.querySelectorAll('video').forEach(v=>paused?v.pause():void v.play());if(paused)music?.pause();else void music?.play();}
