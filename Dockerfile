@@ -10,7 +10,6 @@ COPY deploy/requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir --only-binary=:all: -r /tmp/requirements.txt
 COPY --from=build /usr/local/bin/node /usr/local/bin/node
 COPY --from=build /usr/lib/x86_64-linux-gnu/libstdc++.so.6* /usr/lib/x86_64-linux-gnu/
-COPY --from=build /usr/lib/x86_64-linux-gnu/libatomic.so.1* /usr/lib/x86_64-linux-gnu/
 WORKDIR /app
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
