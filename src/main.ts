@@ -1,3 +1,4 @@
+import {preparePrintout,type Printout} from './printout';
 import {mobileFrame,clampFrame,type Frame,type Workspace} from './window-layout';
 import {MicrophoneDevices} from './microphone-device';
 import './style.css';
@@ -36,7 +37,7 @@ let mediaStatusId=0;const mediaStatusCleanup=new WeakMap<HTMLVideoElement,()=>vo
 const ducks=new Set<string>();
 function musicLevel(){if(music)music.volume=sound?(ducks.size?.16:.6):0;}
 function stopSpeech(){finishSpeechStatus?.();finishSpeechStatus=undefined;speechEpoch++;streamedSpeech?.stop();streamedSpeech=undefined;speech?.pause();ducks.delete('speech');musicLevel();}
-let lastPrint:{image:string;character:string}|undefined;
+let lastPrint:Printout|undefined;let openPrintDialog:(()=>void)|undefined;
 let recorder:MediaRecorder|null=null,stream:MediaStream|null=null;
 let recordingRequested=false,recordingStarting=false,pushToTalk=false,recordingNumber=0;
 let stopRecordingTimer:number|undefined,lastMicUrl='',lastMicPlayback:HTMLAudioElement|undefined;
@@ -178,7 +179,17 @@ function showFlower(){
  const hats=[...desktop.querySelectorAll<HTMLElement>('.hat-cascade')];hats.reverse().forEach((w,i)=>schedule(()=>removeWindow(w),i*160));
  schedule(()=>{const actor=desktopDancer();schedule(()=>{actor.remove();clearWindows();for(let i=0;i<3;i++)dancer('tayne',{x:60+i*293,y:17,w:282,h:500},'flarhgunnstow');},1700);},450);
 }
-function showPrintout(){if(!lastPrint){notify('No pages in the print queue.');return;}const t=windowBox({title:`Print Manager — ${lastPrint.character.toUpperCase()}`,x:340,y:84,w:280,h:357,className:'print-preview',id:'print'});const img=document.createElement('img');img.src=lastPrint.image;img.alt=`${identity} smiling as ${lastPrint.character}`;t.content.append(img);const label=document.createElement('small');label.textContent='1 page spooled • virtual printer';t.content.append(label);const b=document.createElement('button');b.className='classic-button';b.textContent='Save printout';b.onclick=()=>{const a=document.createElement('a');a.href=img.src;a.download=`${lastPrint!.character}-smiling.png`;a.click();};t.content.append(b);}
+function showPrintout(){
+ if(!lastPrint){notify('No pages in the print queue.');return;}
+ const old=desktop.querySelector('[data-id="print"]');if(old)removeWindow(old);
+ const job=lastPrint,t=windowBox({title:`Print Manager — ${job.character.toUpperCase()}`,x:340,y:84,w:300,h:380,className:'print-preview',id:'print'});
+ const img=document.createElement('img');img.src=job.image;img.alt=`${job.name} smiling as ${job.character}`;t.content.append(img);
+ const label=document.createElement('small');label.textContent='1 page · Choose a printer or Save as PDF';t.content.append(label);
+ const actions=document.createElement('div');actions.className='print-actions';t.content.append(actions);
+ const print=document.createElement('button');print.className='classic-button';print.textContent='Print…';print.disabled=!openPrintDialog;const ready=openPrintDialog;
+ print.onclick=()=>{try{ready?.();}catch(e){notify(`Print dialog unavailable: ${(e as Error).message}`);}};actions.append(print);
+ const save=document.createElement('button');save.className='classic-button';save.textContent='Save image';save.onclick=()=>{const a=document.createElement('a');a.href=job.image;a.download=`${job.character}-smiling.png`;a.click();};actions.append(save);
+}
 function showNsfw(confirmed=false){
  clearWindows();
  const t=dancer('tayne',{x:confirmed?345:596,y:confirmed?16:18,w:282,h:501},'tayne-sway');
@@ -232,7 +243,13 @@ async function apply(cmd:Command,acknowledged=false){
  if(cmd.action==='celery'){context.character='celery';context.costume=costumes.celery;clearWindows();loading('Loading CELERY MAN, please wait...');void type(cmd.response);presentSequence(showCelery,mode==='live'?Math.max(0,1500-(performance.now()-preparingAt)):1500);}
  if(cmd.action==='engage'){desktop.querySelectorAll('video').forEach(v=>{if(v.dataset.character==='celery'&&!v.classList.contains('face-video')){v.dataset.sequence='Celery Man / 4d3d3d3';v.src=videoSource('celery','engaged');void v.play();}else v.playbackRate=1.4;});void type(cmd.response);}
  if(cmd.action==='oyster'){context.character='oyster';context.costume=costumes.oyster;portrait('oyster');dancer('oyster',{x:421,y:47,w:487,h:424});musicFor('oyster');void type(cmd.response);}
- if(cmd.action==='print'){const character=cmd.target||context.character;const image=mode==='reference'?'/media/original/oyster-face.png':liveAssets[`${profile}:${character}:smile`]?.image||'';lastPrint={image,character};events.push({kind:'print-spooled',...lastPrint,time:performance.now()});}
+ if(cmd.action==='print'){
+  const character=cmd.target||context.character,image=mode==='reference'?'/media/original/oyster-face.png':liveAssets[`${profile}:${character}:smile`]?.image||'';
+  const job:Printout={image,character,name:identity},order=commandEpoch,status=feedbackToken;
+  commandStatus.job(status,'print-image','Preparing printout');
+  try{const ready=await preparePrintout(job);if(order!==commandEpoch)return;lastPrint=job;openPrintDialog=ready;events.push({kind:'print-spooled',...job,time:performance.now()});showPrintout();commandStatus.job(status,'print-image','Print dialog · print or cancel');events.push({kind:'print-dialog-requested',...job,time:performance.now()});ready();}
+  finally{commandStatus.jobDone(status,'print-image');}
+ }
  if(cmd.action==='attention'||cmd.action==='cancel')void type(cmd.response);
  if(cmd.action==='beta'){clearWindows();music?.pause();context.pending='beta';void type(cmd.response,true);}
  if(cmd.action==='tayne'){context.character='tayne';context.costume=costumes.tayne;clearWindows();loading('Loading BETA, please wait...');presentSequence(showTayne,mode==='live'?Math.max(0,1150-(performance.now()-preparingAt)):1150);}

@@ -14,6 +14,6 @@ export const motions:Record<string,string>={
  face:'Close up portrait on solid hot pink background. Small rhythmic head bobs and glances, slight awkward smile, keep shoulders in frame. No speech, no cuts, no camera movement.',
  hat:'Close up head and shoulders. Keep torso still and stare directly at camera through sunglasses. The black fedora wobbles and tilts left and right on the head, then returns to level. Small absurd repeated head tilts. No hands touching the hat.',
  flarhgunnstow:'Full body odd dance move: lift both bent arms, hop with one knee lifted, kick one leg forward, then land wide and point both arms sideways. Repeat alternating sides, quick and absurd, maintaining same costume and face.',
- smile:'Head and shoulders close-up, look straight at viewer and slowly form an awkward broad closed-mouth smile. Hold smile. Flat hot pink background.',
+ smile:'Head and shoulders close-up, look straight at viewer and hold an awkward broad closed-mouth smile. Head and upper chest only. Flat pale gray background.',
  intro:'Head and shoulders close up. Look at camera and say with a friendly confident American male voice: "Hey there. I am Tayne, your latest dancer. I cannot wait to entertain you." Maintain black fedora, sunglasses, and gold patterned shirt. Plain light gray background.'
 };

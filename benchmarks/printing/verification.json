@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-03",
+  "browser": "Chrome 153 on macOS",
+  "command": "Give me a printout of Oyster smiling.",
+  "identity": "Thomas Dimson",
+  "native_print_dialog": true,
+  "cancel_and_retry": true,
+  "next_command": "Computer?",
+  "next_response": "Yes.",
+  "pdf": "output/pdf/oyster-smiling-portrait.pdf",
+  "pages": 1,
+  "paper": "Letter, 612 x 792 points",
+  "visual_review": "Smiling head-and-shoulders portrait, gray background, Oyster wardrobe, preserved proportions, white margins, no desktop chrome or debug overlays.",
+  "generation": "Flux Klein costume portrait followed by MiniMax H3 image-to-video; print is frame at 2 seconds from the generated video.",
+  "reference": "reference/celery-man.mp4 at 48.4 seconds shows the printed smiling Oyster head-and-shoulders photo on gray.",
+  "limitations": ["Physical printer not tested", "Native mobile print sheet not tested", "Browsers do not report whether a print dialog was cancelled or printed"]
+}
