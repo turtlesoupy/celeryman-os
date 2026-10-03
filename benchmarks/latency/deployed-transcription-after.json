@@ -1,0 +1,102 @@
+{
+  "created": "2026-10-03T22:17:32.765Z",
+  "site": "https://celeryman.fun",
+  "rows": [
+    {
+      "round": 0,
+      "clip": "01",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "Computer, load up Celery Man, please.",
+      "providerMs": 858,
+      "totalMs": 1383
+    },
+    {
+      "round": 0,
+      "clip": "02",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "Could you kick up the, uh, 4D3D3D3?",
+      "providerMs": 775,
+      "totalMs": 1041
+    },
+    {
+      "round": 0,
+      "clip": "09",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "Could I see a hat wobble?",
+      "providerMs": 591,
+      "totalMs": 778
+    },
+    {
+      "round": 0,
+      "clip": "10",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "And a flarghing.",
+      "providerMs": 365,
+      "totalMs": 544
+    },
+    {
+      "round": 0,
+      "clip": "13",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "Mhm.",
+      "providerMs": 414,
+      "totalMs": 513
+    },
+    {
+      "round": 0,
+      "clip": "16",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "I'll get it later. We have important work to do.",
+      "providerMs": 560,
+      "totalMs": 807
+    },
+    {
+      "round": 1,
+      "clip": "01",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "Computer, load up Celery Man, please.",
+      "providerMs": 1081,
+      "totalMs": 1283
+    },
+    {
+      "round": 1,
+      "clip": "02",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "Could you kick up the uh, 4d3d3d3?",
+      "providerMs": 379,
+      "totalMs": 659
+    },
+    {
+      "round": 1,
+      "clip": "09",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "Could I see a hat wobble?",
+      "providerMs": 606,
+      "totalMs": 812
+    },
+    {
+      "round": 1,
+      "clip": "10",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "And a flarganste.",
+      "providerMs": 337,
+      "totalMs": 462
+    },
+    {
+      "round": 1,
+      "clip": "13",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "Huh?",
+      "providerMs": 273,
+      "totalMs": 357
+    },
+    {
+      "round": 1,
+      "clip": "16",
+      "model": "gpt-4o-mini-transcribe",
+      "text": "I'll get it later. We have important work to do.",
+      "providerMs": 356,
+      "totalMs": 580
+    }
+  ]
+}

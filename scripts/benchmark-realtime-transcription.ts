@@ -5,10 +5,11 @@ import {promisify} from 'node:util';
 import OpenAI from 'openai';
 import {scripted,sketch,type Context} from '../src/protocol.ts';
 const exec=promisify(execFile),client=new OpenAI({maxRetries:0,timeout:20000});
+const delay=(process.env.REALTIME_DELAY||'low') as 'minimal'|'low'|'medium'|'high'|'xhigh';
 const results:any[]=[];
 for(const index of [1,2,9,10,11,12,13,16]){
  const {stdout:pcm}=await exec('ffmpeg',['-v','error','-i',`benchmarks/voice-inputs/${String(index).padStart(2,'0')}.wav`,'-f','s16le','-ar','24000','-ac','1','pipe:1'],{encoding:'buffer',maxBuffer:4e6});
- const session:any=await client.realtime.clientSecrets.create({session:{type:'transcription',audio:{input:{format:{type:'audio/pcm',rate:24000},transcription:{model:'gpt-live-transcribe',languages:['en'],keywords:['Celery Man','Cinco','Tayne','Oyster','4d3d3d3','hat wobble','flarhgunnstow'],delay:'low'},turn_detection:null}}}});
+ const session:any=await client.realtime.clientSecrets.create({session:{type:'transcription',audio:{input:{format:{type:'audio/pcm',rate:24000},transcription:{model:'gpt-live-transcribe',languages:['en'],keywords:['Celery Man','Cinco','Tayne','Oyster','4d3d3d3','hat wobble','flarhgunnstow'],delay},turn_detection:null}}}});
  const ws=new WebSocket('wss://api.openai.com/v1/realtime?intent=transcription',['realtime','openai-insecure-api-key.'+session.value]);
  let began=0,committed=0,firstDeltaMs:number|undefined;
  const complete=new Promise<any>((resolve,reject)=>{
@@ -37,4 +38,4 @@ for(const index of [1,2,9,10,11,12,13,16]){
  }finally{ws.close();}
 }
 await fs.mkdir('benchmarks/latency',{recursive:true});
-await fs.writeFile('benchmarks/latency/realtime-transcription.json',JSON.stringify({created:new Date().toISOString(),model:'gpt-live-transcribe',delay:'low',note:'Real sketch clips paced in 100ms PCM chunks; new session per clip; connection setup excluded, not a physical microphone test',results},null,2)+'\n');
+await fs.writeFile(`benchmarks/latency/realtime-transcription${delay==='low'?'':'-'+delay}.json`,JSON.stringify({created:new Date().toISOString(),model:'gpt-live-transcribe',delay,note:'Real sketch clips paced in 100ms PCM chunks; new session per clip; connection setup excluded, not a physical microphone test',results},null,2)+'\n');

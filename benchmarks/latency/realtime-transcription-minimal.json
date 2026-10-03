@@ -1,0 +1,88 @@
+{
+  "created": "2026-10-03T22:09:06.142Z",
+  "model": "gpt-live-transcribe",
+  "delay": "minimal",
+  "note": "Real sketch clips paced in 100ms PCM chunks; new session per clip; connection setup excluded, not a physical microphone test",
+  "results": [
+    {
+      "index": 1,
+      "text": "Computer loadup Celery Man please",
+      "afterReleaseMs": 535.1927089999999,
+      "firstDeltaMs": 385.245625,
+      "durationMs": 1850,
+      "action": "llm-fallback",
+      "expectedAction": "celery",
+      "actionCorrect": false
+    },
+    {
+      "index": 2,
+      "text": "Could you kick up the, uh, 4d3d3 to",
+      "afterReleaseMs": 585.2352920000003,
+      "firstDeltaMs": 732.2194999999997,
+      "durationMs": 3200,
+      "action": "engage",
+      "expectedAction": "engage",
+      "actionCorrect": true
+    },
+    {
+      "index": 9,
+      "text": "Could I see a hat wobble?",
+      "afterReleaseMs": 656.5100409999995,
+      "firstDeltaMs": 753.5047919999997,
+      "durationMs": 1780,
+      "action": "hat",
+      "expectedAction": "hat",
+      "actionCorrect": true
+    },
+    {
+      "index": 10,
+      "text": "And a flarhgunnstow",
+      "afterReleaseMs": 583.5966250000001,
+      "firstDeltaMs": 393.6224579999998,
+      "durationMs": 1340,
+      "action": "flarhgunnstow",
+      "expectedAction": "flarhgunnstow",
+      "actionCorrect": true
+    },
+    {
+      "index": 11,
+      "text": "Is there any way to generate a nude Tayne?",
+      "afterReleaseMs": 449.710750000002,
+      "firstDeltaMs": 657.8295829999988,
+      "durationMs": 2600,
+      "action": "repeat",
+      "expectedAction": "repeat",
+      "actionCorrect": true
+    },
+    {
+      "index": 12,
+      "text": "Newd Tayne",
+      "afterReleaseMs": 426.7304579999982,
+      "firstDeltaMs": 344.04975000000195,
+      "durationMs": 1300,
+      "action": "llm-fallback",
+      "expectedAction": "nsfw",
+      "actionCorrect": false
+    },
+    {
+      "index": 13,
+      "text": "Uh-huh,",
+      "afterReleaseMs": 410.2708329999987,
+      "firstDeltaMs": 321.88545899999735,
+      "durationMs": 500,
+      "action": "confirm",
+      "expectedAction": "confirm",
+      "actionCorrect": true
+    },
+    {
+      "index": 16,
+      "text": "I get it later. We have important work to do",
+      "afterReleaseMs": 539.6119169999984,
+      "firstDeltaMs": 374.20629100000224,
+      "durationMs": 3200,
+      "action": "chaos",
+      "expectedAction": "chaos",
+      "actionCorrect": true
+    }
+  ]
+}

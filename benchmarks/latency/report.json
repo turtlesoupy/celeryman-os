@@ -1,0 +1,285 @@
+{
+  "created": "2026-10-03T22:12:07.520Z",
+  "codeCommit": "8862e4c",
+  "transcription": {
+    "selected": "gpt-4o-mini-transcribe",
+    "comparison": [
+      {
+        "model": "gpt-4o-transcribe",
+        "samples": 30,
+        "p50Ms": 537,
+        "p90Ms": 905,
+        "actionCorrect": 26,
+        "exact": 19,
+        "errors": 0
+      },
+      {
+        "model": "gpt-4o-mini-transcribe",
+        "samples": 30,
+        "p50Ms": 289,
+        "p90Ms": 573,
+        "actionCorrect": 29,
+        "exact": 18,
+        "errors": 0
+      },
+      {
+        "model": "gpt-transcribe",
+        "samples": 30,
+        "p50Ms": 424,
+        "p90Ms": 692,
+        "actionCorrect": 27,
+        "exact": 16,
+        "errors": 0
+      }
+    ],
+    "method": "15 real sketch clips, two rounds per model, sequential rotated model order; score is correct command routing, not a population accuracy claim.",
+    "realtime": {
+      "low": {
+        "correct": 8,
+        "total": 8,
+        "medianAfterReleaseMs": 570
+      },
+      "minimal": {
+        "correct": 6,
+        "total": 8,
+        "medianAfterReleaseMs": 537
+      },
+      "decision": "Keep file upload for this release. Realtime provides earlier partial text, but finalization was 0.4–0.7s after release. Direct browser WebRTC could bypass the application server hop and deserves a separate browser/network benchmark before adoption."
+    },
+    "deployed": {
+      "before": {
+        "model": "gpt-4o-transcribe",
+        "samples": 12,
+        "providerMedianMs": 559,
+        "totalMedianMs": 736
+      },
+      "after": {
+        "model": "gpt-4o-mini-transcribe",
+        "samples": 12,
+        "providerMedianMs": 487,
+        "totalMedianMs": 718.5
+      },
+      "conclusion": "Small public-site sample: provider median improved 559→487ms, end-to-end median barely changed (736→718.5ms). The faster local result does not establish a 2× production speedup. Network and provider variability matter."
+    }
+  },
+  "generation": {
+    "settings": {
+      "imageModel": "fal-ai/flux-2/klein/9b/edit",
+      "imageSteps": 4,
+      "videoModel": "minimax/h3-max/reference-to-video",
+      "portraitVideoModel": "minimax/h3-max/image-to-video",
+      "resolution": "480P",
+      "duration": 5,
+      "promptExpansion": "disabled"
+    },
+    "changes": [
+      "Upload and cache wardrobe references alongside identity and motion references.",
+      "Start video inference as soon as the image provider returns its URL; save the image concurrently.",
+      "Process FFmpeg intermediates on local scratch storage, keeping the same filters, codec, CRF and preset.",
+      "Skip cloud-storage file checks for active in-memory job status.",
+      "Use saved final video when the job is already complete instead of fetching the provider preview again."
+    ],
+    "before": [
+      {
+        "scenario": "custom",
+        "profile": "d9eee161-e53c-40fd-b0d7-aa498731f31a",
+        "id": "0229e513a08d8fcb2802",
+        "planningMs": 1427.4080000000001,
+        "previewMs": 4537.768708,
+        "firstBytesMs": 11670.285541000001,
+        "wallMs": 11956.517625,
+        "timings": {
+          "identityMs": 0.05236299999523908,
+          "videoMs": 3095.482791000046,
+          "downloadMs": 885.4254189999774,
+          "totalMs": 4186.021195000038,
+          "finishMs": 205.06062200001907
+        },
+        "providerTimings": {
+          "inference": 1.4678827230236493
+        },
+        "model": "minimax/h3-max/reference-to-video"
+      },
+      {
+        "scenario": "celery",
+        "profile": "d9eee161-e53c-40fd-b0d7-aa498731f31a",
+        "id": "fcba2ac1a84ed8b70683",
+        "previewMs": 9536.497499999998,
+        "firstBytesMs": 10049.917041,
+        "wallMs": 12105.944583,
+        "timings": {
+          "identityMs": 613.1119450000115,
+          "frameMs": 3167.399112999905,
+          "videoMs": 5593.557051000069,
+          "downloadMs": 779.8331789999502,
+          "totalMs": 11674.951737000025,
+          "finishMs": 1521.0504490000894
+        },
+        "providerTimings": {
+          "inference": 2.3163306480000756
+        },
+        "model": "minimax/h3-max/reference-to-video",
+        "costumeFrame": {
+          "model": "fal-ai/flux-2/klein/9b/edit",
+          "requestId": "01a103cb-bf29-71d1-bc52-e01981e061d0"
+        }
+      },
+      {
+        "scenario": "portrait",
+        "profile": "d9eee161-e53c-40fd-b0d7-aa498731f31a",
+        "id": "158b5bc2850c2a3411cb",
+        "previewMs": 5087.439917,
+        "firstBytesMs": 5936.288541999998,
+        "wallMs": 6440.316959,
+        "timings": {
+          "identityMs": 0.5291030000662431,
+          "frameMs": 2949.432058000006,
+          "videoMs": 1974.0274539999664,
+          "downloadMs": 860.9882389999693,
+          "totalMs": 5993.283846999984,
+          "finishMs": 208.3069929999765
+        },
+        "providerTimings": {
+          "inference": 0.6186597980558872
+        },
+        "model": "minimax/h3-max/image-to-video",
+        "costumeFrame": {
+          "model": "fal-ai/flux-2/klein/9b/edit",
+          "requestId": "01a103cb-eb9d-7a31-9dc6-f8b72b222fb9"
+        }
+      }
+    ],
+    "localAfter": [
+      {
+        "scenario": "custom",
+        "profile": "c8e7413f-1017-4c3a-ac39-b01b3da112ac",
+        "id": "64d489570c9a176504a9",
+        "planningMs": 1228.7211670000002,
+        "previewMs": 4308.1365,
+        "firstBytesMs": 4697.805875,
+        "wallMs": 5682.196333999999,
+        "timings": {
+          "identityMs": 375.0375840002671,
+          "videoMs": 2821.58208299987,
+          "previewMs": 3196.6234170002863,
+          "downloadMs": 1286.5872080000117,
+          "ffmpegMs": 63.48187499959022,
+          "persistMs": 2.1879589995369315,
+          "totalMs": 4548.888334000483,
+          "finishMs": 65.68145900033414
+        },
+        "providerTimings": {
+          "inference": 1.0208268049973412
+        },
+        "model": "minimax/h3-max/reference-to-video"
+      },
+      {
+        "scenario": "celery",
+        "profile": "c8e7413f-1017-4c3a-ac39-b01b3da112ac",
+        "id": "d17304a47005109259f3",
+        "previewMs": 9599.7275,
+        "firstBytesMs": 10050.9765,
+        "wallMs": 10912.72825,
+        "timings": {
+          "identityMs": 1419.4037500005215,
+          "frameMs": 2301.0537080001086,
+          "videoMs": 5844.746666999534,
+          "previewMs": 9565.209250000305,
+          "downloadMs": 1117.9985410002992,
+          "ffmpegMs": 187.92599999997765,
+          "persistMs": 0.5368750002235174,
+          "frameRequestMs": 2299.6155420001596,
+          "frameInferenceMs": 1302.9764129969408,
+          "frameDownloadMs": 706.4979159999639,
+          "frameSaveMs": 0.7435830002650619,
+          "totalMs": 10871.68837499991,
+          "finishMs": 188.48570899944752
+        },
+        "providerTimings": {
+          "inference": 2.3406879989997833
+        },
+        "model": "minimax/h3-max/reference-to-video",
+        "costumeFrame": {
+          "model": "fal-ai/flux-2/klein/9b/edit",
+          "requestId": "01a103ce-3708-7012-bb97-dfe43c962727"
+        }
+      },
+      {
+        "scenario": "portrait",
+        "profile": "c8e7413f-1017-4c3a-ac39-b01b3da112ac",
+        "id": "10e9309cf5113703776c",
+        "previewMs": 4949.6312499999985,
+        "firstBytesMs": 5309.203291999998,
+        "wallMs": 5801.994542,
+        "timings": {
+          "identityMs": 0.0781659996137023,
+          "frameMs": 1952.854500000365,
+          "videoMs": 2903.253916999325,
+          "previewMs": 4856.191665999591,
+          "downloadMs": 856.7571250004694,
+          "ffmpegMs": 75.650291999802,
+          "persistMs": 3.619415999390185,
+          "frameRequestMs": 1952.152499999851,
+          "frameInferenceMs": 1191.5325020017917,
+          "frameDownloadMs": 630.8639169996604,
+          "frameSaveMs": 3.7677499996498227,
+          "totalMs": 5792.226040999405,
+          "finishMs": 79.28233299963176
+        },
+        "providerTimings": {
+          "inference": 0.5884433379978873
+        },
+        "model": "minimax/h3-max/image-to-video",
+        "costumeFrame": {
+          "model": "fal-ai/flux-2/klein/9b/edit",
+          "requestId": "01a103ce-5c1d-7ec2-a0d7-d5bc36a59ea6"
+        }
+      }
+    ],
+    "limits": [
+      "Local and Cloud Run timings are not interchangeable; compare the individual stages, not end-to-end totals across hosts.",
+      "The public-site first preview byte measurement includes a 7.1s provider/network outlier; one sample is not a reliable latency distribution.",
+      "The slower canonical Paul reference-reconstruction path remains unchanged for fidelity.",
+      "No image/video model quality downgrade, frame-rate change, resolution reduction, or voice-model switch was made."
+    ]
+  },
+  "voice": {
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "changed": false,
+    "reason": "Previously selected by human listening; already streams PCM and caches complete lines."
+  },
+  "verification": {
+    "passed": [
+      "TypeScript and Vite production build",
+      "Production server origin, media ranges, source isolation, CSRF and rate limit checks",
+      "Exact sketch routing and 19 confirmation/context variants",
+      "Microphone selection and warm-stream reuse checks",
+      "Three uncached local live generation paths and output/poster media checks",
+      "Public production transcription uses Mini; 12 post-deployment samples",
+      "Browser verification: both saved dancer and portrait videos playing from final media URLs"
+    ],
+    "blocked": [
+      "Fresh smile and post-deployment live video checks: Fal returned Exhausted balance."
+    ]
+  },
+  "sources": [
+    "https://developers.openai.com/api/docs/guides/speech-to-text",
+    "https://developers.openai.com/api/docs/guides/realtime-transcription",
+    "https://developers.openai.com/api/docs/models/gpt-4o-mini-transcribe",
+    "https://fal.ai/minimax-h3-max",
+    "https://fal.ai/models/fal-ai/flux-2/klein/9b/edit/api",
+    "https://fal.ai/models/minimax/h3-max/reference-to-video/api"
+  ],
+  "deployment": {
+    "revision": "celeryman-00002-jgs",
+    "imageCommit": "8862e4c",
+    "trafficPercent": 100,
+    "site": "https://celeryman.fun",
+    "savedVideoPlayback": {
+      "verified": true,
+      "readyState": 4,
+      "paused": false,
+      "screenshot": "deployed-playback.png"
+    }
+  }
+}

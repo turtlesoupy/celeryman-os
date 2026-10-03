@@ -1,0 +1,32 @@
+{
+  "checks": [
+    {
+      "scenario": "custom",
+      "id": "64d489570c9a176504a9",
+      "width": 480,
+      "height": 832,
+      "fps": "24/1",
+      "duration": "5.184000",
+      "poster": true
+    },
+    {
+      "scenario": "celery",
+      "id": "d17304a47005109259f3",
+      "width": 208,
+      "height": 360,
+      "fps": "30000/1001",
+      "duration": "5.005000",
+      "poster": true
+    },
+    {
+      "scenario": "portrait",
+      "id": "10e9309cf5113703776c",
+      "width": 672,
+      "height": 480,
+      "fps": "24/1",
+      "duration": "5.184000",
+      "poster": true
+    }
+  ],
+  "remainingLiveChecks": "Fresh smile and post-deployment video tests blocked by Fal exhausted balance"
+}
