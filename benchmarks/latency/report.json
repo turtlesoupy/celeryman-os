@@ -44,7 +44,7 @@
         "total": 8,
         "medianAfterReleaseMs": 537
       },
-      "decision": "Keep file upload for this release. Realtime provides earlier partial text, but finalization was 0.4–0.7s after release. Direct browser WebRTC could bypass the application server hop and deserves a separate browser/network benchmark before adoption."
+      "decision": "Keep file upload for this release. Realtime provides earlier partial text, but finalization was 0.4\u20130.7s after release. Direct browser WebRTC could bypass the application server hop and deserves a separate browser/network benchmark before adoption."
     },
     "deployed": {
       "before": {
@@ -59,7 +59,7 @@
         "providerMedianMs": 487,
         "totalMedianMs": 718.5
       },
-      "conclusion": "Small public-site sample: provider median improved 559→487ms, end-to-end median barely changed (736→718.5ms). The faster local result does not establish a 2× production speedup. Network and provider variability matter."
+      "conclusion": "Small public-site sample: provider median improved 559\u2192487ms, end-to-end median barely changed (736\u2192718.5ms). The faster local result does not establish a 2\u00d7 production speedup. Network and provider variability matter."
     }
   },
   "generation": {
@@ -240,13 +240,129 @@
       "Local and Cloud Run timings are not interchangeable; compare the individual stages, not end-to-end totals across hosts.",
       "The public-site first preview byte measurement includes a 7.1s provider/network outlier; one sample is not a reliable latency distribution.",
       "The slower canonical Paul reference-reconstruction path remains unchanged for fidelity.",
-      "No image/video model quality downgrade, frame-rate change, resolution reduction, or voice-model switch was made."
+      "No image/video model quality downgrade, frame-rate change, resolution reduction, or voice-model switch was made.",
+      "Production before/after generation has one sample per scenario. Preview availability improved by about 0.8s for Celery and portrait; custom preview was essentially unchanged. These are observations, not stable percentile estimates."
+    ],
+    "productionAfter": [
+      {
+        "scenario": "custom",
+        "profile": "c4eecbd1-3c0f-4031-880f-bb2be6019063",
+        "id": "737bd74222aa5f2307b7",
+        "planningMs": 2313.9402919999998,
+        "previewMs": 4581.482584,
+        "firstBytesMs": 5507.250917,
+        "wallMs": 6792.797625,
+        "timings": {
+          "identityMs": 0.06326099997386336,
+          "videoMs": 2471.0428029999603,
+          "previewMs": 2471.111743999878,
+          "downloadMs": 831.4210840000305,
+          "ffmpegMs": 618.0531289998908,
+          "persistMs": 456.1212949999608,
+          "totalMs": 4376.758141000057,
+          "finishMs": 1074.230993000092
+        },
+        "providerTimings": {
+          "inference": 1.0196813099973951
+        },
+        "model": "minimax/h3-max/reference-to-video"
+      },
+      {
+        "scenario": "celery",
+        "profile": "c4eecbd1-3c0f-4031-880f-bb2be6019063",
+        "id": "88be4c71516d0246055f",
+        "previewMs": 8748.554333,
+        "firstBytesMs": 9502.560915999999,
+        "wallMs": 11198.794041000001,
+        "timings": {
+          "identityMs": 432.27201800001785,
+          "frameMs": 2211.902497000061,
+          "videoMs": 5885.482595999958,
+          "previewMs": 8529.664290999994,
+          "downloadMs": 878.4720469999593,
+          "ffmpegMs": 854.4939500000328,
+          "persistMs": 450.9968570000492,
+          "frameRequestMs": 2177.667803999968,
+          "frameInferenceMs": 1297.685053999885,
+          "frameDownloadMs": 622.8566070001107,
+          "frameSaveMs": 222.63406899990514,
+          "totalMs": 10713.719294999959,
+          "finishMs": 1305.5901369999629
+        },
+        "providerTimings": {
+          "inference": 2.3406863269992755
+        },
+        "model": "minimax/h3-max/reference-to-video",
+        "costumeFrame": {
+          "model": "fal-ai/flux-2/klein/9b/edit",
+          "requestId": "01a103e7-e7e3-7442-8164-5c258dea6cd0"
+        }
+      },
+      {
+        "scenario": "portrait",
+        "profile": "c4eecbd1-3c0f-4031-880f-bb2be6019063",
+        "id": "cb3b58555614a31fe317",
+        "previewMs": 4323.095499999999,
+        "firstBytesMs": 5177.744916,
+        "wallMs": 5652.391333,
+        "timings": {
+          "identityMs": 0.6308500000741333,
+          "frameMs": 2156.9622819998767,
+          "videoMs": 1917.374776000157,
+          "previewMs": 4074.971108000027,
+          "downloadMs": 650.1598189999349,
+          "ffmpegMs": 93.01046499982476,
+          "persistMs": 433.77929099998437,
+          "frameRequestMs": 2122.0252059998456,
+          "frameInferenceMs": 1231.5624180009763,
+          "frameDownloadMs": 676.6474610001314,
+          "frameSaveMs": 252.34463600022718,
+          "totalMs": 5251.947822000133,
+          "finishMs": 526.8200950000901
+        },
+        "providerTimings": {
+          "inference": 0.5886430760001531
+        },
+        "model": "minimax/h3-max/image-to-video",
+        "costumeFrame": {
+          "model": "fal-ai/flux-2/klein/9b/edit",
+          "requestId": "01a103e8-11f8-7492-9a8d-a996aac29859"
+        }
+      }
+    ],
+    "productionComparison": [
+      {
+        "scenario": "custom",
+        "samplesPerVersion": 1,
+        "beforePreviewMs": 4537.768708,
+        "afterPreviewMs": 4581.482584
+      },
+      {
+        "scenario": "celery",
+        "samplesPerVersion": 1,
+        "beforePreviewMs": 9536.497499999998,
+        "afterPreviewMs": 8748.554333
+      },
+      {
+        "scenario": "portrait",
+        "samplesPerVersion": 1,
+        "beforePreviewMs": 5087.439917,
+        "afterPreviewMs": 4323.095499999999
+      }
     ]
   },
   "voice": {
     "model": "fal-ai/minimax/speech-2.8-hd",
     "changed": false,
-    "reason": "Previously selected by human listening; already streams PCM and caches complete lines."
+    "reason": "Previously selected by human listening; already streams PCM and caches complete lines.",
+    "productionVerification": {
+      "firstMs": 984.7917080000007,
+      "completeMs": 2908.922042,
+      "chunks": 92,
+      "bytes": 168298,
+      "cached": false,
+      "url": "/media/voice/6ccee06487eaee18e1a2.wav"
+    }
   },
   "verification": {
     "passed": [
@@ -256,11 +372,15 @@
       "Microphone selection and warm-stream reuse checks",
       "Three uncached local live generation paths and output/poster media checks",
       "Public production transcription uses Mini; 12 post-deployment samples",
-      "Browser verification: both saved dancer and portrait videos playing from final media URLs"
+      "Browser verification: both saved dancer and portrait videos playing from final media URLs",
+      "Post-top-up: uncached production custom dance, canonical Celery, portrait and smiling Oyster generation completed",
+      "Fresh uploaded identity in the production browser: custom dance playing at 5.8s, readyState 4, playback time advancing",
+      "Smiling Oyster print PNG visually inspected: correct smile, costume and background; 672\u00d7480",
+      "Uncached cloned speech: first PCM at 985ms, 92 chunks, complete saved WAV matches streamed PCM",
+      "All four generated video URLs support byte ranges; video, print frame and voice confirmed in backing GCS storage"
     ],
-    "blocked": [
-      "Fresh smile and post-deployment live video checks: Fal returned Exhausted balance."
-    ]
+    "blocked": [],
+    "postTopUpEvidence": "release-verification.json"
   },
   "sources": [
     "https://developers.openai.com/api/docs/guides/speech-to-text",
@@ -280,6 +400,19 @@
       "readyState": 4,
       "paused": false,
       "screenshot": "deployed-playback.png"
+    },
+    "freshVideoPlayback": {
+      "verified": true,
+      "job": "79842e7db5aad1719af0",
+      "command": "Computer, show me an exaggerated shoulder shimmy in a mustard yellow tracksuit.",
+      "doneSeconds": 5.8,
+      "readyState": 4,
+      "paused": false,
+      "observedPlaybackTimes": [
+        0.02,
+        3.016779
+      ],
+      "screenshot": "fresh-production-playback.png"
     }
   }
 }

@@ -1,0 +1,93 @@
+{
+  "created": "2026-10-03T22:35:59.275Z",
+  "site": "https://celeryman.fun",
+  "smile": {
+    "id": "258f0cd7a568b3a01851",
+    "profile": "c4eecbd1-3c0f-4031-880f-bb2be6019063",
+    "url": "/media/generated/258f0cd7a568b3a01851.mp4",
+    "image": "/media/generated/258f0cd7a568b3a01851-print.png",
+    "width": 672,
+    "height": 480,
+    "bytes": 354584,
+    "wallMs": 6961.035375,
+    "timings": {
+      "identityMs": 579.2336780000478,
+      "frameMs": 2246.019731000066,
+      "videoMs": 2057.777325999923,
+      "previewMs": 4883.03556400002,
+      "downloadMs": 733.1356590001378,
+      "ffmpegMs": 67.8906160001643,
+      "persistMs": 528.149817999918,
+      "frameRequestMs": 2211.575416999869,
+      "frameInferenceMs": 1244.122742999025,
+      "frameDownloadMs": 435.79520400008187,
+      "frameSaveMs": 226.25373400002718,
+      "totalMs": 6212.238328000065,
+      "finishMs": 596.0719339998905
+    }
+  },
+  "ranges": [
+    {
+      "id": "737bd74222aa5f2307b7",
+      "status": 206,
+      "contentRange": "bytes 0-1023/2784460"
+    },
+    {
+      "id": "88be4c71516d0246055f",
+      "status": 206,
+      "contentRange": "bytes 0-1023/375445"
+    },
+    {
+      "id": "cb3b58555614a31fe317",
+      "status": 206,
+      "contentRange": "bytes 0-1023/1891461"
+    },
+    {
+      "id": "258f0cd7a568b3a01851",
+      "status": 206,
+      "contentRange": "bytes 0-1023/2205259"
+    }
+  ],
+  "speech": {
+    "firstMs": 984.7917080000007,
+    "completeMs": 2908.922042,
+    "chunks": 92,
+    "bytes": 168298,
+    "cached": false,
+    "url": "/media/voice/6ccee06487eaee18e1a2.wav"
+  },
+  "visualVerification": {
+    "smile": true,
+    "screenshot": "fresh-print-frame.png",
+    "browserVideo": {
+      "verified": true,
+      "job": "79842e7db5aad1719af0",
+      "command": "Computer, show me an exaggerated shoulder shimmy in a mustard yellow tracksuit.",
+      "doneSeconds": 5.8,
+      "readyState": 4,
+      "paused": false,
+      "observedPlaybackTimes": [
+        0.02,
+        3.016779
+      ],
+      "screenshot": "fresh-production-playback.png"
+    }
+  },
+  "backingStorage": {
+    "bucket": "celeryman-os-media",
+    "objects": [
+      {
+        "name": "generated/88be4c71516d0246055f.mp4",
+        "size": 375445
+      },
+      {
+        "name": "generated/258f0cd7a568b3a01851-print.png",
+        "size": 354584
+      },
+      {
+        "name": "voice/6ccee06487eaee18e1a2.wav",
+        "size": 168342
+      }
+    ]
+  }
+}

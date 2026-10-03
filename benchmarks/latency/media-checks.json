@@ -28,5 +28,7 @@
       "poster": true
     }
   ],
-  "remainingLiveChecks": "Fresh smile and post-deployment video tests blocked by Fal exhausted balance"
+  "remainingLiveChecks": [],
+  "productionVerification": "release-verification.json",
+  "smileVisualScreenshot": "fresh-print-frame.png"
 }
