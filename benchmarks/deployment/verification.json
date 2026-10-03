@@ -1,0 +1,59 @@
+{
+  "site": "https://celeryman.fun",
+  "checkedAt": "2026-10-03T21:48:02.758Z",
+  "https": true,
+  "wwwRedirect": true,
+  "providers": {
+    "ok": true,
+    "providers": {
+      "openai": true,
+      "fal": true
+    }
+  },
+  "sourceNotExposed": true,
+  "originRestriction": true,
+  "font": true,
+  "mediaRanges": true,
+  "transcription": {
+    "text": "Computer, load up Celery Man please.",
+    "ms": 1044
+  },
+  "voice": {
+    "chunks": 133,
+    "pcmBytes": 213996,
+    "firstMs": 1142,
+    "completeMs": 3930,
+    "cached": false,
+    "url": "/media/voice/bae8176e9867b46a5d38.wav"
+  },
+  "originBypassStatus": 403,
+  "browser": {
+    "freshPhotoUpload": true,
+    "command": "Computer, give me a shoulder shimmy in a mustard yellow tracksuit.",
+    "label": "SHIMMY_MUSTARD",
+    "completionSeconds": 5.5,
+    "video": {
+      "readyState": 4,
+      "paused": false,
+      "width": 480,
+      "height": 832
+    },
+    "job": "631a75de4e5050f23c18"
+  },
+  "persistentObjects": [
+    {
+      "file": "profiles/6f83005d-90e1-4157-b0a0-ea4a04f417c3.jpg",
+      "size": 1135582
+    },
+    {
+      "file": "generated/631a75de4e5050f23c18.mp4",
+      "size": 2980371
+    },
+    {
+      "file": "voice/bae8176e9867b46a5d38.wav",
+      "size": 214040
+    }
+  ],
+  "revision": "celeryman-00001-dsz",
+  "imageCommit": "fa63095"
+}
