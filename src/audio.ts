@@ -1,6 +1,7 @@
 // One output bus makes audible playback and the benchmark recording identical.
 let context:AudioContext|undefined;
 let capture:MediaStreamAudioDestinationNode|undefined;
+let output:GainNode|undefined;
 const connected=new WeakSet<HTMLMediaElement>();
 let recorder:MediaRecorder|undefined;
 let chunks:Blob[]=[];
@@ -8,13 +9,21 @@ function bus(){
  context??=new AudioContext();
  capture??=context.createMediaStreamDestination();
  void context.resume();
- return {context,capture};
+ if(!output){output=context.createGain();output.connect(context.destination);output.connect(capture);}
+ return {context,capture,output};
+}
+export function speechBus(){return bus();}
+// Keep the soundtrack audible during push-to-talk, with a smooth volume change.
+export function duckForMicrophone(recording:boolean){
+ const b=bus(),gain=b.output.gain,now=b.context.currentTime;
+ gain.cancelScheduledValues(now);
+ gain.setTargetAtTime(recording?.4:1,now,.025);
 }
 export function unlockAudio(){return bus().context.resume();}
 export function routeAudio(media:HTMLMediaElement){
  if(connected.has(media))return media;
  const b=bus();const source=b.context.createMediaElementSource(media);
- source.connect(b.context.destination);source.connect(b.capture);connected.add(media);return media;
+ source.connect(b.output);connected.add(media);return media;
 }
 export function startOutputCapture(){
  const b=bus();chunks=[];recorder=new MediaRecorder(b.capture.stream,{mimeType:'audio/webm;codecs=opus'});
@@ -66,7 +75,7 @@ export class MusicLoop {
  private level=.6;
  readonly ready:Promise<void>;
  constructor(readonly url:string,generated=false){
-  const b=bus();this.gain.connect(b.context.destination);this.gain.connect(b.capture);
+  const b=bus();this.gain.connect(b.output);
   this.ready=preloadAudio(url).then(buffer=>{if(!this.disposed)this.buffer=loopBuffer(buffer,generated);});
  }
  get volume(){return this.level;}

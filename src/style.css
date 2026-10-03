@@ -22,3 +22,30 @@
 .desktop{background:#01b2ce}.desktop:after{background:repeating-linear-gradient(0deg,#0000000e 0px,#ffffff05 2.25px,#0000000e 4.5px)}
 
 .content video.intro-video{transform-origin:0 0;transform:translate(-10%,-28%) scale(1.8)}
+
+/* One compact, click-through debug bar; no command controls. */
+.debug-bar{position:absolute;top:8px;left:8px;width:500px;max-width:calc(100% - 16px);z-index:9200;pointer-events:none;display:flex;align-items:stretch;background:#dfe3d9ee;border:1px solid;border-color:#fff #798a83 #798a83 #fff;box-shadow:1px 1px 0 #41595766;color:#253b37}
+.debug-bar-badge{display:flex;align-items:center;padding:0 5px;background:#c1cbc6;border-right:1px solid #9caea5;font-size:7px;letter-spacing:.5px;color:#40514c}
+.command-status,.script-guide{flex:1;min-width:0;padding:4px 6px}
+.script-guide{border-left:1px solid #b0bcb4}
+.script-guide-title{display:flex;justify-content:space-between;gap:5px;align-items:center;color:#53615c;font-size:7px;line-height:1.2;letter-spacing:.4px}
+.script-guide-count{font-variant-numeric:tabular-nums;letter-spacing:0;white-space:nowrap}
+.script-guide-quote,.command-status-echo{font-family:Terminal,monospace;font-size:13px;line-height:1.05;margin:2px 0 0;overflow-wrap:anywhere}
+.command-status-echo:empty{display:none}
+.command-status-line{display:flex;align-items:center;gap:6px;font-size:8px;line-height:1.3;color:#53615c}.command-status-echo:not(:empty)+.command-status-line{margin-top:2px}
+.command-status-time{margin-left:auto;white-space:nowrap;font-variant-numeric:tabular-nums}.command-status.busy .command-status-label:before{content:'●';margin-right:4px;color:#306f71;animation:blink 1.2s steps(1) infinite}.command-status.failed .command-status-label{color:#842c22}
+
+/* Put current work ahead of the transcript, which remains available beneath it. */
+.command-status{flex:1.2}.command-status-line{align-items:flex-start;font-family:Terminal,monospace;font-size:13px;line-height:1.05;color:#253b37}.command-status-label{min-width:0;overflow-wrap:anywhere}.command-status-time{font-family:Arial,sans-serif;font-size:8px;line-height:1.5}.command-status-echo{font-family:Arial,sans-serif;font-size:8px;line-height:1.3;color:#53615c;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.command-status.waiting .command-status-time{color:#805d20}
+
+.toast{top:auto;bottom:46px}
+
+.command-status-detail{font-size:7px;line-height:1.3;color:#53615c;margin-top:2px}.command-status-detail:empty{display:none}
+
+/* Errors stay attached to the diagnostic bar until another command or reset. */
+.debug-bar{flex-wrap:wrap}.debug-bar-badge{order:0}.command-status{order:1}.script-guide{order:2}.command-error{order:3;flex:0 0 100%;padding:5px 7px;border-top:1px solid #8d4941;background:#f0ded3;color:#65251e;display:grid;gap:3px;font-size:9px;line-height:1.3}.command-error-title{font-size:9px;letter-spacing:.5px}.command-error-message{overflow-wrap:anywhere}.command-error-recovery{color:#45362d}.debug-bar.has-error{border-color:#fff #79362c #79362c #fff}.debug-bar.has-error .debug-bar-badge{background:#8d3930;color:#fff}.debug-bar.has-error .command-status-line{color:#842c22}
+
+.microphone-settings{border-top:1px solid #aaa;padding-top:6px;margin-top:8px;font-size:11px}.microphone-settings label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:5px 0}.microphone-settings select{width:275px;max-width:75%;border:2px inset #ddd;background:#fff;padding:4px;font-size:11px}.microphone-actions{display:flex;align-items:center;gap:8px}.microphone-actions button{padding:4px 7px;font-size:10px;white-space:nowrap}.microphone-note{font-size:9px;line-height:1.3;color:#4a5652;overflow-wrap:anywhere}.input-settings .content{padding:10px 16px}.input-settings .microphone-settings{border-top:0;margin:0}.launch .content{overflow:auto}.dock{flex-wrap:wrap}.dock input{min-width:130px;flex:1}
+
+/* Preserve generated performers' proportions inside the reference window geometry. */
+.content video{object-fit:contain;background:#eee}.portrait .content{background:#f5f3e8}.portrait .face-video{object-fit:contain;background:#dc69ab}

@@ -1,0 +1,34 @@
+{
+  "voice": "Alex",
+  "rate": 139,
+  "pitchRatio": 0.65,
+  "eq": [
+    [
+      160,
+      -4.56
+    ],
+    [
+      315,
+      1.2
+    ],
+    [
+      630,
+      1.21
+    ],
+    [
+      1250,
+      5.33
+    ],
+    [
+      2500,
+      4.99
+    ],
+    [
+      5000,
+      5.01
+    ]
+  ],
+  "gain": 0.35847604274749756,
+  "calibrationText": "Good morning Paul. What will your first sequence of the day be?",
+  "method": "Classic system voice fitted to greeting only; frozen pitch, pace and 6-band EQ. Not neural cloning."
+}

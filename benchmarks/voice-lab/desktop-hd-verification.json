@@ -1,0 +1,108 @@
+{
+  "checks": [
+    {
+      "name": "fresh HD generation",
+      "pass": true
+    },
+    {
+      "name": "speech starts before full response",
+      "pass": true
+    },
+    {
+      "name": "no buffer underruns",
+      "pass": true
+    },
+    {
+      "name": "no cold voice errors",
+      "pass": true
+    },
+    {
+      "name": "music stays full while waiting",
+      "pass": true
+    },
+    {
+      "name": "music ducks during PCM speech",
+      "pass": true
+    },
+    {
+      "name": "mute interrupts PCM speech",
+      "pass": true
+    },
+    {
+      "name": "unmute restores music",
+      "pass": true
+    },
+    {
+      "name": "stream error restores music",
+      "pass": true
+    },
+    {
+      "name": "original recording still plays",
+      "pass": true
+    },
+    {
+      "name": "original recording releases duck",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "text": "Thomas, your emerald turnip shuffle number 1526 is ready. Shall I add a tiny purple hat?",
+  "scheduledAudibleOnsetMs": 1432.5,
+  "serverFirstChunkMs": 1230.7021249979734,
+  "serverCompleteMs": 6100.772792004049,
+  "url": "/media/voice/b4493e49147ad21e6bb1.wav",
+  "events": [
+    {
+      "kind": "action",
+      "action": "attention",
+      "response": "Thomas, your emerald turnip shuffle number 1526 is ready. Shall I add a tiny purple hat?",
+      "time": 186.30000007152557
+    },
+    {
+      "kind": "audio",
+      "src": "/api/voice/stream",
+      "text": "Thomas, your emerald turnip shuffle number 1526 is ready. Shall I add a tiny purple hat?",
+      "spokenText": "Thomas, your emerald turnip shuffle number 1526 is ready. Shall I add a tiny purple hat?",
+      "time": 186.30000007152557
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/api/voice/stream",
+      "text": "Thomas, your emerald turnip shuffle number 1526 is ready. Shall I add a tiny purple hat?",
+      "spokenText": "Thomas, your emerald turnip shuffle number 1526 is ready. Shall I add a tiny purple hat?",
+      "latencyMs": 1432.2999999523163,
+      "time": 1618.6000000238419
+    },
+    {
+      "kind": "terminal",
+      "text": "Thomas, your emerald turnip shuffle number 1526 is ready. Shall I add a tiny purple hat?",
+      "time": 2297.600000023842
+    },
+    {
+      "kind": "voice-stream-complete",
+      "text": "Thomas, your emerald turnip shuffle number 1526 is ready. Shall I add a tiny purple hat?",
+      "type": "done",
+      "url": "/media/voice/b4493e49147ad21e6bb1.wav",
+      "cached": false,
+      "firstChunkMs": 1230.7021249979734,
+      "completeMs": 6100.772792004049,
+      "underruns": 0,
+      "time": 6290.800000071526
+    },
+    {
+      "kind": "voice-ended",
+      "text": "Thomas, your emerald turnip shuffle number 1526 is ready. Shall I add a tiny purple hat?",
+      "time": 8991.600000023842
+    }
+  ],
+  "captureVerification": {
+    "reference": "/media/voice/b4493e49147ad21e6bb1.wav",
+    "waveformCorrelation": 0.9911994338035583,
+    "alignmentOffsetMs": 86.5,
+    "recordedDuration": 7.5,
+    "generatedDuration": 7.4187916666666665,
+    "audibleTailCaptured": true,
+    "pass": true,
+    "captureNote": "MediaRecorder may omit initial wall-clock silence; recording offsets are not latency measurements. Browser audio-playing latency is reported separately."
+  }
+}

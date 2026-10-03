@@ -1,0 +1,34 @@
+{
+  "voice": "Junior",
+  "rate": 142,
+  "pitchRatio": 0.65,
+  "eq": [
+    [
+      160,
+      -5.33
+    ],
+    [
+      315,
+      0.52
+    ],
+    [
+      630,
+      2.82
+    ],
+    [
+      1250,
+      7.72
+    ],
+    [
+      2500,
+      3.24
+    ],
+    [
+      5000,
+      8.0
+    ]
+  ],
+  "gain": 0.6264843344688416,
+  "calibrationText": "Good morning Paul. What will your first sequence of the day be?",
+  "method": "Classic system voice fitted to greeting only; frozen pitch, pace and 6-band EQ. Not neural cloning."
+}

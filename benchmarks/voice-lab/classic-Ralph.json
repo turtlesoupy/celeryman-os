@@ -1,0 +1,34 @@
+{
+  "voice": "Ralph",
+  "rate": 142,
+  "pitchRatio": 1.0559701492537312,
+  "eq": [
+    [
+      160,
+      -2.18
+    ],
+    [
+      315,
+      -2.41
+    ],
+    [
+      630,
+      0.41
+    ],
+    [
+      1250,
+      2.54
+    ],
+    [
+      2500,
+      0.7
+    ],
+    [
+      5000,
+      5.93
+    ]
+  ],
+  "gain": 0.8032847046852112,
+  "calibrationText": "Good morning Paul. What will your first sequence of the day be?",
+  "method": "Classic system voice fitted to greeting only; frozen pitch, pace and 6-band EQ. Not neural cloning."
+}

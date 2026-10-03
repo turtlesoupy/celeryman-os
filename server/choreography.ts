@@ -11,7 +11,7 @@ export function canonicalName(body:any):string {
 export const motionNames=['celery','oyster','tayne','hat','engaged','flarhgunnstow','sway'];
 export function generationKey(b:any){
   const improved=motionNames.includes(canonicalName(b));
-  return createHash('sha256').update(JSON.stringify({version:improved?6:b.canonical?4:9,revision:improved?(canonicalName(b)==='sway'?4:canonicalName(b)==='engaged'?3:2):canonicalName(b)==='mozzarell-face'?4:b.variant==='intro'&&b.profile==='paul'?4:b.variant==='face'||b.variant==='hat'||b.variant==='smile'?3:b.character==='celery'||b.character==='oyster'?2:0,canonical:b.canonical,profile:b.profile,character:b.character,variant:b.variant,motion:b.motion,costume:b.costume,nonce:b.nonce,playbackRate:b.playbackRate})).digest('hex').slice(0,20);
+  return createHash('sha256').update(JSON.stringify({version:improved?6:b.canonical?4:9,revision:improved?(canonicalName(b)==='sway'?4:canonicalName(b)==='engaged'?3:b.profile!=='paul'&&canonicalName(b)==='oyster'?4:2):canonicalName(b)==='mozzarell-face'?4:b.profile!=='paul'&&b.variant==='face'&&['celery','oyster'].includes(b.character)?5:b.variant==='intro'&&b.profile==='paul'?4:b.variant==='face'||b.variant==='hat'||b.variant==='smile'?3:b.character==='celery'||b.character==='oyster'?2:0,canonical:b.canonical,profile:b.profile,character:b.character,variant:b.variant,motion:b.motion,costume:b.costume,nonce:b.nonce,playbackRate:b.playbackRate})).digest('hex').slice(0,20);
 }
 
 // These operations transform complete generated frames. There is no actor/face compositing.

@@ -1,0 +1,124 @@
+{
+  "beforeFix": {
+    "videos": 51,
+    "blank": 3
+  },
+  "afterFix": {
+    "first": [
+      {
+        "duration": 5.005,
+        "paused": false,
+        "ready": 4,
+        "sequence": "tayne",
+        "src": "/media/generated/5a01bc97402697d85382.mp4",
+        "time": 4.305506
+      },
+      {
+        "duration": 5.184,
+        "paused": false,
+        "ready": 4,
+        "sequence": "Celery Man",
+        "src": "/media/generated/bf826a96db6d713735d4.mp4",
+        "time": 3.619452
+      },
+      {
+        "duration": 5.184,
+        "paused": false,
+        "ready": 4,
+        "sequence": "oyster",
+        "src": "/media/generated/8fbaa8a1bed94ed05aa7.mp4",
+        "time": 3.435314
+      },
+      {
+        "duration": 5.184,
+        "paused": false,
+        "ready": 4,
+        "sequence": "mozzarell",
+        "src": "/media/generated/bbd59798070d371fddab.mp4",
+        "time": 3.263414
+      },
+      {
+        "duration": 5.005,
+        "paused": false,
+        "ready": 4,
+        "sequence": "tayne",
+        "src": "/media/generated/5a01bc97402697d85382.mp4",
+        "time": 3.579477
+      },
+      {
+        "duration": 5.184,
+        "paused": false,
+        "ready": 4,
+        "sequence": "Celery Man",
+        "src": "/media/generated/bf826a96db6d713735d4.mp4",
+        "time": 2.900748
+      },
+      {
+        "duration": 5.184,
+        "paused": false,
+        "ready": 4,
+        "sequence": "oyster",
+        "src": "/media/generated/8fbaa8a1bed94ed05aa7.mp4",
+        "time": 2.723439
+      },
+      {
+        "duration": 5.184,
+        "paused": false,
+        "ready": 4,
+        "sequence": "mozzarell",
+        "src": "/media/generated/bbd59798070d371fddab.mp4",
+        "time": 2.539502
+      }
+    ],
+    "second": [
+      {
+        "paused": false,
+        "ready": 4,
+        "sequence": "tayne",
+        "time": 4.680792
+      },
+      {
+        "paused": false,
+        "ready": 4,
+        "sequence": "Celery Man",
+        "time": 3.547909
+      },
+      {
+        "paused": false,
+        "ready": 4,
+        "sequence": "oyster",
+        "time": 3.358104
+      },
+      {
+        "paused": false,
+        "ready": 4,
+        "sequence": "mozzarell",
+        "time": 3.191181
+      },
+      {
+        "paused": false,
+        "ready": 4,
+        "sequence": "tayne",
+        "time": 3.97164
+      },
+      {
+        "paused": false,
+        "ready": 4,
+        "sequence": "Celery Man",
+        "time": 2.824067
+      },
+      {
+        "paused": false,
+        "ready": 4,
+        "sequence": "oyster",
+        "time": 2.646673
+      },
+      {
+        "paused": false,
+        "ready": 4,
+        "sequence": "mozzarell",
+        "time": 2.424091
+      }
+    ]
+  }
+}

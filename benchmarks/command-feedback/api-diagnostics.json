@@ -1,0 +1,20 @@
+[
+  {
+    "name": "transcription",
+    "ms": 514,
+    "status": 500,
+    "result": {
+      "error": "OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable."
+    }
+  },
+  {
+    "name": "known-command",
+    "ms": 7,
+    "status": 200,
+    "result": {
+      "action": "celery",
+      "response": "Yes, Thomas!",
+      "provider": "reference-protocol"
+    }
+  }
+]

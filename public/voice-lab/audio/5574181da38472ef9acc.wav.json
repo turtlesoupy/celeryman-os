@@ -1,0 +1,15 @@
+{
+  "source": "call",
+  "requestedText": "Excuse me Thomas. Your wife is on the phone. It's an emergency.",
+  "name": "Thomas",
+  "originalNameSpan": {
+    "start": 0.46000000834465027,
+    "end": 1.0400000214576721
+  },
+  "generatedNameSpan": {
+    "start": 1,
+    "end": 1.699999988079071
+  },
+  "nameModel": "fal-ai/f5-tts",
+  "method": "Original computer phrase with a generated, word-aligned name; 10 ms boundary fades."
+}

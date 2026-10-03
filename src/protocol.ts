@@ -1,15 +1,20 @@
-export type Action='greeting'|'celery'|'engage'|'oyster'|'print'|'attention'|'beta'|'tayne'|'hat'|'flarhgunnstow'|'repeat'|'nsfw'|'confirm'|'call'|'chaos'|'pause'|'resume'|'reset'|'custom'|'reaction';
+export type Action='greeting'|'celery'|'engage'|'oyster'|'print'|'attention'|'beta'|'tayne'|'hat'|'flarhgunnstow'|'repeat'|'nsfw'|'confirm'|'call'|'chaos'|'pause'|'resume'|'reset'|'custom'|'reaction'|'cancel';
 export interface Command {action:Action;response:string;audio?:string;label?:string;motion?:string;costume?:string;target?:string;generationId?:string;playbackRate?:number}
 export interface Context {identity:string;character:string;pending:string;history:string[];costume?:string}
 export function scripted(text:string,c:Context):Command|null {
  const t=text.toLowerCase().replace(/[’']/g,'').replace(/^[.\s]+/,'').trim();
+ const answer=t.replace(/^computer[,!. ]*/, '').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+ const compact=answer.replace(/ /g,'');
+ const affirmative=/^(yes|yep|yup|yeah|sure|ok|okay|all right|alright|absolutely|confirm|go ahead|please do|show me|lets see it)( please| computer)?$/.test(answer)||/^(m+h+m*|m+h+u+m+|u+m+h+u+m+|u+h+h+u+h+|m+h*|h+m+)$/.test(compact);
+ const negative=/^(no|nope|nah|not now|cancel|dont|do not|never mind|nevermind|stop|uh uh|mm mm)( please| computer)?$/.test(answer);
+ if(['beta','nsfw'].includes(c.pending)&&negative)return {action:'cancel',response:'Okay.',audio:'okay'};
+ if(c.pending==='beta'&&affirmative)return {action:'tayne',response:'Okay.',audio:'okay'};
+ if(c.pending==='nsfw'&&affirmative)return {action:'confirm',response:'Okay.',audio:'confirm'};
  if(/(tayne|tane).*get into|^(im|i am) okay|^oh\b/.test(t))return {action:'reaction',response:''};
  if(/^(reset|restart|start over)$/.test(t))return {action:'reset',response:''};
  if(/^(pause|stop|freeze)( music| dancing| everything)?$/.test(t))return {action:'pause',response:'Sequence paused.'};
  if(/^(resume|continue)( dancing)?$/.test(t))return {action:'resume',response:'Sequence resumed.'};
  if(/important work|ill get it later|ignore.*(call|phone)/.test(t))return {action:'chaos',response:'ERROR: BETA TAYNE\nIMPROPER CODING'};
- if(c.pending==='beta'&&/^(yes|all? ?right|ok|okay|sure|show|lets)/.test(t))return {action:'tayne',response:'Okay.',audio:'okay'};
- if(c.pending==='nsfw'&&/^(yes|mm|mh|uh|ok|sure|confirm)/.test(t))return {action:'confirm',response:'Okay.',audio:'confirm'};
  if(/nude|naked|nsfw/.test(t))return c.pending==='repeat'?{action:'nsfw',response:'This is not suitable for work.\nAre you sure?',audio:'nsfw'}:{action:'repeat',response:'Not computing. Please repeat.',audio:'repeat'};
  if(/good morning|^(boot|hello|hi)$/.test(t))return {action:'greeting',response:`Good morning ${c.identity}.\nWhat will your first sequence of the day be?`,audio:c.identity==='Paul'?'greeting':undefined};
  if(/print/.test(t))return {action:'print',response:'Okay.',audio:'print',target:/oyster/.test(t)?'oyster':c.character,costume:/oyster/.test(t)?undefined:c.costume};
@@ -18,10 +23,10 @@ export function scripted(text:string,c:Context):Command|null {
  if(/^(and |a |could i see |show me )*(flar[a-z]*|flower getting smelled)[?.! ]*$/.test(t))return {action:'flarhgunnstow',response:'FLARHGUNNSTOW',audio:'flower'};
  if(/new sequence|beta sequence|anything new|new dancer/.test(t))return {action:'beta',response:'I have a BETA sequence\nI have been working on\n\nWould you like to see it?',audio:'beta'};
  const plain=t.replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
- const named=(name:string)=>new RegExp(`^(computer )?((load( up)?|show( me)?|add sequence|run|start) )?${name}( please)?$`).test(plain);
+ const named=(name:string)=>new RegExp(`^(computer )?((load( up)?|show( me)?|can i see|could i see|add sequence|run|start) )?${name}( please)?$`).test(plain);
  if(named('oyster'))return {action:'oyster',response:'add sequence: OYSTER'};
  if(named('(tayne|tane)'))return {action:'tayne',response:'Loading BETA, please wait...',audio:'okay'};
- if(named('celery( man)?'))return {action:'celery',response:`Yes, ${c.identity}!`,audio:c.identity==='Paul'?'yes-paul':undefined};
+ if(named('celery( ?man)?'))return {action:'celery',response:`Yes, ${c.identity}!`,audio:c.identity==='Paul'?'yes-paul':undefined};
  if(/^(computer)[?!. ]*$/.test(t))return {action:'attention',response:'Yes.',audio:'yes'};
  if(/wife.*phone|incoming call/.test(t))return {action:'call',response:`Excuse me ${c.identity}. Your wife is on the phone. It's an emergency.`,audio:c.identity==='Paul'?'call':undefined};
  return null;

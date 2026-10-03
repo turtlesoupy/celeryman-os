@@ -1,0 +1,16 @@
+{
+  "source": "greeting",
+  "requestedText": "Good morning Thomas. What will your first sequence of the day be?",
+  "name": "Thomas",
+  "originalNameSpan": {
+    "start": 0.9599999785423279,
+    "end": 1.6200000047683716
+  },
+  "generatedNameSpan": {
+    "start": 1,
+    "end": 1.699999988079071
+  },
+  "nameModel": "fal-ai/f5-tts",
+  "requestId": "01a102bb-40e6-7f00-bbd4-54576666254e",
+  "method": "Original computer phrase with a generated, word-aligned name; 10 ms boundary fades."
+}

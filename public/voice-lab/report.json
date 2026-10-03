@@ -1,0 +1,968 @@
+{
+  "created": "2026-10-03T17:05:38.693Z",
+  "version": 1,
+  "notes": [
+    "Voice profile is already enrolled for both MiniMax tiers. No local generated-phrase cache is used for clone or classic trials. Provider-internal caching is unknown.",
+    "firstChunkMs is server receipt of PCM, not time to speaker output. completeMs is file readiness. Browser playback is measured separately.",
+    "Classic parameters were fitted only on Paul greeting. Holdout settings are frozen.",
+    "Splice uses the production implementation with an isolated name/output cache; existing source-word alignment is reused. Name-cold, name-warm, and exact-phrase-cache states are reported separately.",
+    "All outputs and failed trials are retained; no quality-based selection. Subjective model scores are advisory, not calibrated percentages.",
+    "Classic runtime invokes say and ffmpeg directly. Earlier Python-launch timing trials are retained separately as previousTrials, not included in current summaries."
+  ],
+  "cases": [
+    {
+      "id": "greeting-paul",
+      "text": "Good morning Paul. What will your first sequence of the day be?",
+      "reference": "/media/original/greeting.wav",
+      "split": "calibration",
+      "listenReference": "/voice-lab/audio/ref-greeting-paul-listen.wav"
+    },
+    {
+      "id": "greeting-thomas",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "reference": "/media/original/greeting.wav",
+      "split": "personalized",
+      "listenReference": "/voice-lab/audio/ref-greeting-thomas-listen.wav"
+    },
+    {
+      "id": "call-thomas",
+      "text": "Excuse me Thomas. Your wife is on the phone. It's an emergency.",
+      "reference": "/media/original/call.wav",
+      "split": "holdout",
+      "listenReference": "/voice-lab/audio/ref-call-thomas-listen.wav"
+    },
+    {
+      "id": "yes-thomas",
+      "text": "Yes, Thomas!",
+      "reference": "/media/original/yes-paul.wav",
+      "split": "short holdout",
+      "listenReference": "/voice-lab/audio/ref-yes-thomas-listen.wav"
+    },
+    {
+      "id": "novel",
+      "text": "Thomas, your velvet turnip shuffle is ready. Shall I add a tiny purple hat?",
+      "reference": "/media/original/voice-reference.wav",
+      "split": "novel holdout",
+      "listenReference": "/voice-lab/audio/ref-novel-listen.wav"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "greeting-paul-classic-fred",
+      "caseId": "greeting-paul",
+      "method": "classic-fred",
+      "label": "Classic Fred · fitted",
+      "text": "Good morning Paul. What will your first sequence of the day be?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-paul-classic-fred-1.wav",
+          "completeMs": 590.868916
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-paul-classic-fred-2.wav",
+          "completeMs": 481.65833399999997
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-paul-classic-fred-3.wav",
+          "completeMs": 451.643417
+        }
+      ],
+      "url": "/voice-lab/audio/greeting-paul-classic-fred-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-paul-classic-fred-1.wav",
+          "completeMs": 1135.343708
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-paul-classic-fred-2.wav",
+          "completeMs": 895.6337919999999
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-paul-classic-fred-3.wav",
+          "completeMs": 901.181083
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/greeting-paul-classic-fred-1-listen.wav"
+    },
+    {
+      "id": "greeting-paul-classic-junior",
+      "caseId": "greeting-paul",
+      "method": "classic-junior",
+      "label": "Classic Junior · fitted",
+      "text": "Good morning Paul. What will your first sequence of the day be?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-paul-classic-junior-1.wav",
+          "completeMs": 472.1084169999999
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-paul-classic-junior-2.wav",
+          "completeMs": 474.38079199999993
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-paul-classic-junior-3.wav",
+          "completeMs": 471.8225000000002
+        }
+      ],
+      "url": "/voice-lab/audio/greeting-paul-classic-junior-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-paul-classic-junior-1.wav",
+          "completeMs": 1096.216875
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-paul-classic-junior-2.wav",
+          "completeMs": 912.3210419999996
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-paul-classic-junior-3.wav",
+          "completeMs": 919.5649590000003
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/greeting-paul-classic-junior-1-listen.wav"
+    },
+    {
+      "id": "greeting-paul-turbo",
+      "caseId": "greeting-paul",
+      "method": "turbo",
+      "label": "Full clone · MiniMax Turbo streaming",
+      "text": "Good morning Paul. What will your first sequence of the day be?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-paul-turbo-1.wav",
+          "completeMs": 4058.4361670000008,
+          "firstChunkMs": 2021.031167,
+          "providerCompleteMs": 4057.4683330000007,
+          "requestId": "01a102ba-9517-7ef3-90ac-4c6c457a159b"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-paul-turbo-2.wav",
+          "completeMs": 2957.6862920000003,
+          "firstChunkMs": 1033.6090000000004,
+          "providerCompleteMs": 2953.9738340000004,
+          "requestId": "01a102ba-a464-7743-94e3-1298b1847ead"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-paul-turbo-3.wav",
+          "completeMs": 2818.7834999999995,
+          "firstChunkMs": 762.5370409999996,
+          "providerCompleteMs": 2812.7584160000006,
+          "requestId": "01a102ba-aff3-7003-9ad6-412ba9e0a3ef"
+        }
+      ],
+      "url": "/voice-lab/audio/greeting-paul-turbo-1.wav",
+      "listenUrl": "/voice-lab/audio/greeting-paul-turbo-1-listen.wav"
+    },
+    {
+      "id": "greeting-paul-hd",
+      "caseId": "greeting-paul",
+      "method": "hd",
+      "label": "Full clone · MiniMax HD streaming",
+      "text": "Good morning Paul. What will your first sequence of the day be?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-paul-hd-1.wav",
+          "completeMs": 2614.359125000001,
+          "firstChunkMs": 593.6086670000004,
+          "providerCompleteMs": 2613.8001250000016,
+          "requestId": "01a102ba-bafc-7b11-b869-caab46b95415"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-paul-hd-2.wav",
+          "completeMs": 2821.920582999999,
+          "firstChunkMs": 795.9960000000028,
+          "providerCompleteMs": 2816.5098340000004,
+          "requestId": "01a102ba-c52e-7831-9f93-e4d2bcb9cf17"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-paul-hd-3.wav",
+          "completeMs": 3135.027833,
+          "firstChunkMs": 1118.1098330000023,
+          "providerCompleteMs": 3134.4620410000025,
+          "requestId": "01a102ba-d034-78e0-8ef3-58ddc7c917a7"
+        }
+      ],
+      "url": "/voice-lab/audio/greeting-paul-hd-1.wav",
+      "listenUrl": "/voice-lab/audio/greeting-paul-hd-1-listen.wav"
+    },
+    {
+      "id": "greeting-thomas-classic-fred",
+      "caseId": "greeting-thomas",
+      "method": "classic-fred",
+      "label": "Classic Fred · fitted",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-thomas-classic-fred-1.wav",
+          "completeMs": 465.255584
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-thomas-classic-fred-2.wav",
+          "completeMs": 457.10629199999994
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-thomas-classic-fred-3.wav",
+          "completeMs": 457.7427080000002
+        }
+      ],
+      "url": "/voice-lab/audio/greeting-thomas-classic-fred-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-thomas-classic-fred-1.wav",
+          "completeMs": 967.2669160000005
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-thomas-classic-fred-2.wav",
+          "completeMs": 994.9131670000024
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-thomas-classic-fred-3.wav",
+          "completeMs": 904.3858749999999
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/greeting-thomas-classic-fred-1-listen.wav"
+    },
+    {
+      "id": "greeting-thomas-classic-junior",
+      "caseId": "greeting-thomas",
+      "method": "classic-junior",
+      "label": "Classic Junior · fitted",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-thomas-classic-junior-1.wav",
+          "completeMs": 477.12666699999954
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-thomas-classic-junior-2.wav",
+          "completeMs": 480.057417
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-thomas-classic-junior-3.wav",
+          "completeMs": 467.8099999999995
+        }
+      ],
+      "url": "/voice-lab/audio/greeting-thomas-classic-junior-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-thomas-classic-junior-1.wav",
+          "completeMs": 916.091583999998
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-thomas-classic-junior-2.wav",
+          "completeMs": 915.9454160000023
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-thomas-classic-junior-3.wav",
+          "completeMs": 917.3332499999997
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/greeting-thomas-classic-junior-1-listen.wav"
+    },
+    {
+      "id": "greeting-thomas-turbo",
+      "caseId": "greeting-thomas",
+      "method": "turbo",
+      "label": "Full clone · MiniMax Turbo streaming",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-thomas-turbo-1.wav",
+          "completeMs": 3080.6874999999964,
+          "firstChunkMs": 826.3210830000025,
+          "providerCompleteMs": 3079.775916999999,
+          "requestId": "01a102ba-f2dc-7af0-ae46-a70105ae0add"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-thomas-turbo-2.wav",
+          "completeMs": 2984.999834000002,
+          "firstChunkMs": 741.9462920000005,
+          "providerCompleteMs": 2984.1884590000045,
+          "requestId": "01a102ba-fe73-7190-b4d0-5a4bd793365f"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-thomas-turbo-3.wav",
+          "completeMs": 3399.726459000005,
+          "firstChunkMs": 994.6700419999979,
+          "providerCompleteMs": 3398.806166999995,
+          "requestId": "01a102bb-0a1c-7cf2-8899-96634a2acb11"
+        }
+      ],
+      "url": "/voice-lab/audio/greeting-thomas-turbo-1.wav",
+      "listenUrl": "/voice-lab/audio/greeting-thomas-turbo-1-listen.wav"
+    },
+    {
+      "id": "greeting-thomas-hd",
+      "caseId": "greeting-thomas",
+      "method": "hd",
+      "label": "Full clone · MiniMax HD streaming",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-thomas-hd-1.wav",
+          "completeMs": 2835.6307089999973,
+          "firstChunkMs": 610.2727909999958,
+          "providerCompleteMs": 2834.159915999997,
+          "requestId": "01a102bb-176c-7a71-932d-03bb2e9740af"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-thomas-hd-2.wav",
+          "completeMs": 3566.191125000005,
+          "firstChunkMs": 1231.5741250000065,
+          "providerCompleteMs": 3565.4456659999996,
+          "requestId": "01a102bb-227d-7a11-a1d3-0d0869128308"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/greeting-thomas-hd-3.wav",
+          "completeMs": 2746.1065420000014,
+          "firstChunkMs": 643.9045829999959,
+          "providerCompleteMs": 2745.3434999999954,
+          "requestId": "01a102bb-306b-78b3-b358-35abb5d56c78"
+        }
+      ],
+      "url": "/voice-lab/audio/greeting-thomas-hd-1.wav",
+      "listenUrl": "/voice-lab/audio/greeting-thomas-hd-1-listen.wav"
+    },
+    {
+      "id": "greeting-thomas-splice",
+      "caseId": "greeting-thomas",
+      "method": "splice",
+      "label": "Original phrase + generated name",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/greeting-thomas-splice-1.wav",
+          "completeMs": 75212.132958,
+          "cacheState": "name cold (reference alignment warm)",
+          "stages": [
+            {
+              "stage": "upload",
+              "atMs": 3.995999999999185
+            },
+            {
+              "stage": "synthesis",
+              "atMs": 1212.4232499999998
+            },
+            {
+              "stage": "download",
+              "atMs": 73612.21670799999
+            },
+            {
+              "stage": "alignment",
+              "atMs": 74065.441167
+            },
+            {
+              "stage": "splice",
+              "atMs": 75127.346917
+            },
+            {
+              "stage": "complete",
+              "atMs": 75211.59454199999
+            }
+          ]
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/greeting-thomas-splice-2.wav",
+          "completeMs": 0.9211670000076992,
+          "cacheState": "exact phrase cached",
+          "stages": []
+        }
+      ],
+      "url": "/voice-lab/audio/greeting-thomas-splice-1.wav",
+      "listenUrl": "/voice-lab/audio/greeting-thomas-splice-1-listen.wav"
+    },
+    {
+      "id": "call-thomas-classic-fred",
+      "caseId": "call-thomas",
+      "method": "classic-fred",
+      "label": "Classic Fred · fitted",
+      "text": "Excuse me Thomas. Your wife is on the phone. It's an emergency.",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/call-thomas-classic-fred-1.wav",
+          "completeMs": 459.3469580000001
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/call-thomas-classic-fred-2.wav",
+          "completeMs": 467.2061670000003
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/call-thomas-classic-fred-3.wav",
+          "completeMs": 464.9842920000001
+        }
+      ],
+      "url": "/voice-lab/audio/call-thomas-classic-fred-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/call-thomas-classic-fred-1.wav",
+          "completeMs": 1115.4653749999998
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/call-thomas-classic-fred-2.wav",
+          "completeMs": 1031.5128329999861
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/call-thomas-classic-fred-3.wav",
+          "completeMs": 913.7882919999975
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/call-thomas-classic-fred-1-listen.wav"
+    },
+    {
+      "id": "call-thomas-classic-junior",
+      "caseId": "call-thomas",
+      "method": "classic-junior",
+      "label": "Classic Junior · fitted",
+      "text": "Excuse me Thomas. Your wife is on the phone. It's an emergency.",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/call-thomas-classic-junior-1.wav",
+          "completeMs": 475.16349999999966
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/call-thomas-classic-junior-2.wav",
+          "completeMs": 485.59370800000033
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/call-thomas-classic-junior-3.wav",
+          "completeMs": 477.91770800000086
+        }
+      ],
+      "url": "/voice-lab/audio/call-thomas-classic-junior-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/call-thomas-classic-junior-1.wav",
+          "completeMs": 920.6456659999967
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/call-thomas-classic-junior-2.wav",
+          "completeMs": 917.3924169999955
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/call-thomas-classic-junior-3.wav",
+          "completeMs": 928.1534580000007
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/call-thomas-classic-junior-1-listen.wav"
+    },
+    {
+      "id": "call-thomas-turbo",
+      "caseId": "call-thomas",
+      "method": "turbo",
+      "label": "Full clone · MiniMax Turbo streaming",
+      "text": "Excuse me Thomas. Your wife is on the phone. It's an emergency.",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/call-thomas-turbo-1.wav",
+          "completeMs": 3779.2251670000114,
+          "firstChunkMs": 909.1494999999995,
+          "providerCompleteMs": 3776.223457999993,
+          "requestId": "01a102bc-7834-7a23-8311-81cec143cb2c"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/call-thomas-turbo-2.wav",
+          "completeMs": 3532.6497079999826,
+          "firstChunkMs": 712.6196669999918,
+          "providerCompleteMs": 3531.932791999978,
+          "requestId": "01a102bc-8684-75e3-8b60-e8d0eee3c3e8"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/call-thomas-turbo-3.wav",
+          "completeMs": 3821.299457999994,
+          "firstChunkMs": 740.4771250000049,
+          "providerCompleteMs": 3820.566208000004,
+          "requestId": "01a102bc-944d-7fa2-b335-e5a55488a664"
+        }
+      ],
+      "url": "/voice-lab/audio/call-thomas-turbo-1.wav",
+      "listenUrl": "/voice-lab/audio/call-thomas-turbo-1-listen.wav"
+    },
+    {
+      "id": "call-thomas-hd",
+      "caseId": "call-thomas",
+      "method": "hd",
+      "label": "Full clone · MiniMax HD streaming",
+      "text": "Excuse me Thomas. Your wife is on the phone. It's an emergency.",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/call-thomas-hd-1.wav",
+          "completeMs": 3447.59375,
+          "firstChunkMs": 740.8971670000174,
+          "providerCompleteMs": 3446.758792000008,
+          "requestId": "01a102bc-a33b-7383-b54c-e9e7eabc3881"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/call-thomas-hd-2.wav",
+          "completeMs": 3475.197583000001,
+          "firstChunkMs": 993.8935000000056,
+          "providerCompleteMs": 3474.313416000019,
+          "requestId": "01a102bc-b0b0-7e82-a479-e21e2200c312"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/call-thomas-hd-3.wav",
+          "completeMs": 3718.0797500000044,
+          "firstChunkMs": 936.5044169999892,
+          "providerCompleteMs": 3714.7789589999884,
+          "requestId": "01a102bc-be4a-7860-bb59-36d4b89fc2a4"
+        }
+      ],
+      "url": "/voice-lab/audio/call-thomas-hd-1.wav",
+      "listenUrl": "/voice-lab/audio/call-thomas-hd-1-listen.wav"
+    },
+    {
+      "id": "call-thomas-splice",
+      "caseId": "call-thomas",
+      "method": "splice",
+      "label": "Original phrase + generated name",
+      "text": "Excuse me Thomas. Your wife is on the phone. It's an emergency.",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/call-thomas-splice-1.wav",
+          "completeMs": 2655.5095000000147,
+          "cacheState": "name warm, phrase cold",
+          "stages": [
+            {
+              "stage": "alignment",
+              "atMs": 0.849000000016531
+            },
+            {
+              "stage": "splice",
+              "atMs": 2555.136750000005
+            },
+            {
+              "stage": "complete",
+              "atMs": 2655.091333999997
+            }
+          ]
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/call-thomas-splice-2.wav",
+          "completeMs": 0.41204100000322796,
+          "cacheState": "exact phrase cached",
+          "stages": []
+        }
+      ],
+      "url": "/voice-lab/audio/call-thomas-splice-1.wav",
+      "listenUrl": "/voice-lab/audio/call-thomas-splice-1-listen.wav"
+    },
+    {
+      "id": "yes-thomas-classic-fred",
+      "caseId": "yes-thomas",
+      "method": "classic-fred",
+      "label": "Classic Fred · fitted",
+      "text": "Yes, Thomas!",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/yes-thomas-classic-fred-1.wav",
+          "completeMs": 432.546875
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/yes-thomas-classic-fred-2.wav",
+          "completeMs": 434.0067089999993
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/yes-thomas-classic-fred-3.wav",
+          "completeMs": 437.0847080000003
+        }
+      ],
+      "url": "/voice-lab/audio/yes-thomas-classic-fred-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/yes-thomas-classic-fred-1.wav",
+          "completeMs": 1291.1768750000047
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/yes-thomas-classic-fred-2.wav",
+          "completeMs": 906.4673750000075
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/yes-thomas-classic-fred-3.wav",
+          "completeMs": 882.9880829999747
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/yes-thomas-classic-fred-1-listen.wav"
+    },
+    {
+      "id": "yes-thomas-classic-junior",
+      "caseId": "yes-thomas",
+      "method": "classic-junior",
+      "label": "Classic Junior · fitted",
+      "text": "Yes, Thomas!",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/yes-thomas-classic-junior-1.wav",
+          "completeMs": 451.57937500000116
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/yes-thomas-classic-junior-2.wav",
+          "completeMs": 458.1193750000002
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/yes-thomas-classic-junior-3.wav",
+          "completeMs": 442.921875
+        }
+      ],
+      "url": "/voice-lab/audio/yes-thomas-classic-junior-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/yes-thomas-classic-junior-1.wav",
+          "completeMs": 893.518167000002
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/yes-thomas-classic-junior-2.wav",
+          "completeMs": 902.5532079999975
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/yes-thomas-classic-junior-3.wav",
+          "completeMs": 896.3040829999954
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/yes-thomas-classic-junior-1-listen.wav"
+    },
+    {
+      "id": "yes-thomas-turbo",
+      "caseId": "yes-thomas",
+      "method": "turbo",
+      "label": "Full clone · MiniMax Turbo streaming",
+      "text": "Yes, Thomas!",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/yes-thomas-turbo-1.wav",
+          "completeMs": 2058.7509999999893,
+          "firstChunkMs": 1143.577250000002,
+          "providerCompleteMs": 2057.9634169999918,
+          "requestId": "01a102bc-ee34-7ae0-b23c-842025e2e369"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/yes-thomas-turbo-2.wav",
+          "completeMs": 1341.2119999999995,
+          "firstChunkMs": 614.9001669999852,
+          "providerCompleteMs": 1340.4375419999997,
+          "requestId": "01a102bc-f5c8-7d82-b693-6841e57d939a"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/yes-thomas-turbo-3.wav",
+          "completeMs": 1449.2195420000062,
+          "firstChunkMs": 602.2753340000054,
+          "providerCompleteMs": 1448.67095900001,
+          "requestId": "01a102bc-fb07-7512-97c8-7ae66a4bddbc"
+        }
+      ],
+      "url": "/voice-lab/audio/yes-thomas-turbo-1.wav",
+      "listenUrl": "/voice-lab/audio/yes-thomas-turbo-1-listen.wav"
+    },
+    {
+      "id": "yes-thomas-hd",
+      "caseId": "yes-thomas",
+      "method": "hd",
+      "label": "Full clone · MiniMax HD streaming",
+      "text": "Yes, Thomas!",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/yes-thomas-hd-1.wav",
+          "completeMs": 1818.9190830000152,
+          "firstChunkMs": 884.4985000000161,
+          "providerCompleteMs": 1818.365833000018,
+          "requestId": "01a102bd-00af-7893-87ce-7abcb5f2666f"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/yes-thomas-hd-2.wav",
+          "completeMs": 1789.5930410000146,
+          "firstChunkMs": 770.481832999998,
+          "providerCompleteMs": 1788.9782500000147,
+          "requestId": "01a102bd-07cd-7400-b422-84a6f0680706"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/yes-thomas-hd-3.wav",
+          "completeMs": 1942.3927919999987,
+          "firstChunkMs": 1112.516834000009,
+          "providerCompleteMs": 1941.7795420000039,
+          "requestId": "01a102bd-0eca-7bb0-b9f4-5d4fcbc9d906"
+        }
+      ],
+      "url": "/voice-lab/audio/yes-thomas-hd-1.wav",
+      "listenUrl": "/voice-lab/audio/yes-thomas-hd-1-listen.wav"
+    },
+    {
+      "id": "yes-thomas-splice",
+      "caseId": "yes-thomas",
+      "method": "splice",
+      "label": "Original phrase + generated name",
+      "text": "Yes, Thomas!",
+      "trials": [
+        {
+          "trial": 1,
+          "error": "Personalized name was not pronounced correctly",
+          "elapsedMs": 1.7825829999928828
+        },
+        {
+          "trial": 2,
+          "error": "Personalized name was not pronounced correctly",
+          "elapsedMs": 1.4589580000028946
+        }
+      ]
+    },
+    {
+      "id": "novel-classic-fred",
+      "caseId": "novel",
+      "method": "classic-fred",
+      "label": "Classic Fred · fitted",
+      "text": "Thomas, your velvet turnip shuffle is ready. Shall I add a tiny purple hat?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/novel-classic-fred-1.wav",
+          "completeMs": 475.97450000000026
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/novel-classic-fred-2.wav",
+          "completeMs": 464.9993749999994
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/novel-classic-fred-3.wav",
+          "completeMs": 479.43283299999894
+        }
+      ],
+      "url": "/voice-lab/audio/novel-classic-fred-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/novel-classic-fred-1.wav",
+          "completeMs": 956.3251670000027
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/novel-classic-fred-2.wav",
+          "completeMs": 927.3387079999957
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/novel-classic-fred-3.wav",
+          "completeMs": 907.5202080000017
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/novel-classic-fred-1-listen.wav"
+    },
+    {
+      "id": "novel-classic-junior",
+      "caseId": "novel",
+      "method": "classic-junior",
+      "label": "Classic Junior · fitted",
+      "text": "Thomas, your velvet turnip shuffle is ready. Shall I add a tiny purple hat?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/novel-classic-junior-1.wav",
+          "completeMs": 496.2633339999993
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/novel-classic-junior-2.wav",
+          "completeMs": 488.7564169999987
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/novel-classic-junior-3.wav",
+          "completeMs": 487.6345419999998
+        }
+      ],
+      "url": "/voice-lab/audio/novel-classic-junior-1.wav",
+      "previousTrials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/novel-classic-junior-1.wav",
+          "completeMs": 922.1540420000092
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/novel-classic-junior-2.wav",
+          "completeMs": 927.7644579999906
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/novel-classic-junior-3.wav",
+          "completeMs": 924.7528749999765
+        }
+      ],
+      "listenUrl": "/voice-lab/audio/novel-classic-junior-1-listen.wav"
+    },
+    {
+      "id": "novel-turbo",
+      "caseId": "novel",
+      "method": "turbo",
+      "label": "Full clone · MiniMax Turbo streaming",
+      "text": "Thomas, your velvet turnip shuffle is ready. Shall I add a tiny purple hat?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/novel-turbo-1.wav",
+          "completeMs": 4055.4635830000043,
+          "firstChunkMs": 1077.4216250000172,
+          "providerCompleteMs": 4054.663292000012,
+          "requestId": "01a102bd-2c99-7313-b3e1-0776b8e661b8"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/novel-turbo-2.wav",
+          "completeMs": 4058.2242499999993,
+          "firstChunkMs": 844.4259999999776,
+          "providerCompleteMs": 4057.4577500000014,
+          "requestId": "01a102bd-3c01-75c1-aeb0-7ccdb414dd35"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/novel-turbo-3.wav",
+          "completeMs": 4369.734708000004,
+          "firstChunkMs": 1088.9852079999982,
+          "providerCompleteMs": 4368.964332999982,
+          "requestId": "01a102bd-4bdf-74c0-b956-a48e8fd2ae6c"
+        }
+      ],
+      "url": "/voice-lab/audio/novel-turbo-1.wav",
+      "listenUrl": "/voice-lab/audio/novel-turbo-1-listen.wav"
+    },
+    {
+      "id": "novel-hd",
+      "caseId": "novel",
+      "method": "hd",
+      "label": "Full clone · MiniMax HD streaming",
+      "text": "Thomas, your velvet turnip shuffle is ready. Shall I add a tiny purple hat?",
+      "trials": [
+        {
+          "trial": 1,
+          "url": "/voice-lab/audio/novel-hd-1.wav",
+          "completeMs": 4619.490374999994,
+          "firstChunkMs": 745.8263330000045,
+          "providerCompleteMs": 4618.7779579999915,
+          "requestId": "01a102bd-5cef-7941-b9d4-d58847af56e6"
+        },
+        {
+          "trial": 2,
+          "url": "/voice-lab/audio/novel-hd-2.wav",
+          "completeMs": 6212.709292000014,
+          "firstChunkMs": 3067.2571250000037,
+          "providerCompleteMs": 6211.94445900002,
+          "requestId": "01a102bd-6efb-7350-8f21-285a9f6ce38a"
+        },
+        {
+          "trial": 3,
+          "url": "/voice-lab/audio/novel-hd-3.wav",
+          "completeMs": 4971.338250000001,
+          "firstChunkMs": 1802.2645839999896,
+          "providerCompleteMs": 4970.85829199999,
+          "requestId": "01a102bd-8742-7591-ab56-acfee8d33f06"
+        }
+      ],
+      "url": "/voice-lab/audio/novel-hd-1.wav",
+      "listenUrl": "/voice-lab/audio/novel-hd-1-listen.wav"
+    }
+  ],
+  "errors": [
+    {
+      "id": "yes-thomas-splice",
+      "trial": 1,
+      "error": "Personalized name was not pronounced correctly",
+      "elapsedMs": 1.7825829999928828
+    },
+    {
+      "id": "yes-thomas-splice",
+      "trial": 2,
+      "error": "Personalized name was not pronounced correctly",
+      "elapsedMs": 1.4589580000028946
+    }
+  ],
+  "controls": [
+    {
+      "id": "control-positive",
+      "caseId": "greeting-paul",
+      "text": "Good morning Paul. What will your first sequence of the day be?",
+      "url": "/voice-lab/audio/control-positive.wav",
+      "listenUrl": "/voice-lab/audio/control-positive-listen.wav"
+    },
+    {
+      "id": "control-negative",
+      "caseId": "greeting-paul",
+      "text": "Good morning Paul. What will your first sequence of the day be?",
+      "url": "/voice-lab/audio/control-negative.wav",
+      "listenUrl": "/voice-lab/audio/control-negative-listen.wav"
+    }
+  ]
+}

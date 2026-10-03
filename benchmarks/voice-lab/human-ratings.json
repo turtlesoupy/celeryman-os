@@ -1,0 +1,180 @@
+{
+  "date": "2026-10-03T17:24:36.961Z",
+  "reportCreated": "2026-10-03T17:05:38.693Z",
+  "ratings": {
+    "greeting-thomas-turbo": {
+      "pace": "3",
+      "ratedAfterReveal": false,
+      "clarity": "5",
+      "match": "4",
+      "seams": "4",
+      "notes": "very close",
+      "favorite": false
+    },
+    "greeting-thomas-classic-fred": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "3",
+      "seams": "2",
+      "pace": "1",
+      "notes": "sounds like the wrong computer voice",
+      "favorite": false
+    },
+    "greeting-thomas-hd": {
+      "match": "4",
+      "ratedAfterReveal": false,
+      "clarity": "4",
+      "seams": "3",
+      "pace": "5",
+      "favorite": true,
+      "notes": "also very close"
+    },
+    "greeting-thomas-splice": {
+      "seams": "1",
+      "ratedAfterReveal": false,
+      "match": "5",
+      "clarity": "4",
+      "pace": "5"
+    },
+    "greeting-thomas-classic-junior": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "1",
+      "seams": "1",
+      "pace": "1",
+      "notes": "sounds like the wrong computer"
+    },
+    "call-thomas-hd": {
+      "match": "5",
+      "ratedAfterReveal": false,
+      "clarity": "5",
+      "seams": "4",
+      "pace": "5",
+      "favorite": true
+    },
+    "call-thomas-classic-fred": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "1",
+      "seams": "1",
+      "pace": "1",
+      "notes": "wrong computer"
+    },
+    "call-thomas-turbo": {
+      "match": "5",
+      "ratedAfterReveal": false,
+      "pace": "4",
+      "clarity": "5",
+      "seams": "5"
+    },
+    "call-thomas-classic-junior": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "1",
+      "seams": "1",
+      "pace": "1"
+    },
+    "call-thomas-splice": {
+      "match": "5",
+      "ratedAfterReveal": false,
+      "clarity": "4",
+      "seams": "2",
+      "pace": "5"
+    },
+    "yes-thomas-hd": {
+      "favorite": true,
+      "ratedAfterReveal": false,
+      "match": "4",
+      "clarity": "5",
+      "pace": "4",
+      "seams": "5"
+    },
+    "yes-thomas-classic-fred": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "1",
+      "seams": "1",
+      "pace": "1",
+      "favorite": false
+    },
+    "yes-thomas-turbo": {
+      "match": "4",
+      "ratedAfterReveal": false,
+      "clarity": "5",
+      "pace": "3",
+      "seams": "5",
+      "favorite": false
+    },
+    "yes-thomas-classic-junior": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "1",
+      "seams": "1",
+      "pace": "1",
+      "favorite": false
+    },
+    "greeting-paul-classic-junior": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "1",
+      "seams": "1",
+      "pace": "1",
+      "favorite": false
+    },
+    "greeting-paul-classic-fred": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "1",
+      "seams": "1",
+      "pace": "1",
+      "favorite": false
+    },
+    "greeting-paul-hd": {
+      "match": "4",
+      "ratedAfterReveal": false,
+      "clarity": "4",
+      "seams": "5",
+      "pace": "5",
+      "favorite": true
+    },
+    "greeting-paul-turbo": {
+      "match": "4",
+      "ratedAfterReveal": false,
+      "clarity": "4",
+      "seams": "4",
+      "pace": "3"
+    },
+    "novel-classic-junior": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "1",
+      "seams": "1",
+      "pace": "1",
+      "favorite": false
+    },
+    "novel-classic-fred": {
+      "match": "1",
+      "ratedAfterReveal": false,
+      "clarity": "1",
+      "seams": "1",
+      "pace": "1",
+      "favorite": false
+    },
+    "novel-hd": {
+      "pace": "5",
+      "ratedAfterReveal": false,
+      "seams": "5",
+      "clarity": "5",
+      "match": "5",
+      "favorite": true
+    },
+    "novel-turbo": {
+      "match": "4",
+      "ratedAfterReveal": false,
+      "pace": "4",
+      "seams": "5",
+      "clarity": "5"
+    }
+  },
+  "liveRuns": []
+}

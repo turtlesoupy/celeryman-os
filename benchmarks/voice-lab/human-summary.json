@@ -1,0 +1,53 @@
+{
+  "source": "cinco-my-voice-ratings (1).json",
+  "ratedCandidates": 22,
+  "blinded": true,
+  "chosenDefault": "minimax-speech-2.8-hd-streaming",
+  "methods": [
+    {
+      "method": "hd",
+      "rated": 5,
+      "favorites": 5,
+      "match": 4.4,
+      "clarity": 4.6,
+      "seams": 4.4,
+      "pace": 4.8
+    },
+    {
+      "method": "turbo",
+      "rated": 5,
+      "favorites": 0,
+      "match": 4.2,
+      "clarity": 4.8,
+      "seams": 4.6,
+      "pace": 3.4
+    },
+    {
+      "method": "splice",
+      "rated": 2,
+      "favorites": 0,
+      "match": 5.0,
+      "clarity": 4.0,
+      "seams": 1.5,
+      "pace": 5.0
+    },
+    {
+      "method": "classic-fred",
+      "rated": 5,
+      "favorites": 0,
+      "match": 1.0,
+      "clarity": 1.4,
+      "seams": 1.2,
+      "pace": 1.0
+    },
+    {
+      "method": "classic-junior",
+      "rated": 5,
+      "favorites": 0,
+      "match": 1.0,
+      "clarity": 1.0,
+      "seams": 1.0,
+      "pace": 1.0
+    }
+  ]
+}

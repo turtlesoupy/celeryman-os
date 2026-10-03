@@ -1,0 +1,34 @@
+{
+  "voice": "Fred",
+  "rate": 142,
+  "pitchRatio": 0.753731343283582,
+  "eq": [
+    [
+      160,
+      -2.27
+    ],
+    [
+      315,
+      0.71
+    ],
+    [
+      630,
+      6.01
+    ],
+    [
+      1250,
+      8.0
+    ],
+    [
+      2500,
+      3.47
+    ],
+    [
+      5000,
+      8.0
+    ]
+  ],
+  "gain": 0.5153362154960632,
+  "calibrationText": "Good morning Paul. What will your first sequence of the day be?",
+  "method": "Classic system voice fitted to greeting only; frozen pitch, pace and 6-band EQ. Not neural cloning."
+}

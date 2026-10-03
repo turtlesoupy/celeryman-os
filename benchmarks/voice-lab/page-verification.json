@@ -1,0 +1,146 @@
+{
+  "assets": [
+    {
+      "url": "/voice-lab/audio/ref-greeting-paul-listen.wav",
+      "duration": 4.15,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/ref-greeting-thomas-listen.wav",
+      "duration": 4.15,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/ref-call-thomas-listen.wav",
+      "duration": 3.42,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/ref-yes-thomas-listen.wav",
+      "duration": 0.85,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/ref-novel-listen.wav",
+      "duration": 7.3,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/greeting-paul-classic-fred-1-listen.wav",
+      "duration": 3.61325,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/greeting-paul-classic-junior-1-listen.wav",
+      "duration": 3.6145833333333335,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/greeting-paul-turbo-1-listen.wav",
+      "duration": 3.436541666666667,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/greeting-paul-hd-1-listen.wav",
+      "duration": 3.3436666666666666,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/greeting-thomas-classic-fred-1-listen.wav",
+      "duration": 3.716,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/greeting-thomas-classic-junior-1-listen.wav",
+      "duration": 3.7252083333333332,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/greeting-thomas-turbo-1-listen.wav",
+      "duration": 3.471375,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/greeting-thomas-hd-1-listen.wav",
+      "duration": 3.5062083333333334,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/greeting-thomas-splice-1-listen.wav",
+      "duration": 4.21,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/call-thomas-classic-fred-1-listen.wav",
+      "duration": 4.42975,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/call-thomas-classic-junior-1-listen.wav",
+      "duration": 4.4355,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/call-thomas-turbo-1-listen.wav",
+      "duration": 4.028666666666667,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/call-thomas-hd-1-listen.wav",
+      "duration": 3.761625,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/call-thomas-splice-1-listen.wav",
+      "duration": 3.5600416666666668,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/yes-thomas-classic-fred-1-listen.wav",
+      "duration": 1.2488333333333332,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/yes-thomas-classic-junior-1-listen.wav",
+      "duration": 1.2568333333333332,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/yes-thomas-turbo-1-listen.wav",
+      "duration": 1.2655,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/yes-thomas-hd-1-listen.wav",
+      "duration": 1.3119166666666666,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/novel-classic-fred-1-listen.wav",
+      "duration": 4.806875,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/novel-classic-junior-1-listen.wav",
+      "duration": 4.8181666666666665,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/novel-turbo-1-listen.wav",
+      "duration": 4.45825,
+      "pass": true
+    },
+    {
+      "url": "/voice-lab/audio/novel-hd-1-listen.wav",
+      "duration": 5.30575,
+      "pass": true
+    }
+  ],
+  "ratingsPersist": true,
+  "exportWorks": true,
+  "failedTrialVisible": true,
+  "unsupportedCaseVisible": true,
+  "mobileFits": true,
+  "rangeRequests": true,
+  "errors": []
+}

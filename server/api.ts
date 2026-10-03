@@ -14,9 +14,9 @@ import type {Plugin} from 'vite';
 import {scripted,type Context} from '../src/protocol.ts';
 import {costumes,motions} from '../src/dances.ts';
 import {interactiveVideo} from './interactive-video.ts';
-import {personalizedVoice} from './personalized-voice.ts';
+import {computerVoiceId,streamComputerVoice} from './computer-voice.ts';
 import {canonicalName,generationKey,finishChoreography,motionPrompt} from './choreography.ts';
-const openai=new OpenAI();
+const openai=new OpenAI({maxRetries:0,timeout:20000});
 fal.config({credentials:process.env.FAL_KEY});
 const root=process.cwd(),media=path.join(root,'public/media');
 type Job={previewUrl?:string;status:string;stage:string;url?:string;image?:string;music?:string;error?:string;started?:number;elapsed?:number;requestId?:string;providerStatus?:string;timings?:Record<string,number>};
@@ -117,33 +117,7 @@ async function qwenVoice(text:string){
  return `/media/voice/${id}.wav`;
  })();voiceLocks.set(id,promise);promise.catch(()=>voiceLocks.delete(id));return promise;
 }
-let minimaxVoiceId:Promise<string>|undefined;
-async function computerVoiceId(){
- const file=path.join(root,'cache/minimax-computer-voice.json');
- if(await exists(file))return JSON.parse(await fs.readFile(file,'utf8')).voiceId as string;
- const audio=await fal.storage.upload(new File([await fs.readFile(path.join(media,'original/voice-long.wav'))],'computer.wav',{type:'audio/wav'}));
- const clone:any=await fal.subscribe('fal-ai/minimax/voice-clone',{input:{audio_url:audio,noise_reduction:true,need_volume_normalization:true,text:'Sequence engaged.',model:'speech-02-hd'}});
- await fs.writeFile(file,JSON.stringify({voiceId:clone.data.custom_voice_id}));return clone.data.custom_voice_id as string;
-}
-const phraseLocks=new Map<string,Promise<string>>();
-function voice(text:string,style='computer'){
- const key=style+':'+text;const old=phraseLocks.get(key);if(old)return old;
- const pending=makeVoice(text,style);phraseLocks.set(key,pending);pending.catch(()=>phraseLocks.delete(key));return pending;
-}
-async function makeVoice(text:string,style='computer'){
- try{const personalized=await personalizedVoice(text,openai);if(personalized)return personalized;}catch(error){console.warn('Personalized name synthesis unavailable; using full-phrase voice model.',error instanceof Error?error.message:'Unknown error');}
- const id=hash('minimax28-v1:'+style+':'+text),file=path.join(media,'voice',id+'.wav');
- if(voiceLocks.has(id))return voiceLocks.get(id)!;
- const result=(async()=>{
- if(!await exists(file)){
-  minimaxVoiceId??=computerVoiceId();
-  const speech:any=await fal.subscribe('fal-ai/minimax/speech-2.8-hd',{input:{prompt:text,voice_setting:{voice_id:await minimaxVoiceId,speed:1,emotion:'neutral'},language_boost:'English'}});
-  const raw=path.join(media,'voice',id+'.raw');await saveRemote(speech.data.audio.url,raw);
-  const effects=style==='phone'?'highpass=f=230,lowpass=f=3700,volume=1.15':'anull';
-  const temporary=file+'.tmp.wav';await exec('ffmpeg',['-y','-i',raw,'-af',effects,'-ar','24000','-c:a','pcm_s16le',temporary,'-loglevel','error']);await fs.rename(temporary,file);await fs.unlink(raw);
- }
- return '/media/voice/'+id+'.wav';})();voiceLocks.set(id,result);result.catch(()=>voiceLocks.delete(id));return result;
-}
+async function voice(text:string,_style='computer'){return (await streamComputerVoice(text,()=>{})).url;}
 export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServer(server){
  server.middlewares.use(async(req,res,next)=>{
   // Generated files must not depend on Vite's asynchronously updated public-file index.
@@ -182,7 +156,7 @@ export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServe
    if(req.url==='/api/health')result={ok:true,providers:{openai:!!process.env.OPENAI_API_KEY,fal:!!process.env.FAL_KEY}};
    else if(req.url==='/api/warm'){
     void reference(String(b.profile||'paul')).catch(()=>{});
-    const name=String(b.name||'').slice(0,35);if(name&&name!=='Paul')void voice(`Good morning ${name}.\nWhat will your first sequence of the day be?`).catch(()=>{});
+    void computerVoiceId().catch(()=>{});
     result={ok:true};
    }else if(req.url==='/api/command'){
     const text=String(b.text||'').slice(0,2000),context=b.context as Context;
@@ -221,9 +195,16 @@ export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServe
     }else result.provider='reference-protocol';
    }else if(req.url==='/api/transcribe'){
     const bytes=Buffer.from(String(b.audio||''),'base64');
-    let transcript=await openai.audio.transcriptions.create({file:await toFile(bytes,`input.${String(b.mime).includes('wav')?'wav':String(b.mime).includes('mp4')?'mp4':'webm'}`,{type:b.mime||'audio/webm'}),model:'gpt-4o-transcribe',prompt:`A person speaking to a retro dance computer. Possible names: Celery Man, Cinco, Tayne, Oyster. Dance moves: 4d3d3d3, hat wobble, flarhgunnstow. Transcribe only speech, not the background music. ${b.context?.pending?'The computer is awaiting a '+String(b.context.pending)+' response.':''}`});
-    if(transcript.text.trim().length<7||/context:|silence/i.test(transcript.text)){transcript=await openai.audio.transcriptions.create({file:await toFile(bytes,`input.${String(b.mime).includes('wav')?'wav':String(b.mime).includes('mp4')?'mp4':'webm'}`),model:'whisper-1',language:'en'});}
-    result={text:transcript.text};
+    const started=performance.now(),requestId=String(b.requestId||randomUUID());
+    const transcript=await openai.audio.transcriptions.create({file:await toFile(bytes,`input.${String(b.mime).includes('wav')?'wav':String(b.mime).includes('mp4')?'mp4':'webm'}`,{type:b.mime||'audio/webm'}),model:'gpt-4o-transcribe',language:'en',response_format:'json',include:['logprobs'],prompt:'Vocabulary: Celery Man, Cinco, Tayne, Oyster, 4d3d3d3 (four dee three dee three dee three), hat wobble, flarhgunnstow.'});
+    result={text:transcript.text,requestId,model:'gpt-4o-transcribe',transcriptionMs:Math.round(performance.now()-started),logprobs:transcript.logprobs};
+   }else if(req.url==='/api/voice/stream'){
+    const text=String(b.text||'').trim().slice(0,600);if(!text)throw Error('Speech text is required');
+    const controller=new AbortController();res.on('close',()=>{if(!res.writableEnded)controller.abort();});
+    res.setHeader('Content-Type','application/x-ndjson');res.setHeader('Cache-Control','no-store');res.flushHeaders();
+    const send=(data:unknown)=>{if(!res.destroyed)res.write(JSON.stringify(data)+'\n');};
+    const summary=await streamComputerVoice(text,chunk=>send({type:'pcm',data:chunk.toString('base64')}),controller.signal);
+    send({type:'done',...summary});res.end();return;
    }else if(req.url==='/api/voice')result={url:await voice(String(b.text||'').slice(0,600),b.style==='phone'?'phone':'computer')};
    else if(req.url==='/api/generate'){
     const id=generationKey(b);
@@ -236,6 +217,6 @@ export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServe
     const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),Buffer.from(b.image,'base64'));void reference(id).catch(()=>{});result={id};
    }else {res.statusCode=404;result={error:'Unknown endpoint'};}
    res.end(JSON.stringify(result));
-  }catch(e){res.statusCode=500;res.end(JSON.stringify({error:e instanceof Error?e.message:'Request failed'}));}
+  }catch(e){const rawError=e instanceof Error?e.message:'Request failed';const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){res.end(JSON.stringify({type:'error',error})+'\n');}else{res.statusCode=500;res.end(JSON.stringify({error}));}}
  });
 }};}

@@ -1,0 +1,74 @@
+greeting-paul-classic-fred 1 {"completeMs":1135.343708}
+greeting-paul-classic-fred 2 {"completeMs":895.6337919999999}
+greeting-paul-classic-fred 3 {"completeMs":901.181083}
+greeting-paul-classic-junior 1 {"completeMs":1096.216875}
+greeting-paul-classic-junior 2 {"completeMs":912.3210419999996}
+greeting-paul-classic-junior 3 {"completeMs":919.5649590000003}
+greeting-paul-turbo 1 {"firstChunkMs":2021.031167,"completeMs":4058.4361670000008}
+greeting-paul-turbo 2 {"firstChunkMs":1033.6090000000004,"completeMs":2957.6862920000003}
+greeting-paul-turbo 3 {"firstChunkMs":762.5370409999996,"completeMs":2818.7834999999995}
+greeting-paul-hd 1 {"firstChunkMs":593.6086670000004,"completeMs":2614.359125000001}
+greeting-paul-hd 2 {"firstChunkMs":795.9960000000028,"completeMs":2821.920582999999}
+greeting-paul-hd 3 {"firstChunkMs":1118.1098330000023,"completeMs":3135.027833}
+greeting-thomas-classic-fred 1 {"completeMs":967.2669160000005}
+greeting-thomas-classic-fred 2 {"completeMs":994.9131670000024}
+greeting-thomas-classic-fred 3 {"completeMs":904.3858749999999}
+greeting-thomas-classic-junior 1 {"completeMs":916.091583999998}
+greeting-thomas-classic-junior 2 {"completeMs":915.9454160000023}
+greeting-thomas-classic-junior 3 {"completeMs":917.3332499999997}
+greeting-thomas-turbo 1 {"firstChunkMs":826.3210830000025,"completeMs":3080.6874999999964}
+greeting-thomas-turbo 2 {"firstChunkMs":741.9462920000005,"completeMs":2984.999834000002}
+greeting-thomas-turbo 3 {"firstChunkMs":994.6700419999979,"completeMs":3399.726459000005}
+greeting-thomas-hd 1 {"firstChunkMs":610.2727909999958,"completeMs":2835.6307089999973}
+greeting-thomas-hd 2 {"firstChunkMs":1231.5741250000065,"completeMs":3566.191125000005}
+greeting-thomas-hd 3 {"firstChunkMs":643.9045829999959,"completeMs":2746.1065420000014}
+greeting-thomas-splice 1 {"completeMs":75212.132958,"cacheState":"name cold (reference alignment warm)"}
+greeting-thomas-splice 2 {"completeMs":0.9211670000076992,"cacheState":"exact phrase cached"}
+call-thomas-classic-fred 1 {"completeMs":1115.4653749999998}
+call-thomas-classic-fred 2 {"completeMs":1031.5128329999861}
+call-thomas-classic-fred 3 {"completeMs":913.7882919999975}
+call-thomas-classic-junior 1 {"completeMs":920.6456659999967}
+call-thomas-classic-junior 2 {"completeMs":917.3924169999955}
+call-thomas-classic-junior 3 {"completeMs":928.1534580000007}
+call-thomas-turbo 1 {"firstChunkMs":909.1494999999995,"completeMs":3779.2251670000114}
+call-thomas-turbo 2 {"firstChunkMs":712.6196669999918,"completeMs":3532.6497079999826}
+call-thomas-turbo 3 {"firstChunkMs":740.4771250000049,"completeMs":3821.299457999994}
+call-thomas-hd 1 {"firstChunkMs":740.8971670000174,"completeMs":3447.59375}
+call-thomas-hd 2 {"firstChunkMs":993.8935000000056,"completeMs":3475.197583000001}
+call-thomas-hd 3 {"firstChunkMs":936.5044169999892,"completeMs":3718.0797500000044}
+call-thomas-splice 1 {"completeMs":2655.5095000000147,"cacheState":"name warm, phrase cold"}
+call-thomas-splice 2 {"completeMs":0.41204100000322796,"cacheState":"exact phrase cached"}
+yes-thomas-classic-fred 1 {"completeMs":1291.1768750000047}
+yes-thomas-classic-fred 2 {"completeMs":906.4673750000075}
+yes-thomas-classic-fred 3 {"completeMs":882.9880829999747}
+yes-thomas-classic-junior 1 {"completeMs":893.518167000002}
+yes-thomas-classic-junior 2 {"completeMs":902.5532079999975}
+yes-thomas-classic-junior 3 {"completeMs":896.3040829999954}
+yes-thomas-turbo 1 {"firstChunkMs":1143.577250000002,"completeMs":2058.7509999999893}
+yes-thomas-turbo 2 {"firstChunkMs":614.9001669999852,"completeMs":1341.2119999999995}
+yes-thomas-turbo 3 {"firstChunkMs":602.2753340000054,"completeMs":1449.2195420000062}
+yes-thomas-hd 1 {"firstChunkMs":884.4985000000161,"completeMs":1818.9190830000152}
+yes-thomas-hd 2 {"firstChunkMs":770.481832999998,"completeMs":1789.5930410000146}
+yes-thomas-hd 3 {"firstChunkMs":1112.516834000009,"completeMs":1942.3927919999987}
+yes-thomas-splice {
+  trial: 1,
+  error: 'Personalized name was not pronounced correctly',
+  elapsedMs: 1.7825829999928828
+}
+yes-thomas-splice {
+  trial: 2,
+  error: 'Personalized name was not pronounced correctly',
+  elapsedMs: 1.4589580000028946
+}
+novel-classic-fred 1 {"completeMs":956.3251670000027}
+novel-classic-fred 2 {"completeMs":927.3387079999957}
+novel-classic-fred 3 {"completeMs":907.5202080000017}
+novel-classic-junior 1 {"completeMs":922.1540420000092}
+novel-classic-junior 2 {"completeMs":927.7644579999906}
+novel-classic-junior 3 {"completeMs":924.7528749999765}
+novel-turbo 1 {"firstChunkMs":1077.4216250000172,"completeMs":4055.4635830000043}
+novel-turbo 2 {"firstChunkMs":844.4259999999776,"completeMs":4058.2242499999993}
+novel-turbo 3 {"firstChunkMs":1088.9852079999982,"completeMs":4369.734708000004}
+novel-hd 1 {"firstChunkMs":745.8263330000045,"completeMs":4619.490374999994}
+novel-hd 2 {"firstChunkMs":3067.2571250000037,"completeMs":6212.709292000014}
+novel-hd 3 {"firstChunkMs":1802.2645839999896,"completeMs":4971.338250000001}

@@ -1,0 +1,58 @@
+greeting-paul [
+  [ 'control-negative', 40 ],
+  [ 'greeting-paul-classic-fred', 65 ],
+  [ 'greeting-paul-hd', 98 ],
+  [ 'greeting-paul-classic-junior', 65 ],
+  [ 'greeting-paul-turbo', 98 ],
+  [ 'control-positive', 98 ],
+  [ 'greeting-paul-hd', 98 ],
+  [ 'greeting-paul-classic-fred', 35 ],
+  [ 'control-positive', 100 ],
+  [ 'greeting-paul-turbo', 98 ],
+  [ 'control-negative', 60 ],
+  [ 'greeting-paul-classic-junior', 35 ]
+]
+greeting-thomas [
+  [ 'greeting-thomas-splice', 96 ],
+  [ 'greeting-thomas-hd', 75 ],
+  [ 'greeting-thomas-classic-junior', 40 ],
+  [ 'greeting-thomas-classic-fred', 40 ],
+  [ 'greeting-thomas-turbo', 74 ],
+  [ 'greeting-thomas-classic-junior', 45 ],
+  [ 'greeting-thomas-turbo', 87 ],
+  [ 'greeting-thomas-hd', 80 ],
+  [ 'greeting-thomas-splice', 95 ],
+  [ 'greeting-thomas-classic-fred', 45 ]
+]
+call-thomas [
+  [ 'call-thomas-classic-fred', 45 ],
+  [ 'call-thomas-hd', 95 ],
+  [ 'call-thomas-turbo', 90 ],
+  [ 'call-thomas-classic-junior', 45 ],
+  [ 'call-thomas-splice', 92 ],
+  [ 'call-thomas-classic-junior', 35 ],
+  [ 'call-thomas-turbo', 75 ],
+  [ 'call-thomas-classic-fred', 35 ],
+  [ 'call-thomas-splice', 95 ],
+  [ 'call-thomas-hd', 74 ]
+]
+yes-thomas [
+  [ 'yes-thomas-classic-fred', 40 ],
+  [ 'yes-thomas-turbo', 90 ],
+  [ 'yes-thomas-classic-junior', 40 ],
+  [ 'yes-thomas-hd', 90 ],
+  [ 'yes-thomas-classic-junior', 85 ],
+  [ 'yes-thomas-hd', 35 ],
+  [ 'yes-thomas-turbo', 35 ],
+  [ 'yes-thomas-classic-fred', 87 ]
+]
+novel [
+  [ 'novel-classic-junior', 35 ],
+  [ 'novel-turbo', 97 ],
+  [ 'novel-classic-fred', 35 ],
+  [ 'novel-hd', 96 ],
+  [ 'novel-classic-junior', 35 ],
+  [ 'novel-hd', 96 ],
+  [ 'novel-classic-fred', 35 ],
+  [ 'novel-turbo', 96 ]
+]

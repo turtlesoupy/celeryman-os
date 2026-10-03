@@ -11,7 +11,10 @@
     "benchmark:live": "tsx scripts/benchmark.ts --live",
     "benchmark:audio": "tsx scripts/benchmark.ts --live --audio",
     "benchmark:timed": "tsx scripts/timed-sketch.ts",
-    "benchmark:generalization": "tsx scripts/generalization.ts"
+    "benchmark:generalization": "tsx scripts/generalization.ts",
+    "benchmark:voice": "tsx scripts/benchmark-voice-lab.ts && node scripts/finish-voice-lab.mjs",
+    "benchmark:voice:classic": "python3 scripts/classic-voice.py fit && node scripts/voice-lab-grade.mjs calibrate",
+    "test:voice-lab": "tsx scripts/check-voice-lab.ts"
   },
   "keywords": [],
   "author": "",

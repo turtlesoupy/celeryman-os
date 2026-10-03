@@ -1,0 +1,51 @@
+{
+  "created": "2026-10-03T17:11:49.393Z",
+  "metrics": [
+    {
+      "method": "classic-Fred",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "firstChunkMs": null,
+      "firstAudibleMs": 501.2999999523163,
+      "completeMs": 493.60000002384186,
+      "underruns": 0,
+      "url": "/voice-lab/audio/live-0a86bd59-086a-4a52-a94b-5314849b0bdc.wav"
+    },
+    {
+      "method": "classic-Junior",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "firstChunkMs": null,
+      "firstAudibleMs": 540.7000000476837,
+      "completeMs": 535,
+      "underruns": 0,
+      "url": "/voice-lab/audio/live-dbad69e7-9983-45e6-9105-c9eafa47406a.wav"
+    },
+    {
+      "method": "turbo",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "firstChunkMs": 1082.9000000953674,
+      "firstAudibleMs": 1232.8000000715256,
+      "completeMs": 3546.8000000715256,
+      "underruns": 0,
+      "url": "/voice-lab/audio/live-10338d6b-ccef-41d6-bc6d-a40d355751b3.wav"
+    },
+    {
+      "method": "hd",
+      "text": "Good morning Thomas. What will your first sequence of the day be?",
+      "firstChunkMs": 786.8000000715256,
+      "firstAudibleMs": 1071.1000000238419,
+      "completeMs": 3241.100000023842,
+      "underruns": 0,
+      "url": "/voice-lab/audio/live-2628f7ff-8313-44c8-a350-8bcdc853e9e0.wav"
+    }
+  ],
+  "checks": {
+    "streamedAudibleBeforeComplete": true,
+    "classicAudible": true,
+    "unsupportedSpliceExplained": true,
+    "cancellation": true,
+    "blindByDefault": true,
+    "revealWorks": true,
+    "noBrowserErrors": true
+  },
+  "errors": []
+}
