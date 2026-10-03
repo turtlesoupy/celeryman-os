@@ -8,7 +8,8 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 const exec=promisify(execFile);
 import {createHash,randomUUID} from 'node:crypto';
-import OpenAI,{toFile} from 'openai';
+import OpenAI from 'openai';
+import {transcribeAudio} from './transcription.ts';
 import {fal} from '@fal-ai/client';
 import type {Plugin} from 'vite';
 import type {IncomingMessage,ServerResponse} from 'node:http';
@@ -199,9 +200,8 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     }else result.provider='reference-protocol';
    }else if(req.url==='/api/transcribe'){
     const bytes=Buffer.from(String(b.audio||''),'base64');
-    const started=performance.now(),requestId=String(b.requestId||randomUUID());
-    const transcript=await openai.audio.transcriptions.create({file:await toFile(bytes,`input.${String(b.mime).includes('wav')?'wav':String(b.mime).includes('mp4')?'mp4':'webm'}`,{type:b.mime||'audio/webm'}),model:'gpt-4o-transcribe',language:'en',response_format:'json',include:['logprobs'],prompt:'Vocabulary: Celery Man, Cinco, Tayne, Oyster, 4d3d3d3 (four dee three dee three dee three), hat wobble, flarhgunnstow.'});
-    result={text:transcript.text,requestId,model:'gpt-4o-transcribe',transcriptionMs:Math.round(performance.now()-started),logprobs:transcript.logprobs};
+    const requestId=String(b.requestId||randomUUID());
+    result={...await transcribeAudio(openai,bytes,b.mime||'audio/webm'),requestId};
    }else if(req.url==='/api/voice/stream'){
     const text=String(b.text||'').trim().slice(0,600);if(!text)throw Error('Speech text is required');
     const controller=new AbortController();res.on('close',()=>{if(!res.writableEnded)controller.abort();});
@@ -216,7 +216,13 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     if(await exists(path.join(media,'generated',`${id}.mp4`)))jobs.set(id,{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,image:await exists(path.join(media,'generated',`${id}-print.png`))?`/media/generated/${id}-print.png`:`/media/generated/${id}.png`});
     else if(!jobs.has(id)||jobs.get(id)?.status==='error'){jobs.set(id,{status:'working',stage:'Queued'});void generate(id,b);}
     result={id,...jobs.get(id)};
-   }else if(req.url.startsWith('/api/job/')){const id=req.url.split('/').pop()!;const saved=/^[a-f0-9]{20}$/.test(id)&&await exists(path.join(media,'generated',`${id}.mp4`));result={id,...(jobs.get(id)||(saved?{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,image:await exists(path.join(media,'generated',`${id}-print.png`))?`/media/generated/${id}-print.png`:`/media/generated/${id}.png`}:{status:'error',error:'Unknown job'}))};}
+   }else if(req.url.startsWith('/api/job/')){
+    const id=req.url.split('/').pop()!,active=jobs.get(id);
+    // Active jobs already have authoritative state. A cloud-storage stat on
+    // every 120ms poll adds latency precisely while generation is in progress.
+    if(active)result={id,...active};
+    else {const saved=/^[a-f0-9]{20}$/.test(id)&&await exists(path.join(media,'generated',`${id}.mp4`));result={id,...(saved?{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,image:await exists(path.join(media,'generated',`${id}-print.png`))?`/media/generated/${id}-print.png`:`/media/generated/${id}.png`}:{status:'error',error:'Unknown job'})};}
+   }
    else if(req.url==='/api/profile'){
     const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),Buffer.from(b.image,'base64'));void reference(id).catch(()=>{});result={id};
    }else {res.statusCode=404;result={error:'Unknown endpoint'};}

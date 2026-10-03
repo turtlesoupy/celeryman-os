@@ -1,0 +1,74 @@
+{
+  "created": "2026-10-03T22:04:24.201Z",
+  "site": "https://celeryman.fun",
+  "results": [
+    {
+      "scenario": "custom",
+      "profile": "d9eee161-e53c-40fd-b0d7-aa498731f31a",
+      "id": "0229e513a08d8fcb2802",
+      "planningMs": 1427.4080000000001,
+      "previewMs": 4537.768708,
+      "firstBytesMs": 11670.285541000001,
+      "wallMs": 11956.517625,
+      "timings": {
+        "identityMs": 0.05236299999523908,
+        "videoMs": 3095.482791000046,
+        "downloadMs": 885.4254189999774,
+        "totalMs": 4186.021195000038,
+        "finishMs": 205.06062200001907
+      },
+      "providerTimings": {
+        "inference": 1.4678827230236493
+      },
+      "model": "minimax/h3-max/reference-to-video"
+    },
+    {
+      "scenario": "celery",
+      "profile": "d9eee161-e53c-40fd-b0d7-aa498731f31a",
+      "id": "fcba2ac1a84ed8b70683",
+      "previewMs": 9536.497499999998,
+      "firstBytesMs": 10049.917041,
+      "wallMs": 12105.944583,
+      "timings": {
+        "identityMs": 613.1119450000115,
+        "frameMs": 3167.399112999905,
+        "videoMs": 5593.557051000069,
+        "downloadMs": 779.8331789999502,
+        "totalMs": 11674.951737000025,
+        "finishMs": 1521.0504490000894
+      },
+      "providerTimings": {
+        "inference": 2.3163306480000756
+      },
+      "model": "minimax/h3-max/reference-to-video",
+      "costumeFrame": {
+        "model": "fal-ai/flux-2/klein/9b/edit",
+        "requestId": "01a103cb-bf29-71d1-bc52-e01981e061d0"
+      }
+    },
+    {
+      "scenario": "portrait",
+      "profile": "d9eee161-e53c-40fd-b0d7-aa498731f31a",
+      "id": "158b5bc2850c2a3411cb",
+      "previewMs": 5087.439917,
+      "firstBytesMs": 5936.288541999998,
+      "wallMs": 6440.316959,
+      "timings": {
+        "identityMs": 0.5291030000662431,
+        "frameMs": 2949.432058000006,
+        "videoMs": 1974.0274539999664,
+        "downloadMs": 860.9882389999693,
+        "totalMs": 5993.283846999984,
+        "finishMs": 208.3069929999765
+      },
+      "providerTimings": {
+        "inference": 0.6186597980558872
+      },
+      "model": "minimax/h3-max/image-to-video",
+      "costumeFrame": {
+        "model": "fal-ai/flux-2/klein/9b/edit",
+        "requestId": "01a103cb-eb9d-7a31-9dc6-f8b72b222fb9"
+      }
+    }
+  ]
+}

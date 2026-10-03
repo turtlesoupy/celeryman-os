@@ -1,0 +1,102 @@
+{
+  "created": "2026-10-03T22:07:44.849Z",
+  "site": "https://celeryman.fun",
+  "rows": [
+    {
+      "round": 0,
+      "clip": "01",
+      "model": "gpt-4o-transcribe",
+      "text": "Computer load up Celery Man, please.",
+      "providerMs": 505,
+      "totalMs": 851
+    },
+    {
+      "round": 0,
+      "clip": "02",
+      "model": "gpt-4o-transcribe",
+      "text": "Could you kick up the 43d3d3?",
+      "providerMs": 1446,
+      "totalMs": 1690
+    },
+    {
+      "round": 0,
+      "clip": "09",
+      "model": "gpt-4o-transcribe",
+      "text": "Could I see a hat wobble?",
+      "providerMs": 723,
+      "totalMs": 991
+    },
+    {
+      "round": 0,
+      "clip": "10",
+      "model": "gpt-4o-transcribe",
+      "text": "and a flarhgunnstow",
+      "providerMs": 604,
+      "totalMs": 780
+    },
+    {
+      "round": 0,
+      "clip": "13",
+      "model": "gpt-4o-transcribe",
+      "text": "Oyster",
+      "providerMs": 551,
+      "totalMs": 648
+    },
+    {
+      "round": 0,
+      "clip": "16",
+      "model": "gpt-4o-transcribe",
+      "text": "I'll get it later.",
+      "providerMs": 869,
+      "totalMs": 1135
+    },
+    {
+      "round": 1,
+      "clip": "01",
+      "model": "gpt-4o-transcribe",
+      "text": "Computer load up Celery Man, please.",
+      "providerMs": 697,
+      "totalMs": 900
+    },
+    {
+      "round": 1,
+      "clip": "02",
+      "model": "gpt-4o-transcribe",
+      "text": "Could you kick up the 43d3d3?",
+      "providerMs": 476,
+      "totalMs": 671
+    },
+    {
+      "round": 1,
+      "clip": "09",
+      "model": "gpt-4o-transcribe",
+      "text": "Could I see a hat wobble?",
+      "providerMs": 330,
+      "totalMs": 498
+    },
+    {
+      "round": 1,
+      "clip": "10",
+      "model": "gpt-4o-transcribe",
+      "text": "flarhgunnstow",
+      "providerMs": 510,
+      "totalMs": 683
+    },
+    {
+      "round": 1,
+      "clip": "13",
+      "model": "gpt-4o-transcribe",
+      "text": "Celery Man,",
+      "providerMs": 567,
+      "totalMs": 692
+    },
+    {
+      "round": 1,
+      "clip": "16",
+      "model": "gpt-4o-transcribe",
+      "text": "Celery Man,",
+      "providerMs": 421,
+      "totalMs": 656
+    }
+  ]
+}

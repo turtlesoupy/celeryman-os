@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import os from 'node:os';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {fal} from '@fal-ai/client';
@@ -9,18 +10,29 @@ import {canonicalName,motionPrompt} from './choreography.ts';
 const exec=promisify(execFile);
 const motionReferences=new Map<string,Promise<string>>();
 function motionReference(file:string){let pending=motionReferences.get(file);if(!pending){pending=fs.readFile(file).then(bytes=>fal.storage.upload(new File([bytes],'motion.mp4',{type:'video/mp4'})));motionReferences.set(file,pending);pending.catch(()=>motionReferences.delete(file));}return pending;}
-const costumeFrames=new Map<string,Promise<{url:string;requestId?:string}>>();
-function fastCostumeFrame(profile:string,costume:string,closeup:boolean,ref:string,canonical:string,smiling=false){
+const wardrobeReferences=new Map<string,Promise<string|undefined>>();
+function wardrobeReference(canonical:string){
+ const name=canonical.replace(/-face$/,'');let pending=wardrobeReferences.get(name);
+ if(!pending){const file=path.join(process.cwd(),'public/media/motion',name+'.png');pending=fs.access(file).then(async()=>fal.storage.upload(new File([await fs.readFile(file)],'wardrobe.png',{type:'image/png'})),()=>undefined);wardrobeReferences.set(name,pending);pending.catch(()=>wardrobeReferences.delete(name));}
+ return pending;
+}
+type CostumeFrame={url:string;requestId?:string;saved?:Promise<void>;timings?:Record<string,number>};
+const costumeFrames=new Map<string,Promise<CostumeFrame>>();
+function fastCostumeFrame(profile:string,costume:string,closeup:boolean,ref:string,canonical:string,smiling=false,wardrobe?:string){
  const key=createHash('sha256').update(JSON.stringify({profile,costume,closeup,canonical,...(smiling?{smiling:true}:{}),version:closeup||canonical==='oyster'?3:2})).digest('hex').slice(0,20);
  const old=costumeFrames.get(key);if(old)return old;
  const pending=(async()=>{
   const file=path.join(process.cwd(),'public/media/generated',`fast-frame-${key}.png`);
   if(await fs.access(file).then(()=>true,()=>false))return {url:await fal.storage.upload(new File([await fs.readFile(file)],'costume.png',{type:'image/png'}))};
-  const wardrobeFile=path.join(process.cwd(),'public/media/motion',canonical.replace(/-face$/,'')+'.png');
-  const wardrobe=await fs.access(wardrobeFile).then(async()=>fal.storage.upload(new File([await fs.readFile(wardrobeFile)],'wardrobe.png',{type:'image/png'})),()=>undefined);
+  const started=performance.now();
   const result:any=await fal.run('fal-ai/flux-2/klein/9b/edit',{input:{image_urls:wardrobe?[ref,wardrobe]:[ref],prompt:`Create a new coherent whole-person photograph. Image 1 supplies ONLY the person’s identity. ${wardrobe?`Image 2 supplies the EXACT outfit, materials, shiny fabric and accessories. ${closeup?'Ignore its full-body framing and pose; compose a new tight head-and-shoulders portrait.':'Also match its pose, lighting and flat backdrop.'} Recreate ALL clothing from image 2 on the SAME adult person from image 1. The outfit in image 2 has priority over the general text description; match its colors and sheen, do not modernize it.`:'Dress this same person in the complete costume described below.'} Preserve their exact facial features, hair, facial hair, eyeglasses and body build; only substitute eyewear if explicitly required by the costume. General costume description: ${costume}. ${smiling?'A smiling headshot for a photo print: an unmistakable warm, awkward closed-mouth smile with raised cheeks, looking slightly off camera. Hold the whole hat and shoulders inside the frame.':''} ${closeup?'TIGHT head-and-shoulders closeup: hat nearly touches the top edge, face occupies half the image height, crop at upper chest. No waist, legs, feet or full body.':'Entire coherent person from hair to shoe soles, centered and occupying 80% of image height, hands on hips, empty margins above and below.'} ${canonical.endsWith('-face')?'Solid hot pink studio background, edge to edge, no gradient or yellow border.':'Flat light gray seamless studio background.'} Low-budget 1990s lighting. No text, collage or pasted head.`,image_size:closeup||canonical==='oyster'?{width:640,height:480}:{width:480,height:848},output_format:'png',num_inference_steps:4}});
-  const response=await fetch(result.data.images[0].url);if(!response.ok)throw Error('Costume frame download failed');await fs.writeFile(file,Buffer.from(await response.arrayBuffer()));
-  return {url:result.data.images[0].url,requestId:result.requestId};
+  const timings:Record<string,number>={frameRequestMs:performance.now()-started};
+  if(typeof result.data.timings?.inference==='number')timings.frameInferenceMs=result.data.timings.inference*1000;
+  // The video provider can use its own image URL immediately. Persisting our
+  // copy must not hold up inference (especially on the production GCS mount).
+  const saved=(async()=>{const began=performance.now();const response=await fetch(result.data.images[0].url);if(!response.ok)throw Error('Costume frame download failed');const bytes=Buffer.from(await response.arrayBuffer());timings.frameDownloadMs=performance.now()-began;const saveAt=performance.now();await fs.writeFile(file+'.partial',bytes);await fs.rename(file+'.partial',file);timings.frameSaveMs=performance.now()-saveAt;})();
+  void saved.catch(()=>costumeFrames.delete(key));
+  return {url:result.data.images[0].url,requestId:result.requestId,saved,timings};
  })();costumeFrames.set(key,pending);pending.catch(()=>costumeFrames.delete(key));return pending;
 }
 export async function interactiveVideo(id:string,body:any,job:any,identity:()=>Promise<string>){
@@ -28,7 +40,8 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  job.stage='Rendering dance';job.started=Date.now();job.timings=timings;
  const canonical=canonicalName(body),motionFile=path.join(process.cwd(),'public/media/motion',canonical+'-5s.mp4');
  const transfer=!!canonical&&await fs.access(motionFile).then(()=>true,()=>false);
- const [ref,motionRef]=await Promise.all([identity(),transfer?motionReference(motionFile):Promise.resolve(undefined)]);timings.identityMs=performance.now()-start;
+ const needsFrame=body.variant==='smile'||transfer||(body.canonical&&body.variant==='face'&&['celery','oyster'].includes(body.character));
+ const [ref,motionRef,wardrobe]=await Promise.all([identity(),transfer?motionReference(motionFile):Promise.resolve(undefined),needsFrame?wardrobeReference(body.variant==='smile'?body.character:canonical):Promise.resolve(undefined)]);timings.identityMs=performance.now()-start;
  const hatWobble=/hat.*wobble|wobble.*hat/i.test(body.motion);
  const effectiveMotion=hatWobble&&body.playbackRate!==undefined&&body.playbackRate!==1?'Hat wobble: keep torso and head mostly upright and still while the hat itself rocks smoothly side to side on the head, then returns to level. Arms relaxed at sides. A regular rhythm with a clearly visible tilt of the actual hat.':body.motion;
  const closeup=['face','smile','hat','intro'].includes(body.variant);
@@ -36,8 +49,8 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  if(transfer)prompt=motionPrompt(canonical)+` The same person from Image 1 wears this complete outfit: ${body.costume}. Use the outfit and studio background from Video 1, preserve the identity from Image 1, and reconstruct the whole performer. Exactly one dancer, entirely in frame.`;
  if(canonical==='mozzarell-face')prompt=`Image 1 is the identity of the performer. Preserve the face, hair, facial hair and eyewear. Dress in ${body.costume}. Wide waist-up framing with shoulders and upper arms loosely spread sideways; head occupies only one third of frame height. Goofy grin and small rhythmic upper-body bobs. Uniform pale gray backdrop, locked camera, low-budget analog dance footage. No speech, cuts, text or other people.`;
  if(body.variant==='intro')prompt=`Image 1 is the recognizable adult performer. Dress in ${body.costume}. Tight head-and-shoulders portrait, flat gray studio, locked camera, 1990s analog video. ${body.motion} Speak exactly the requested sentence in a natural warm American male voice. No other words, no music, no singing.`;
- let costumeFrame:{url:string;requestId?:string}|undefined;
- if(body.variant==='smile'||transfer||(body.canonical&&body.variant==='face'&&['celery','oyster'].includes(body.character))){job.stage='Preparing costume';costumeFrame=await fastCostumeFrame(body.profile,body.costume,closeup,ref,body.variant==='smile'?body.character:canonical,body.variant==='smile');timings.frameMs=performance.now()-start-timings.identityMs;job.stage='Rendering dance';}
+ let costumeFrame:CostumeFrame|undefined;
+ if(needsFrame){job.stage='Preparing costume';costumeFrame=await fastCostumeFrame(body.profile,body.costume,closeup,ref,body.variant==='smile'?body.character:canonical,body.variant==='smile',wardrobe);timings.frameMs=performance.now()-start-timings.identityMs;job.stage='Rendering dance';}
  if(body.variant==='face')prompt+=' Preserve the tight head-and-shoulders composition of Image 1 throughout. Hat at the top edge, upper chest at bottom edge. Never zoom out or show legs or feet. Solid hot pink backdrop.';
  const anchoredPortrait=['face','smile'].includes(body.variant)&&!!costumeFrame;
  const model=anchoredPortrait?'minimax/h3-max/image-to-video':'minimax/h3-max/reference-to-video';
@@ -46,22 +59,36 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  // Synchronous inference avoids the hosted queue's poll/delivery round trips.
  const video:any=await fal.run(model,{input:{...(anchoredPortrait?{image_url:costumeFrame!.url}:{reference_image_urls:[costumeFrame?.url||ref],...(canonical==='oyster'&&costumeFrame?{image_url:costumeFrame.url}:{})}),...(motionRef?{reference_video_urls:[motionRef]}:{}),prompt,duration:5,resolution:'480P',aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='oyster'?'4:3':body.variant==='intro'?'9:16':closeup?'4:3':'9:16',prompt_expansion_mode:'disabled'}});
  timings.videoMs=performance.now()-start-timings.identityMs-(timings.frameMs||0);
+ timings.previewMs=performance.now()-start;
  videoPreviews.set(id,video.data.video.url);
  // The browser can stream the genuine completed model output immediately,
  // while the local cache and poster are written independently below.
  if(body.variant!=='smile')Object.assign(job,{previewUrl:`/media/generated/${id}.mp4?live=1`,url:`/media/generated/${id}.mp4`});
  job.stage='Loading sequence';
- const dir=path.join(process.cwd(),'public/media/generated'),output=path.join(dir,id+'.mp4'),temp=output+'.partial';
+ const dir=path.join(process.cwd(),'public/media/generated'),output=path.join(dir,id+'.mp4');
+ // FFmpeg seeks and rewrites headers. Do that on local scratch, not a cloud
+ // object-storage mount; persist only the finished artifacts.
+ const scratch=await fs.mkdtemp(path.join(os.tmpdir(),'cinco-video-'));
+ try{
+ const temp=path.join(scratch,'video.mp4');
  const response=await fetch(video.data.video.url);if(!response.ok)throw Error('Video download failed');await fs.writeFile(temp,Buffer.from(await response.arrayBuffer()));
  timings.downloadMs=performance.now()-start-timings.identityMs-timings.videoMs-(timings.frameMs||0);
  // Extract a real generated frame, never a composited photo, for the poster/print queue.
  let processing:any;
- if(transfer){job.stage='Finishing sequence';const finished=output+'.finished.mp4';await exec('ffmpeg',['-y','-i',temp,'-t','5','-vf','scale=-2:360,gblur=sigma=0.3,fps=30000/1001','-an','-c:v','libx264','-preset','veryfast','-crf','18','-movflags','+faststart',finished,'-loglevel','error']);await fs.rename(finished,temp);processing={pipeline:'whole-frame-soft-video',note:'No segmentation, recoloring or body-dependent crop.'};}
+ const finishStarted=performance.now();
+ if(transfer){job.stage='Finishing sequence';const finished=path.join(scratch,'finished.mp4');await exec('ffmpeg',['-y','-i',temp,'-t','5','-vf','scale=-2:360,gblur=sigma=0.3,fps=30000/1001','-an','-c:v','libx264','-preset','veryfast','-crf','18','-movflags','+faststart',finished,'-loglevel','error']);await fs.rename(finished,temp);processing={pipeline:'whole-frame-soft-video',note:'No segmentation, recoloring or body-dependent crop.'};}
  const image=path.join(dir,id+(body.variant==='smile'?'-print':'')+'.png');
- await exec('ffmpeg',['-y','-ss',body.variant==='smile'?'2':'0','-i',temp,'-frames:v','1',image,'-loglevel','error']);
+ const poster=path.join(scratch,'poster.png');
+ await exec('ffmpeg',['-y','-ss',body.variant==='smile'?'2':'0','-i',temp,'-frames:v','1',poster,'-loglevel','error']);
+ timings.ffmpegMs=performance.now()-finishStarted;
+ const saveStarted=performance.now();
+ await Promise.all([fs.copyFile(temp,output+'.partial'),fs.copyFile(poster,image+'.partial'),costumeFrame?.saved]);
+ await Promise.all([fs.rename(output+'.partial',output),fs.rename(image+'.partial',image)]);
+ timings.persistMs=performance.now()-saveStarted;
+ Object.assign(timings,costumeFrame?.timings);
  timings.totalMs=performance.now()-start;timings.finishMs=timings.totalMs-timings.identityMs-timings.videoMs-timings.downloadMs-(timings.frameMs||0);
  const metadata={profile:body.profile,character:body.character,variant:body.variant,costume:body.costume,motion:body.motion,playbackRate:body.playbackRate,prompt,model,videoRequest:video.requestId,providerTimings:video.data.timings,timings,elapsedMs:timings.totalMs,processing,costumeFrame:costumeFrame?{model:'fal-ai/flux-2/klein/9b/edit',requestId:costumeFrame.requestId}:undefined,pipeline:'direct-whole-person-reference-v1'};
  await fs.writeFile(path.join(dir,id+'.json'),JSON.stringify(metadata,null,2));
- await fs.rename(temp,output);
  Object.assign(job,{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,image:`/media/generated/${path.basename(image)}`,elapsed:timings.totalMs});
+ }finally{await fs.rm(scratch,{recursive:true,force:true});}
 }
