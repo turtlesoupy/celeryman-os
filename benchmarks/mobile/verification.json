@@ -1,0 +1,19 @@
+{
+  "profile": "Thomas Dimson",
+  "environment": "Codex in-app desktop browser with viewport overrides; not physical mobile hardware",
+  "viewportsChecked": [[320,568],[390,844],[844,390],[1280,720]],
+  "checks": {
+    "portraitStartButtonHeight": 44,
+    "persistentTalkButtonHeight": 48,
+    "desktopBoundsAt1280x720": {"x":0,"y":0,"width":1280,"height":720},
+    "typedCommandViaTouchControls": "passed",
+    "drag": "CINCO ID moved from (85,116) to (20,163)",
+    "maximize": {"x":8,"y":112,"width":374,"height":648},
+    "restoreMinimizedFromWindowSwitcher": "passed",
+    "orientationReflow": "passed",
+    "fullTimedSketch": "completed; 8 finale videos playing",
+    "microphonePermissionFailure": "isolated fixture rejected both attempts; Talk returned to idle and next tap retried",
+    "touchSettingsMenu": "More closes when Input device opens"
+  },
+  "notVerified": ["Physical iPhone/Android microphone", "Bluetooth audio routing", "Native software keyboard behavior", "Remote phone access to private HTTPS server"]
+}

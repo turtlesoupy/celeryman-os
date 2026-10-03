@@ -32,7 +32,7 @@ export function createCommandStatus(parent:HTMLElement,idle=()=> 'Waiting for co
   job(id:number,key:string,text:string){if(id!==token||failed)return;if(jobs.get(key)?.text!==text)jobs.set(key,{text,since:performance.now()});render();},
   jobDone(id:number,key:string){if(id!==token||!jobs.delete(key))return;if(!failed&&!working&&!jobs.size)completedAt=performance.now();render();},
   finish(id:number){if(id!==token||failed)return;working=false;completedAt=performance.now();render();},
-  error(id:number,message:string){if(id!==token||failed)return;const failure=describeServiceError(message);failed=true;working=false;phaseText='Stopped · '+failure.title;errorTitle.textContent='ERROR · '+failure.title;errorMessage.textContent=failure.message;recovery.textContent=failure.recovery;alert.classList.remove('hidden');parent.classList.add('has-error');completedAt=performance.now();element.classList.add('failed');render();},
+  error(id:number,message:string){if(id!==token||failed)return;const failure=describeServiceError(message);failed=true;working=false;phaseText='Stopped · '+failure.title;errorTitle.textContent='ERROR · '+failure.title;const guidance=(text:string)=>parent.closest('.mobile')?text.replace(/\bF1\b/g,'More'):text;errorMessage.textContent=guidance(failure.message);recovery.textContent=guidance(failure.recovery);alert.classList.remove('hidden');parent.classList.add('has-error');completedAt=performance.now();element.classList.add('failed');render();},
   clear(){clearError();token++;jobs.clear();failed=false;working=false;completedAt=0;detailText='';echo.textContent='';element.classList.remove('failed');render();}
  };
 }

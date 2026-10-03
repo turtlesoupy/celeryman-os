@@ -69,3 +69,10 @@ The two blind grading passes use the same model with independently ordered anony
 The complete human evaluation is preserved in `benchmarks/voice-lab/human-ratings.json` with a summary in `human-summary.json`. Human ratings take precedence over the automated voice grader: HD was the favorite on 5/5 lines (mean match 4.4/5, pace 4.8/5), whereas classic voices scored 1/5 on match and splicing scored 1.5/5 on transitions. The automated grader's high splice-continuity scores were not reliable for this listener; they remain recorded unchanged.
 
 Run `npx tsx scripts/check-desktop-voice.ts` to verify the selected voice in the actual desktop: fresh generation, audio before response completion, music ducking only during speech, cancellation/mute, stream failure recovery and original-recording playback. The latest fresh live desktop check began playback in 1.43 s (1.31 s in the preceding run), with no buffer underruns; its capture correlated 0.991 with the generated WAV and included the audible tail. Run `python3 scripts/verify-desktop-voice.py` after the browser check to repeat the capture comparison. Browser onset excludes physical speaker latency.
+
+
+## Mobile desktop
+
+Phone layouts keep the overlapping window manager at readable size. Windows are recomposed for portrait or landscape, with touch dragging, resizing, minimize/maximize, and a Windows switcher for bringing covered windows forward. The bottom bar provides Talk (tap again to send), Type, Windows, and More. Sign-in and command controls use touch-sized targets; desktop geometry remains based on the reference sketch.
+
+`npx tsx scripts/check-window-layout.ts` checks window bounds across small phones, landscape, tablets, and reduced keyboard viewports. Browser checks and screenshots are saved under `benchmarks/mobile/`. These are viewport tests, not a claim of physical iPhone/Android microphone or Bluetooth verification. The local development server still binds to loopback; phone access requires a separately configured private HTTPS connection.

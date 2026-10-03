@@ -49,3 +49,40 @@
 
 /* Preserve generated performers' proportions inside the reference window geometry. */
 .content video{object-fit:contain;background:#eee}.portrait .content{background:#f5f3e8}.portrait .face-video{object-fit:contain;background:#dc69ab}
+
+/* A smaller desktop, not a scaled-down screenshot: keep window chrome touchable. */
+.viewport{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+.hint{border:0;background:none;padding:0}.touch-bar,.window-list{display:none}
+.desktop.mobile{align-self:start;justify-self:center;transform-origin:top center}
+.mobile .hint{display:none}.mobile:not(.running) .debug-bar{display:none}
+.mobile .titlebar{height:36px;font-size:12px}.mobile .titlebar>span{padding:8px 5px}
+.mobile .titlebar button{min-width:32px;padding:2px 4px}.mobile .titlebar .close{width:46px}.mobile .titlebar .sys{width:32px}
+.mobile .resize{width:28px;height:28px;background:linear-gradient(135deg,transparent 66%,#888 67%,transparent 71%,#888 74%,transparent 78%)}
+.mobile .window.minimized{height:40px!important}.mobile .menu-line{font-size:14px;height:25px}
+.mobile .window-menu{top:35px;font-size:15px}.mobile .window-menu button{min-height:44px}
+.mobile .launch .content{padding:14px 16px;font-size:14px}.mobile .launch h1{font-size:22px}.mobile .launch p{font-size:13px}
+.mobile .launch label{margin:10px 0}.mobile .launch input,.mobile .launch select{font-size:16px;min-height:44px;width:62%;max-width:62%}
+.mobile .classic-button{min-height:44px;font-size:14px;padding:8px 12px}
+.mobile .launch .buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mobile .launch .note{font-size:11px}.mobile .microphone-actions{align-items:flex-start;flex-wrap:wrap}.mobile .microphone-note{font-size:12px}
+.mobile .microphone-settings{font-size:13px}.mobile .microphone-settings select{font-size:16px;min-height:44px}.mobile .input-settings .content{overflow:auto}
+.mobile .boot .loading-label{font-size:13px}.mobile .boot .identity-art{height:140px}.mobile .boot .identity-art svg{height:135px}
+.mobile .terminal .titlebar{height:32px;font-size:11px}.mobile .terminal .titlebar>span{padding:6px 4px}.mobile .terminal .content{font-size:23px;padding:6px 10px}
+.mobile .terminal.custom-terminal{top:auto!important;bottom:84px;height:128px!important}
+.mobile .portrait .content{padding:8px}.mobile .portrait .bottom-edge{height:10px}
+.mobile .nsfw .content{font-size:64px}.mobile .error .content{font-size:22px}
+.mobile .phone .titlebar{font-size:11px;height:32px}.mobile .phone .content{padding:6px}
+.mobile .free-dancer{left:calc(50% - 100px);top:125px;width:200px;height:300px}
+.mobile .touch-bar{position:absolute;left:0;right:0;bottom:0;padding:8px 8px max(12px,env(safe-area-inset-bottom));background:#c7cfcb;border-top:2px outset #eee;z-index:9600;gap:6px;grid-template-columns:1.4fr 1fr 1fr 1fr}
+.mobile.running .touch-bar{display:grid}.mobile .touch-bar button{padding:8px 5px;min-height:48px;font-size:14px}.mobile .touch-mic{font-weight:bold;color:#174e42}.mobile .touch-mic[aria-pressed=true]{background:#86372e;color:#fff}
+.mobile .dock{bottom:80px;left:8px;right:8px;max-width:none;max-height:55%;overflow:auto;padding:8px;gap:8px}
+.mobile .dock input{font-size:16px;width:calc(100% - 70px);min-height:44px;order:-2;flex:1}.mobile .dock button[type=submit],.mobile .dock input+button{order:-1}
+.mobile .dock button{font-size:13px;min-height:44px;padding:6px 10px}.mobile .dock .lamp{display:none}
+.mobile .window-list:not(.hidden){display:grid;position:absolute;left:8px;right:8px;bottom:80px;max-height:55%;overflow:auto;gap:6px;padding:10px;background:#ced5d1;border:2px outset #eee;z-index:9500}
+.mobile .window-list button{text-align:left}.mobile .toast{left:8px;right:8px;bottom:82px;font-size:13px}
+.mobile .debug-bar{top:max(6px,env(safe-area-inset-top));left:6px;max-width:calc(100% - 12px);width:calc(100% - 12px)}
+.mobile .debug-bar-badge{display:none}.mobile .command-status,.mobile .script-guide{padding:5px 7px}
+.mobile .command-status-line{font-size:16px}.mobile .command-status-time{font-size:10px}.mobile .command-status-echo{font-size:11px}
+.mobile .command-status-detail{font-size:10px;max-height:26px;overflow:hidden}.mobile .script-guide-title{font-size:9px}.mobile .script-guide-quote{font-size:17px}
+.mobile .command-error,.mobile .command-error-title{font-size:12px}
+@media(max-height:500px){.mobile .debug-bar{width:65%}.mobile .command-status-detail{display:none}.mobile .touch-bar{left:auto;width:390px}.mobile .launch p{margin:3px 0}.mobile .launch .content{overflow:auto}}

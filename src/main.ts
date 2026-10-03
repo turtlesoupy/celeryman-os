@@ -1,3 +1,4 @@
+import {mobileFrame,clampFrame,type Frame,type Workspace} from './window-layout';
 import {MicrophoneDevices} from './microphone-device';
 import './style.css';
 import {createCommandStatus} from './command-status';
@@ -8,14 +9,17 @@ import {routeAudio,unlockAudio,speechBus,duckForMicrophone,startOutputCapture,st
 import {sketch,scripted,type Command,type Context} from './protocol';
 import {costumes,motions} from './dances';
 const app=document.querySelector<HTMLDivElement>('#app')!;
-app.innerHTML=`<main class="viewport"><section class="desktop" aria-label="Cinco desktop"><div class="hint" title="Show controls">F1 · controls</div><form class="dock hidden"><span class="lamp"></span><button type="button" class="classic-button mic">Microphone</button><button type="button" class="classic-button" data-tool="input">Input device</button><button type="button" class="classic-button replay-mic" disabled title="Replay the exact audio sent for transcription">Replay mic</button><input aria-label="Computer command" placeholder="Computer…" autocomplete="off"><button class="classic-button">Enter</button><button type="button" class="classic-button" data-tool="identity">Identity</button><button type="button" class="classic-button" data-tool="replay">Sketch</button><button type="button" class="classic-button" data-tool="pause">Pause</button><button type="button" class="classic-button" data-tool="printout">Printout</button><button type="button" class="classic-button" data-tool="sound">Sound on</button><button type="button" class="classic-button" data-tool="reset">Reset</button><button type="button" class="classic-button" data-tool="hide">×</button></form></section></main>`;
+app.innerHTML=`<main class="viewport"><section class="desktop" aria-label="Cinco desktop"><button class="hint" type="button" title="Show controls">F1 · controls</button><form class="dock hidden"><span class="lamp"></span><button type="button" class="classic-button mic">Microphone</button><button type="button" class="classic-button" data-tool="input">Input device</button><button type="button" class="classic-button replay-mic" disabled title="Replay the exact audio sent for transcription">Replay mic</button><input aria-label="Computer command" placeholder="Computer…" autocomplete="off"><button class="classic-button">Enter</button><button type="button" class="classic-button" data-tool="identity">Identity</button><button type="button" class="classic-button" data-tool="replay">Sketch</button><button type="button" class="classic-button" data-tool="pause">Pause</button><button type="button" class="classic-button" data-tool="printout">Printout</button><button type="button" class="classic-button" data-tool="sound">Sound on</button><button type="button" class="classic-button" data-tool="reset">Reset</button><button type="button" class="classic-button" data-tool="hide">×</button></form></section></main>`;
 const desktop=document.querySelector<HTMLElement>('.desktop')!,dock=document.querySelector<HTMLFormElement>('.dock')!,input=dock.querySelector('input')!;
+const touchBar=document.createElement('nav');touchBar.className='touch-bar';touchBar.setAttribute('aria-label','Computer controls');
+touchBar.innerHTML='<button type="button" class="classic-button touch-mic" aria-label="Start microphone" aria-pressed="false">● Talk</button><button type="button" class="classic-button" data-touch="type">Type</button><button type="button" class="classic-button" data-touch="windows" aria-expanded="false">Windows</button><button type="button" class="classic-button" data-touch="more" aria-expanded="false">More</button>';
+const windowList=document.createElement('div');windowList.className='window-list hidden';windowList.setAttribute('aria-label','Open windows');desktop.append(touchBar,windowList);
 const debugBar=document.createElement('div');debugBar.className='debug-bar';debugBar.setAttribute('role','group');debugBar.setAttribute('aria-label','Debug diagnostics');debugBar.innerHTML='<span class="debug-bar-badge">DEBUG</span>';desktop.append(debugBar);
 const commandStatus=createCommandStatus(debugBar,()=>{
  const videos=[...desktop.querySelectorAll<HTMLVideoElement>('video')];
  if(videos.some(v=>!v.paused&&v.readyState>=2))return desktop.classList.contains('finale')?`Playing finale · ${videos.length} windows · ready for command`:`Idle · playing ${videos.find(v=>!v.paused&&v.readyState>=2)?.dataset.sequence||context.character}`;
  if(videos.length&&videos.every(v=>v.paused))return 'Idle · playback paused';
- return 'Waiting for command · hold Space to talk';
+ return desktop.classList.contains('mobile')?'Ready · tap Talk to speak':'Waiting for command · hold Space to talk';
 });let feedbackToken=0;
 const scriptGuide=createScriptGuide(debugBar);
 let profile=localStorage.getItem('cinco-profile')||'paul',identity=localStorage.getItem('cinco-name')||'Paul';
@@ -42,11 +46,23 @@ const spokenLines:Record<string,string>={'okay':'Okay.','print':'Okay.','confirm
 const delay=(ms:number)=>new Promise(r=>setTimeout(r,ms));
 const schedule=(fn:()=>void,ms:number)=>{const id=window.setTimeout(fn,ms);timers.push(id);return id;};
 const api=async(url:string,body?:unknown)=>{const r=await fetch('/api/'+url,{method:body?'POST':'GET',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(45000)});const b=await r.json();if(!r.ok)throw Error(b.error||'Computer is not responding.');return b;};
-function fit(){desktop.style.transform=`scale(${Math.min(innerWidth/960,innerHeight/540)})`;}addEventListener('resize',fit);fit();
+const originalFrames=new WeakMap<HTMLElement,Frame>();
+let compact=false;
+function workspace():Workspace{return {width:desktop.clientWidth,height:desktop.clientHeight,top:compact?(started?(desktop.clientHeight<500?84:112):12):8,bottom:desktop.clientHeight-(compact&&started?Math.max(84,touchBar.offsetHeight+8):8)};}
+function placeWindow(win:HTMLElement,frame:Frame){originalFrames.set(win,frame);const r=compact?mobileFrame(frame,workspace()):frame;Object.assign(win.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',transform:''});}
+function fit(){
+ compact=innerWidth<760||(innerHeight<500&&innerWidth<1000)||(matchMedia('(pointer: coarse)').matches&&innerWidth<1200);
+ desktop.classList.toggle('mobile',compact);desktop.classList.toggle('running',started);
+ const height=compact?(visualViewport?.height||innerHeight):540;
+ desktop.style.width=(compact?innerWidth:960)+'px';desktop.style.height=height+'px';
+ desktop.style.transform=compact?'none':`scale(${Math.min(innerWidth/960,innerHeight/540)})`;
+ for(const win of desktop.querySelectorAll<HTMLElement>('.window')){const frame=originalFrames.get(win);if(frame)placeWindow(win,frame);}
+}
+addEventListener('resize',fit);visualViewport?.addEventListener('resize',fit);fit();
 function notify(message:string){document.querySelector('.toast')?.remove();const e=document.createElement('div');e.className='toast';e.textContent=message;desktop.append(e);setTimeout(()=>e.remove(),7000);}
 type W={title:string;x:number;y:number;w:number;h:number;className?:string;menu?:string;blue?:boolean;id?:string};
 function windowBox(o:W){
- const win=document.createElement('section');win.className=`window active ${o.className||''}`;win.dataset.id=o.id||`window-${++winCount}`;win.setAttribute('aria-label',o.title);win.style.cssText=`left:${o.x}px;top:${o.y}px;width:${o.w}px;height:${o.h}px;z-index:${++topZ}`;
+ const win=document.createElement('section');win.className=`window active ${o.className||''}`;win.dataset.id=o.id||`window-${++winCount}`;win.setAttribute('aria-label',o.title);win.style.zIndex=String(++topZ);placeWindow(win,o);
  const bar=document.createElement('header');bar.className=`titlebar ${o.blue?'blue':''}`;
  bar.innerHTML='<button class="sys" aria-label="Window menu"><i class="window-dash"></i></button><span></span><button class="close" aria-label="Close window">Close</button><button class="min" aria-label="Minimize window">▾</button><button class="max" aria-label="Maximize window">▴</button>';
  bar.querySelector('span')!.textContent=o.title;win.append(bar);
@@ -56,10 +72,10 @@ function windowBox(o:W){
  win.addEventListener('pointerdown',()=>{win.style.zIndex=String(++topZ);});
  bar.querySelector('.close')!.addEventListener('click',()=>removeWindow(win));bar.querySelector('.min')!.addEventListener('click',()=>win.classList.toggle('minimized'));
  bar.querySelector('.sys')!.addEventListener('click',()=>{const prior=win.querySelector('.window-menu');if(prior){prior.remove();return;}const menu=document.createElement('div');menu.className='window-menu';for(const [label,selector]of [['Minimize','.min'],['Maximize / restore','.max'],['Close','.close']]){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{menu.remove();(bar.querySelector(selector) as HTMLButtonElement).click();};menu.append(b);}win.append(menu);});
- let saved='';bar.querySelector('.max')!.addEventListener('click',()=>{if(saved){win.style.cssText=saved;saved='';}else{saved=win.style.cssText;Object.assign(win.style,{left:'8px',top:'8px',width:'944px',height:'524px'});}});
- function drag(e:PointerEvent,resize=false){if((e.target as HTMLElement).closest('button'))return;e.preventDefault();const scale=desktop.getBoundingClientRect().width/960,sx=e.clientX,sy=e.clientY,x=win.offsetLeft,y=win.offsetTop,w=win.offsetWidth,h=win.offsetHeight;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);const el=e.currentTarget as HTMLElement;
-  const move=(ev:PointerEvent)=>{const dx=(ev.clientX-sx)/scale,dy=(ev.clientY-sy)/scale;if(resize){win.style.width=Math.max(120,w+dx)+'px';win.style.height=Math.max(60,h+dy)+'px';}else{win.style.left=Math.max(-w+40,Math.min(920,x+dx))+'px';win.style.top=Math.max(0,Math.min(515,y+dy))+'px';}};
-  const end=()=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',end);};el.addEventListener('pointermove',move);el.addEventListener('pointerup',end);
+ let saved:Frame|undefined;bar.querySelector('.max')!.addEventListener('click',()=>{win.classList.remove('minimized');const target=saved||{x:8,y:workspace().top,w:desktop.clientWidth-16,h:workspace().bottom-workspace().top};const r=compact?clampFrame(target,workspace()):target;saved=saved?undefined:{x:win.offsetLeft,y:win.offsetTop,w:win.offsetWidth,h:win.offsetHeight};Object.assign(win.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px'});});
+ function drag(e:PointerEvent,resize=false){if((e.target as HTMLElement).closest('button'))return;e.preventDefault();const scale=desktop.getBoundingClientRect().width/desktop.clientWidth,sx=e.clientX,sy=e.clientY,x=win.offsetLeft,y=win.offsetTop,w=win.offsetWidth,h=win.offsetHeight;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);const el=e.currentTarget as HTMLElement;
+  const move=(ev:PointerEvent)=>{const dx=(ev.clientX-sx)/scale,dy=(ev.clientY-sy)/scale;if(compact){const r=clampFrame({x:resize?x:x+dx,y:resize?y:y+dy,w:resize?Math.max(240,w+dx):w,h:resize?Math.max(88,h+dy):h},workspace());Object.assign(win.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px'});}else if(resize){win.style.width=Math.max(120,w+dx)+'px';win.style.height=Math.max(60,h+dy)+'px';}else{win.style.left=Math.max(-w+40,Math.min(920,x+dx))+'px';win.style.top=Math.max(0,Math.min(515,y+dy))+'px';}};
+  const end=()=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',end);el.removeEventListener('pointercancel',end);};el.addEventListener('pointermove',move);el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
  }bar.addEventListener('pointerdown',e=>drag(e));handle.addEventListener('pointerdown',e=>drag(e,true));desktop.append(win);return {win,content};
 }
 function removeWindow(win:Element){
@@ -68,11 +84,11 @@ function removeWindow(win:Element){
   mediaStatusCleanup.get(v)?.();mediaStatusCleanup.delete(v);v.pause();v.removeAttribute('src');v.load();
  });
 }
-function clearWindows(){desktop.classList.remove('finale');ducks.delete('intro');musicLevel();desktop.querySelectorAll('.window,.free-dancer').forEach(removeWindow);}
+function clearWindows(){windowList.classList.add('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded','false');desktop.classList.remove('finale');ducks.delete('intro');musicLevel();desktop.querySelectorAll('.window,.free-dancer').forEach(removeWindow);}
 function clearTimers(){timers.forEach(clearTimeout);timers=[];}
 function terminal(large=false){let win=desktop.querySelector<HTMLElement>('[data-id="terminal"]');if(win)return win;
  const t=windowBox({title:`${identity}'s COMPUTER`,x:60,y:405,w:362,h:101,id:'terminal',className:`terminal ${large?'large':''}`});
- if(large)Object.assign(t.win.style,{left:'204px',top:'147px',width:'532px',height:'283px'});
+ if(large)placeWindow(t.win,{x:204,y:147,w:532,h:283,className:'terminal large'});
  t.win.querySelector('.bottom-edge')!.remove();const drive=document.createElement('div');drive.className='drive';drive.innerHTML='<span>▧ C　　　　　　　　　　　　　　　　　↕</span>';t.win.append(drive);const status=document.createElement('div');status.className='status';status.textContent='▱₁  ▱₂';t.win.append(status);
  const commandInput=document.createElement('input');commandInput.className='terminal-input';commandInput.setAttribute('aria-label','Terminal command');t.win.append(commandInput);
  const content=t.content;content.addEventListener('click',()=>{commandInput.value='';commandInput.focus();});
@@ -145,11 +161,11 @@ function showTayne(){
 }
 
 function showHat(){
- clearWindows();const term=terminal();Object.assign(term.style,{left:'72px',top:'390px'});
+ clearWindows();const term=terminal();if(!compact)Object.assign(term.style,{left:'72px',top:'390px'});
  // Recorded front-window rectangles from the sketch; scale chrome with the window.
- const hatStart=performance.now();const create=(box:number[])=>{const scale=box[2]/901;const t=dancer('tayne',{title:'',menu:'Tayne',blue:true,x:box[0]/2-23.5*scale,y:box[1]/2-56*scale,w:476,h:410,className:'portrait hat-cascade'},'hat');t.win.style.transformOrigin='top left';t.win.style.transform=`scale(${scale})`;const v=t.content.querySelector('video')!;v.addEventListener('loadeddata',()=>{v.currentTime=(performance.now()-hatStart)/1000%v.duration;},{once:true});return t.win;};
+ const hatStart=performance.now();const create=(box:number[])=>{const scale=box[2]/901;const t=dancer('tayne',{title:'',menu:'Tayne',blue:true,x:box[0]/2-23.5*scale,y:box[1]/2-56*scale,w:476,h:410,className:'portrait hat-cascade'},'hat');t.win.style.transformOrigin='top left';if(!compact)t.win.style.transform=`scale(${scale})`;const v=t.content.querySelector('video')!;v.addEventListener('loadeddata',()=>{v.currentTime=(performance.now()-hatStart)/1000%v.duration;},{once:true});return t.win;};
  create(hatTrack[0]);let front=create(hatTrack[0]);
- hatTrack.forEach((box,i)=>{if(!i)return;schedule(()=>{if(i<=20&&i%5===0)front=create(box);const scale=box[2]/901;Object.assign(front.style,{left:box[0]/2-23.5*scale+'px',top:box[1]/2-56*scale+'px',transform:`scale(${scale})`});if(i>20&&i%5===0)front=create(box);},i*1000/29.97);});
+ hatTrack.forEach((box,i)=>{if(!i)return;schedule(()=>{if(i<=20&&i%5===0)front=create(box);const scale=box[2]/901;if(compact)placeWindow(front,{x:box[0]/2-23.5*scale,y:box[1]/2-56*scale,w:476,h:410,className:'portrait hat-cascade'});else Object.assign(front.style,{left:box[0]/2-23.5*scale+'px',top:box[1]/2-56*scale+'px',transform:`scale(${scale})`});if(i>20&&i%5===0)front=create(box);},i*1000/29.97);});
 }
 function desktopDancer(){
  const video=document.createElement('video');video.src=videoSource('tayne','flarhgunnstow');video.muted=true;video.loop=true;video.playsInline=true;void video.play();
@@ -175,7 +191,7 @@ function showNsfw(confirmed=false){
 function showCall(){
  const banner=desktop.querySelector('[data-id="nsfw-banner"]');if(banner)removeWindow(banner);
  const preview=desktop.querySelector<HTMLVideoElement>('video[data-sequence="Tayne / NSFW preview"]');if(preview)preview.dataset.sequence='tayne';
- desktop.classList.add('alarm');const main=desktop.querySelector<HTMLElement>('.window:not(.terminal)');if(main)Object.assign(main.style,{left:'345px',top:'16px',width:'282px',height:'503px'});
+ desktop.classList.add('alarm');const main=desktop.querySelector<HTMLElement>('.window:not(.terminal)');if(main)placeWindow(main,{x:345,y:16,w:282,h:503});
  const t=windowBox({title:'',blue:true,menu:'INCOMING CALL',x:398,y:126,w:150,h:225,className:'phone',id:'call'});
  t.content.innerHTML='<div class="number">545-33448</div><div class="phone-screen"><svg class="receiver" viewBox="0 0 64 70" aria-label="Telephone"><path d="M15 14Q8 39 47 53" fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/><path d="M14 9L22 20M42 49L53 52" stroke="white" stroke-width="14" stroke-linecap="round"/><path d="M30 7L27 16M39 11L32 19M44 19L35 23" stroke="white" stroke-width="3"/></svg><div class="label">WIFE</div></div>';
  void speak({action:'call',response:`Excuse me ${identity}. Your wife is on the phone. It's an emergency.`,audio:profile==='paul'?'call':undefined});events.push({kind:'action',action:'call',time:performance.now()});
@@ -276,60 +292,75 @@ async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,rec
  }catch(e){if(token===run&&commandStatus.current(status))commandStatus.error(status,(e as Error).name==='TimeoutError'?'Transcription timed out. F1 → Replay mic to check the recording.':(e as Error).message);throw e;}
 }
 
-function reset(){commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','paused','flash');clearWindows();started=false;replaying=false;paused=false;launch();}
-async function begin(){scriptGuide.reset();void unlockAudio();void api('warm',{profile,name:identity}).catch(()=>{});clearWindows();started=true;dock.classList.add('hidden');await dispatch('Good morning','boot');}
-function launch(){const t=windowBox({title:'Cinco Identity Generator 2.5',x:250,y:93,w:460,h:397,className:'launch'});t.content.innerHTML=`<h1>Your first sequence of the day.</h1><p>Choose an identity. Speak to your computer,<br>or type a command. It has important work to do.</p><label>Identity <select aria-label="Identity"><option value="paul">Paul Rudd</option><option value="thomas">Thomas Dimson</option><option value="upload">Use my photograph…</option></select></label><label>Your name <input aria-label="Your name" maxlength="35"></label><label>Experience <select aria-label="Experience"><option value="live">Live generation</option><option value="reference">Reference comparison</option></select></label><div class="buttons"><button class="classic-button start">Start computer</button><button class="classic-button replay">Play sketch</button></div><div class="note">F1 for controls · Space to talk · Private local session</div>`;
+function reset(){commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','paused','flash');clearWindows();started=false;replaying=false;paused=false;setMicState('idle');fit();launch();}
+async function begin(){scriptGuide.reset();void unlockAudio();void api('warm',{profile,name:identity}).catch(()=>{});clearWindows();started=true;fit();dock.classList.add('hidden');await dispatch('Good morning','boot');}
+function launch(){const t=windowBox({title:'Cinco Identity Generator 2.5',x:250,y:93,w:460,h:397,className:'launch'});t.content.innerHTML=`<h1>Your first sequence of the day.</h1><p>Choose an identity. Speak to your computer,<br>or type a command. It has important work to do.</p><label>Identity <select aria-label="Identity"><option value="paul">Paul Rudd</option><option value="thomas">Thomas Dimson</option><option value="upload">Use my photograph…</option></select></label><label>Your name <input aria-label="Your name" maxlength="35"></label><label>Experience <select aria-label="Experience"><option value="live">Live generation</option><option value="reference">Reference comparison</option></select></label><div class="buttons"><button class="classic-button start">Start computer</button><button class="classic-button replay">Play sketch</button></div><div class="note">${compact?'Tap Talk to speak · Type for commands':'F1 for controls · Space to talk'} · Private local session</div>`;
  const micMount=document.createElement('div');t.content.querySelector('.buttons')!.before(micMount);microphone.mount(micMount);
  const select=t.content.querySelector<HTMLSelectElement>('[aria-label="Identity"]')!,name=t.content.querySelector('input')!;select.value=['paul','thomas'].includes(profile)?profile:'upload';name.value=identity;
  let warmTimer:number;const warm=()=>{clearTimeout(warmTimer);warmTimer=window.setTimeout(()=>void api('warm',{profile,name:name.value.trim()}).catch(()=>{}),500);};name.addEventListener('input',warm);warm();
  select.onchange=async()=>{if(select.value==='upload'){const f=document.createElement('input');f.type='file';f.accept='image/*';f.onchange=async()=>{const file=f.files?.[0];if(!file)return;const b64=await fileBase64(file);const r=await api('profile',{image:b64});profile=r.id;name.value='';notify('Identity loaded. Enter your name.');};f.click();}else{profile=select.value;name.value=profile==='paul'?'Paul':'Thomas';warm();}};
  const save=()=>{mode=(t.content.querySelector('[aria-label="Experience"]') as HTMLSelectElement).value as 'live'|'reference';identity=name.value.trim()||'User';context.identity=identity;localStorage.setItem('cinco-profile',profile);localStorage.setItem('cinco-name',identity);};
  t.content.querySelector('.start')!.addEventListener('click',()=>{save();void begin();});t.content.querySelector('.replay')!.addEventListener('click',()=>{save();void replay();});}
-async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};started=true;replaying=true;dock.classList.add('hidden');let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){const a=new Audio('/media/original/keyboard.wav');routeAudio(a);if(sound)void a.play();}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
+async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};started=true;fit();replaying=true;dock.classList.add('hidden');let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){const a=new Audio('/media/original/keyboard.wav');routeAudio(a);if(sound)void a.play();}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
 async function fileBase64(blob:Blob){return new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(blob);});}
 async function startRecording(){
  recordingRequested=true;clearTimeout(stopRecordingTimer);
  if(recordingStarting||recorder?.state==='recording')return;
- recordingStarting=true;
+ recordingStarting=true;void unlockAudio();setMicState('opening');
  // A new utterance supersedes pending interpretation, generation, and delayed windows.
  commandEpoch++;generationEpoch++;typing++;stopSpeech();lastMicPlayback?.pause();duckForMicrophone(true);
  const recordingRun=run,status=commandStatus.begin('Opening microphone · wait to speak');feedbackToken=status;
  const number=++recordingNumber,requestId=`${crypto.randomUUID()}-${number}`;
  try{
   stream=await microphone.open(stream);
-  if(!recordingRequested||recordingRun!==run||!commandStatus.current(status)){stream.getTracks().forEach(t=>t.enabled=false);duckForMicrophone(false);commandStatus.error(status,'Microphone was not ready. Hold Space again and wait for Listening.');return;}
+  if(!recordingRequested||recordingRun!==run||!commandStatus.current(status)){stream.getTracks().forEach(t=>t.enabled=false);duckForMicrophone(false);setMicState('idle');commandStatus.error(status,compact?'Microphone was not ready. Tap Talk again and wait for Listening.':'Microphone was not ready. Hold Space again and wait for Listening.');return;}
   stream.getTracks().forEach(t=>t.enabled=true);
   commandStatus.detail(status,`Input: ${stream.getAudioTracks()[0]?.label||microphone.label}`);
   const activeStream=stream,chunks:Blob[]=[],mime=MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4';
   const current=new MediaRecorder(activeStream,{mimeType:mime});recorder=current;
   const audioContext=speechBus().context,source=audioContext.createMediaStreamSource(activeStream),meter=audioContext.createAnalyser();meter.fftSize=2048;source.connect(meter);
   const samples=new Float32Array(meter.fftSize);let peak=0;const began=performance.now();
-  const interval=window.setInterval(()=>{meter.getFloatTimeDomainData(samples);const rms=Math.sqrt(samples.reduce((sum,v)=>sum+v*v,0)/samples.length);peak=Math.max(peak,rms);commandStatus.phase(status,`Listening #${number} · ${rms>.005?'signal OK':'quiet'} · release Space to send`);},100);
+  const interval=window.setInterval(()=>{meter.getFloatTimeDomainData(samples);const rms=Math.sqrt(samples.reduce((sum,v)=>sum+v*v,0)/samples.length);peak=Math.max(peak,rms);commandStatus.phase(status,`Listening #${number} · ${rms>.005?'signal OK':'quiet'} · ${compact?'tap Send to finish':'release Space to send'}`);},100);
   current.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
   current.onerror=()=>{commandStatus.error(status,'Microphone recording failed. Try again.');stopRecording();};
   current.onstop=async()=>{
    clearInterval(interval);source.disconnect();meter.disconnect();
-   if(recorder===current){activeStream.getTracks().forEach(t=>t.enabled=false);duckForMicrophone(false);document.querySelector('.lamp')!.classList.remove('on');dock.querySelector('.mic')!.textContent='Microphone';}
+   if(recorder===current){activeStream.getTracks().forEach(t=>t.enabled=false);duckForMicrophone(false);setMicState('idle');}
    if(recordingRun!==run||!commandStatus.current(status))return;
    const blob=new Blob(chunks,{type:mime}),durationMs=performance.now()-began,device=activeStream.getAudioTracks()[0]?.label||'Default microphone';
    if(lastMicUrl)URL.revokeObjectURL(lastMicUrl);lastMicUrl=URL.createObjectURL(blob);
    const replay=dock.querySelector<HTMLButtonElement>('.replay-mic')!;replay.disabled=false;replay.title=`Replay mic #${number}: ${(durationMs/1000).toFixed(1)} seconds from ${device}`;
-   commandStatus.echo(status,`${(durationMs/1000).toFixed(1)}s · F1 → Replay mic`,'Captured');
+   commandStatus.echo(status,`${(durationMs/1000).toFixed(1)}s · ${compact?'More':'F1'} → Replay mic`,'Captured');
    events.push({kind:'microphone-capture',requestId,durationMs,peak,bytes:blob.size,device});
-   if(durationMs<250||peak<.001){commandStatus.error(status,'Recording too short or quiet. F1 → Replay mic to check.');return;}
+   if(durationMs<250||peak<.001){commandStatus.error(status,`Recording too short or quiet. ${compact?'More':'F1'} → Replay mic to check.`);return;}
    try{await receiveAudio(await fileBase64(blob),mime,status,{requestId,durationMs,peak,device});}catch(e){notify((e as Error).message);}
   };
-  current.start();commandStatus.phase(status,`Listening #${number} · speak now`);document.querySelector('.lamp')!.classList.add('on');dock.querySelector('.mic')!.textContent='Stop recording';
- }catch(e){duckForMicrophone(false);commandStatus.error(status,(e as Error).message||`Microphone unavailable: ${microphone.label}. Open F1 → Input device to select a connected microphone.`);notify('Check the microphone selection in F1 → Input device.');}
+  current.start();commandStatus.phase(status,`Listening #${number} · speak now`);setMicState('recording');
+ }catch(e){duckForMicrophone(false);setMicState('idle');commandStatus.error(status,(e as Error).message||`Microphone unavailable: ${microphone.label}. Open F1 → Input device to select a connected microphone.`);notify(`Check the microphone selection in ${compact?'More':'F1'} → Input device.`);}
  finally{recordingStarting=false;}
 }
 function stopRecording(){recordingRequested=false;const current=recorder;clearTimeout(stopRecordingTimer);if(current?.state==='recording')stopRecordingTimer=window.setTimeout(()=>{if(current.state==='recording')current.stop();},150);}
 dock.querySelector('.replay-mic')!.addEventListener('click',()=>{if(!lastMicUrl||recorder?.state==='recording')return;stopSpeech();lastMicPlayback?.pause();lastMicPlayback=new Audio(lastMicUrl);routeAudio(lastMicPlayback);void lastMicPlayback.play();});
-dock.onsubmit=e=>{e.preventDefault();void unlockAudio();const text=input.value;input.value='';void dispatch(text).catch(e=>notify(e.message));};dock.querySelector('.mic')!.addEventListener('click',()=>recorder?.state==='recording'?stopRecording():void startRecording());
+function setMicState(state:'idle'|'opening'|'recording'){
+ if(state==='idle')recordingRequested=false;const active=state!=='idle';document.querySelector('.lamp')!.classList.toggle('on',active);
+ dock.querySelector('.mic')!.textContent=active?'Stop recording':'Microphone';
+ const b=touchBar.querySelector<HTMLButtonElement>('.touch-mic')!;b.textContent=state==='opening'?'Opening…':state==='recording'?'■ Send':'● Talk';b.setAttribute('aria-label',active?'Stop microphone and send':'Start microphone');b.setAttribute('aria-pressed',String(active));
+}
+const toggleRecording=()=>recordingRequested||recorder?.state==='recording'?stopRecording():void startRecording();
+touchBar.querySelector('.touch-mic')!.addEventListener('click',toggleRecording);
+touchBar.querySelector('[data-touch="type"]')!.addEventListener('click',()=>{windowList.classList.add('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded','false');dock.classList.remove('hidden');input.focus();});
+touchBar.querySelector('[data-touch="more"]')!.addEventListener('click',()=>{windowList.classList.add('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded','false');dock.classList.toggle('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded',String(!dock.classList.contains('hidden')));});
+touchBar.querySelector('[data-touch="windows"]')!.addEventListener('click',()=>{
+ dock.classList.add('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded','false');windowList.replaceChildren();windowList.classList.toggle('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded',String(!windowList.classList.contains('hidden')));
+ for(const win of desktop.querySelectorAll<HTMLElement>('.window')){if(win.style.display==='none')continue;const button=document.createElement('button');button.type='button';button.className='classic-button';button.textContent=win.getAttribute('aria-label')||win.querySelector('.menu-line')?.textContent||'Sequence';button.onclick=()=>{win.classList.remove('minimized');win.style.zIndex=String(++topZ);windowList.classList.add('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded','false');};windowList.append(button);}
+ if(!windowList.children.length)windowList.textContent='No open windows.';
+});
+dock.onsubmit=e=>{e.preventDefault();void unlockAudio();const text=input.value;input.value='';if(compact){input.blur();dock.classList.add('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded','false');}void dispatch(text).catch(e=>notify(e.message));};dock.querySelector('.mic')!.addEventListener('click',toggleRecording);
 document.querySelector('.hint')!.addEventListener('click',()=>{dock.classList.toggle('hidden');input.focus();});
-dock.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.onclick=()=>{switch(b.dataset.tool){case'input':{const t=windowBox({title:'Microphone input',x:250,y:180,w:460,h:190,className:'input-settings'});microphone.mount(t.content);break;}case'identity':launch();break;case'printout':showPrintout();break;case'replay':void replay();break;case'reset':reset();break;case'hide':dock.classList.add('hidden');break;case'pause':void dispatch(paused?'resume':'pause');break;case'sound':sound=!sound;b.textContent=sound?'Sound on':'Sound off';if(!sound)stopSpeech();musicLevel();desktop.querySelectorAll<HTMLVideoElement>('video.intro-video').forEach(v=>v.muted=!sound);break;}});
+dock.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.onclick=()=>{if(compact&&b.dataset.tool!=='sound'){dock.classList.add('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded','false');}switch(b.dataset.tool){case'input':{const t=windowBox({title:'Microphone input',x:250,y:180,w:460,h:190,className:'input-settings'});microphone.mount(t.content);break;}case'identity':launch();break;case'printout':showPrintout();break;case'replay':void replay();break;case'reset':reset();break;case'hide':dock.classList.add('hidden');break;case'pause':void dispatch(paused?'resume':'pause');break;case'sound':sound=!sound;b.textContent=sound?'Sound on':'Sound off';if(!sound)stopSpeech();musicLevel();desktop.querySelectorAll<HTMLVideoElement>('video.intro-video').forEach(v=>v.muted=!sound);break;}});
 addEventListener('keydown',e=>{if(e.key==='F1'||e.key==='Escape'){e.preventDefault();dock.classList.toggle('hidden');if(!dock.classList.contains('hidden'))input.focus();}if(e.code==='Space'&&!(e.target instanceof HTMLInputElement)&&!(e.target instanceof HTMLSelectElement)&&!e.repeat&&started){e.preventDefault();pushToTalk=true;void startRecording();}if(e.key==='Enter'&&!(e.target instanceof HTMLInputElement)&&started){dock.classList.remove('hidden');input.focus();}});
 addEventListener('keyup',e=>{if(e.code==='Space'&&pushToTalk){pushToTalk=false;stopRecording();}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&recordingRequested)stopRecording();});
 addEventListener('pagehide',()=>{stream?.getTracks().forEach(t=>t.stop());});
 addEventListener('blur',()=>{if(pushToTalk){pushToTalk=false;stopRecording();}});
 Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,liveAssets,profile,context,lastPrint,started,replaying,paused,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();},settle:()=>delay(1800)}});

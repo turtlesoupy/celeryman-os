@@ -1,0 +1,12 @@
+<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><div id="app"></div>
+<script type="module">
+const saved=new Map([['cinco-profile','thomas'],['cinco-name','Thomas']]);
+Object.defineProperty(window,'localStorage',{value:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)}});
+let attempts=0;
+Object.defineProperty(navigator,'mediaDevices',{value:{
+ addEventListener(){},
+ async enumerateDevices(){return [{kind:'audioinput',deviceId:'test-phone',groupId:'test-phone',label:'Test phone microphone'}]},
+ async getUserMedia(){document.body.dataset.attempts=String(++attempts);throw new DOMException('Microphone permission denied by test fixture','NotAllowedError')}
+}});
+await import('/src/main.ts');
+</script>
