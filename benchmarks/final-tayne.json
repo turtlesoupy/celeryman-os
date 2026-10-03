@@ -1,0 +1,59 @@
+{
+  "scores": {
+    "choreography": 98,
+    "wardrobe": 99,
+    "background": 99,
+    "camera_framing": 98,
+    "retro_low_budget_dance_video_look": 98
+  },
+  "overall": 98.4,
+  "pass_nearly_perfect": true,
+  "observed_differences_and_deductions": [
+    {
+      "category": "choreography",
+      "deduction_points": 2,
+      "observations": [
+        "The sampled sequence of wide squat stance, alternating torso lean, and low hand gestures is faithfully matched across the sheet.",
+        "Only small pose-detail differences are visible: in a few frames such as row 1 column 2, row 2 column 2, and row 3 column 4, the regenerated hands/fingers sit slightly differently or at slightly different heights than the source.",
+        "No missing major pose, wrong movement phase, or clear timing jump is visible in the sampled frames."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "deduction_points": 1,
+      "observations": [
+        "Wardrobe matches: black fedora, dark sunglasses, gold/black ornate patterned shirt, black pants, and black boots.",
+        "Minor differences appear only in shirt pattern/texture alignment and small wrinkle/edge details; costume identity is unchanged."
+      ]
+    },
+    {
+      "category": "background",
+      "deduction_points": 1,
+      "observations": [
+        "Both videos use the same plain light studio background.",
+        "B appears slightly cleaner/greener in tone, and the visible contact-sheet divider lines present in A are not apparent in B; this may partly be contact-sheet formatting rather than video content."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "deduction_points": 2,
+      "observations": [
+        "Framing is very close: full body, centered, same approximate scale, same front-facing studio angle.",
+        "There are slight per-frame differences in body placement and limb/boot contours, with some feet or legs occupying marginally different positions within the frame."
+      ]
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction_points": 2,
+      "observations": [
+        "The flat-lit, plain-background, low-budget dance-video look is preserved.",
+        "B looks a little smoother/cleaner and less contact-sheet-gridded than A, reducing exact visual match slightly."
+      ]
+    }
+  ],
+  "identity_face_note": "Minor facial/identity differences are not meaningfully assessable because sunglasses and hat obscure the face; no material deduction applied for face.",
+  "uncertainty_due_to_sampled_frames": {
+    "level": "low_to_moderate",
+    "reason": "The 30 sampled frames at 1/6-second spacing show very close pose and styling correspondence, but unsampled in-between motion could contain timing or articulation differences not visible in the contact sheets."
+  }
+}

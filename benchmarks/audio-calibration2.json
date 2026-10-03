@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None; identical duplicate of the target file."
+    },
+    {
+      "file": "analysis/minimax28.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 78,
+      "pitch": 82,
+      "rhythm": 88,
+      "overall": 80,
+      "concrete_differences": "The voice is noticeably more muffled, lower in frequency energy, and lacks the crisp robotic formant resonance present in the original synthesis."
+    },
+    {
+      "file": "analysis/voice-Fred.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 45,
+      "pitch": 40,
+      "rhythm": 65,
+      "overall": 48,
+      "concrete_differences": "Completely different synthesizer profile (classic Apple Fred voice). Monotone pitch contour with heavy, chunky square-like robotic formants, significantly deeper pitch, and distinct mechanical cadence."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}

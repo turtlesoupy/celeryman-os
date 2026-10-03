@@ -1,0 +1,20 @@
+{
+  "scores": {
+    "choreography": 68,
+    "costume": 72,
+    "framing_background": 70,
+    "temporal_consistency": 64,
+    "overall_fidelity": 67
+  },
+  "concrete_mismatches": [
+    "Temporal alignment and sequence of body bobs differ across timestamps.",
+    "Reference A features a hat/object tossing element around 00:04 absent in Generated B.",
+    "Generated B has slight framing shifts and an inconsistent head movement cycle compared to Reference A."
+  ],
+  "pass_nearly_perfect": false,
+  "improvement_recommendations": [
+    "Synchronize the head-bobbing and torso bending timing precisely to match Clip A.",
+    "Include the airborne accessory movement shown in the later frames of the reference.",
+    "Stabilize the camera framing and preserve consistent vertical positioning of the dancer."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None; identical to the reference audio."
+    },
+    {
+      "file": "analysis/h3-dialogue-thomas.wav",
+      "transcript": "Good morning, Thomas. What will your first sequence of the day be?",
+      "timbre": 78,
+      "pitch": 75,
+      "rhythm": 80,
+      "overall": 76,
+      "concrete_differences": "Says 'Thomas' instead of 'Paul'. The synthesized voice is significantly more human, natural, and low-pitched/breathy compared to the bright, metallic, robotic resonant synth tone in the reference clip."
+    },
+    {
+      "file": "analysis/h3-dialogue-novel.wav",
+      "transcript": "Mustard shimmy engaged, nether typing rubricated staged, and you utterly he eye poured caged.",
+      "timbre": 75,
+      "pitch": 72,
+      "rhythm": 70,
+      "overall": 72,
+      "concrete_differences": "Completely different text. Features natural, humanized low-pitch articulation with breathiness rather than the rigid, metallic, electronic formant vocoder resonance of the target."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}

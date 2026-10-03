@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None. The audio is bit-for-bit or practically acoustically identical to the reference sample."
+    },
+    {
+      "file": "analysis/h3-transfer-thomas.wav",
+      "transcript": "Good morning Paul. What will your first sequence of the day be? Never Paul.",
+      "timbre": 88,
+      "pitch": 85,
+      "rhythm": 82,
+      "overall": 80,
+      "concrete_differences": "Adds an extra hallucinated phrase 'Never Paul' at the end. Contains noticeable digital artifacts/reverb tail differences and slight pitch instability compared to the clean original."
+    },
+    {
+      "file": "analysis/h3-transfer-novel.wav",
+      "transcript": "mustard, shimmy, engaged",
+      "timbre": 90,
+      "pitch": 75,
+      "rhythm": 60,
+      "overall": 68,
+      "concrete_differences": "Completely different text with list-like pauses. Timbre resembles the base synthesizer, but isolated word delivery changes pitch contour and rhythm significantly."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}

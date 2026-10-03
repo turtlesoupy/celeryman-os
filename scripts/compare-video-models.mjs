@@ -1,0 +1,14 @@
+import 'dotenv/config';import fs from 'node:fs/promises';import {fal} from '@fal-ai/client';import {execFileSync} from 'node:child_process';
+fal.config({credentials:process.env.FAL_KEY});
+const cases=[['celery','b494a0dba7c800985e67'],['oyster','8b3274bb50a1c5b384f5']];
+await Promise.all(cases.map(async([character,id])=>{
+ const identity=await fal.storage.upload(new File([await fs.readFile(`public/media/generated/${id}.png`)],'complete-person.png',{type:'image/png'}));
+ execFileSync('ffmpeg',['-y','-i',`public/media/motion/${character}-5s.mp4`,'-vf','scale=iw*max(720/iw\\,720/ih):ih*max(720/iw\\,720/ih),scale=trunc(iw/2)*2:trunc(ih/2)*2','-c:v','libx264',`analysis/${character}-720.mp4`,'-loglevel','error']);
+ const video=await fal.storage.upload(new File([await fs.readFile(`analysis/${character}-720.mp4`)],'choreography.mp4',{type:'video/mp4'}));
+ await Promise.all(['h3','o3'].map(async kind=>{
+ const prompt=`Regenerate the COMPLETE performer, from hair to shoes, as the adult person depicted in ${kind==='o3'?'@Image1':'Image 1'}, dancing the exact choreography from ${kind==='o3'?'@Video1':'Video 1'}. The reference movie is the precise motion and style guide: copy every step, torso angle, hand position, facial expression, timing, and the original soft video texture. The new person's body, face, neck, hands, costume and limbs must be rendered together as one physically coherent live-action person. Do not paste or replace only a head. Preserve the reference framing, camera, light and background. ${character==='oyster'?'Copy the deep rapid bows, including the red flame cap flying briefly off the head near 2 seconds and returning, and the red flame graphics down the black pants.':'Hands on hips, shuffle and sway from side to side, head tilted slightly, suit sleeves rolled up, loose shiny charcoal trousers.'} No new movements, no camera motion, no modern cinematic polishing. Same five second choreography as the input.`;
+ const model=kind==='h3'?'minimax/h3-max/reference-to-video':'fal-ai/kling-video/o3/pro/video-to-video/edit';
+ const input=kind==='h3'?{prompt,reference_image_urls:[identity],reference_video_urls:[video],duration:5,resolution:'480P',aspect_ratio:character==='oyster'?'4:3':'9:16',prompt_expansion_mode:'disabled'}:{prompt,image_urls:[identity],video_url:video,keep_audio:false};
+ const start=Date.now();try{const r=await fal.subscribe(model,{input,onEnqueue:requestId=>console.log(character,kind,requestId)});const base=`analysis/${character}-${kind}`;await fs.writeFile(base+'.mp4',Buffer.from(await(await fetch(r.data.video.url)).arrayBuffer()));await fs.writeFile(base+'.json',JSON.stringify({model,input,elapsed:Date.now()-start,requestId:r.requestId},null,2));console.log(character,kind,'complete',Date.now()-start);}catch(e){console.log(character,kind,'error',e.body||e.message);}
+ }));
+}));

@@ -1,0 +1,15 @@
+{
+  "scores": {
+    "choreography_and_timing": 100,
+    "wardrobe": 100,
+    "background": 100,
+    "camera_framing": 100,
+    "retro_low_budget_dance_video_look": 100,
+    "overall": 100
+  },
+  "deductions": [],
+  "observed_differences": [],
+  "overall": 100,
+  "pass_nearly_perfect": true,
+  "uncertainty_due_to_sampled_frames": "Low for the visible sampled frames: the contact sheets appear identical frame-for-frame. Some uncertainty remains for motion between sampled 0.5-second frames, which is not visible here."
+}

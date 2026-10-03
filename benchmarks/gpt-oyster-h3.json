@@ -1,0 +1,68 @@
+{
+  "scores": {
+    "choreography_timing": 74,
+    "wardrobe": 96,
+    "background": 98,
+    "camera_framing": 95,
+    "retro_low_budget_dance_video_look": 97,
+    "overall": 87
+  },
+  "pass_nearly_perfect": false,
+  "concrete_observable_deductions": {
+    "choreography_timing": [
+      {
+        "deduction": 14,
+        "observation": "The pose sequence is visibly out of order at several sampled times. In A frame 1 the dancer is bent forward with head down, while B frame 1 is much more upright with the head raised."
+      },
+      {
+        "deduction": 6,
+        "observation": "A frames 3-4 show a more upright stance with arms/fists down by the sides, while B frames 3-4 remain bent forward with hands clasped/front-centered."
+      },
+      {
+        "deduction": 4,
+        "observation": "Near the end, A frame 9 is upright/front-facing, while B frame 9 is bent forward, indicating a timing/pose mismatch."
+      },
+      {
+        "deduction": 2,
+        "observation": "Several poses are similar overall, but the sampled chronology does not align cleanly frame-to-frame."
+      }
+    ],
+    "wardrobe": [
+      {
+        "deduction": 2,
+        "observation": "The red jacket, black pants, black shirt, boots, and chain-like accessory are preserved, with only minor differences in small folds/edge shapes."
+      },
+      {
+        "deduction": 2,
+        "observation": "Hair/hood silhouette and jacket contours vary slightly between corresponding sampled frames."
+      }
+    ],
+    "background": [
+      {
+        "deduction": 2,
+        "observation": "The plain yellow-green gradient studio background is essentially the same, with only slight gradient/color placement differences."
+      }
+    ],
+    "camera_framing": [
+      {
+        "deduction": 3,
+        "observation": "Both are full-body, centered, static-framed shots, but B has small differences in subject vertical placement and scale across sampled frames."
+      },
+      {
+        "deduction": 2,
+        "observation": "Frame-to-frame pose mismatches also make the apparent framing differ slightly, especially in the more upright versus bent positions."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "deduction": 3,
+        "observation": "The soft, saturated, simple studio music-video look is well preserved, with only minor differences in blur/color rendering."
+      }
+    ]
+  },
+  "overall_assessment": "B preserves the same performer style, outfit, simple gradient background, static full-body framing, and retro low-budget dance-video aesthetic. The main issue is choreography timing/order: multiple sampled frames show B in poses that correspond to different moments from A rather than the same chronological positions.",
+  "uncertainty_due_to_sampled_frames": {
+    "level": "medium",
+    "reason": "Only 0.5-second-spaced contact-sheet frames are visible, so exact in-between motion and transitions cannot be fully judged. However, the observed frame-to-frame timing mismatches are clear in the sampled frames."
+  }
+}

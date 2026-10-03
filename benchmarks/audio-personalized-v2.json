@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None. The candidate audio is bit-for-bit identical to the reference sample."
+    },
+    {
+      "file": "analysis/personalized-v2.wav",
+      "transcript": "Good morning Thomas. What will your first sequence of the day be?",
+      "timbre": 97,
+      "pitch": 95,
+      "rhythm": 94,
+      "overall": 93,
+      "concrete_differences": "The addressed name was changed from 'Paul' to 'Thomas'. The spliced/re-synthesized 'Thomas' has slightly different prosody and timing compared to 'Paul' in the original clip, though the underlying robotic timbre and synthetic artifacts match extremely well."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}

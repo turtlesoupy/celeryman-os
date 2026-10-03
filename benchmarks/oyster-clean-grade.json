@@ -1,0 +1,21 @@
+{
+  "scores": {
+    "choreography": 74,
+    "costume": 70,
+    "framing_background": 65,
+    "temporal_consistency": 72,
+    "overall_fidelity": 68
+  },
+  "pass_nearly_perfect": false,
+  "concrete_mismatches": [
+    "Framing aspect ratio differs from the original 4:3 crop to 16:9 widescreen.",
+    "Reference clip displays a floating red hat artifact at 00:04 which is missing in generated clip B.",
+    "Costume details on pants vary, missing the distinct red graphic prints down the lower legs.",
+    "Lighting and background color gradient placement diverges slightly, appearing cooler on the right side."
+  ],
+  "observable_improvements": [
+    "Crop framing to standard 4:3 aspect ratio to match source composition.",
+    "Replicate graphic elements on the pants and match specific headwear texture accurately.",
+    "Align background color grading and vintage soft-focus artifacting."
+  ]
+}

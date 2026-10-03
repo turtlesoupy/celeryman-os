@@ -1,0 +1,47 @@
+{
+  "scores": {
+    "choreography_timing": 99,
+    "wardrobe": 97,
+    "background": 98,
+    "camera_framing": 100,
+    "retro_low_budget_dance_video_look": 97
+  },
+  "deductions": {
+    "choreography_timing": [
+      {
+        "points": 1,
+        "observation": "Across the sampled 30 frames, the dance poses, lean direction, arm positions, leg stance, and chronological timing match extremely closely. Only tiny silhouette/hand-contour differences are visible in a few frames."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 2,
+        "observation": "Same black suit, white shirt, tie/suspenders, and shoes are preserved, but B has slightly different shirt brightness and less identical wrinkle/highlight patterns on the suit."
+      },
+      {
+        "points": 1,
+        "observation": "Minor tie/suspender contrast and small clothing-edge texture differences are visible in some frames."
+      }
+    ],
+    "background": [
+      {
+        "points": 2,
+        "observation": "The plain studio background is the same, but B appears slightly more gray/green off-white compared with A's whiter background."
+      }
+    ],
+    "camera_framing": [],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 2,
+        "observation": "The low-budget cutout-on-plain-background dance-video look is retained, but B has a slightly different color grade/contrast."
+      },
+      {
+        "points": 1,
+        "observation": "B appears marginally smoother/cleaner in facial and clothing detail, reducing the exact retro texture match slightly."
+      }
+    ]
+  },
+  "overall": 98,
+  "pass_nearly_perfect": true,
+  "uncertainty_due_to_sampled_frames": "low; the contact sheets show only 1/6-second samples, but all visible sampled frames align very closely with no missing pose, wrong costume, scene change, or framing change observed."
+}

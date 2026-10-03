@@ -1,0 +1,88 @@
+{
+  "scores": {
+    "choreography_timing": 78,
+    "wardrobe": 78,
+    "background": 91,
+    "camera_framing": 92,
+    "retro_low_budget_dance_video_look": 84
+  },
+  "overall": 82,
+  "pass_nearly_perfect": false,
+  "identity_personalization_note": "Face/identity differences are present but not penalized beyond the allowed personalization tolerance.",
+  "concrete_observable_deductions": {
+    "choreography_timing": [
+      {
+        "deduction": 12,
+        "observation": "B repeats a very similar leaned-back pose with one arm raised and the other forward across multiple early frames, especially around row 1 columns 4-6 and row 2 columns 1-5, while A continues changing through more distinct side-sway and arm positions."
+      },
+      {
+        "deduction": 6,
+        "observation": "Several sampled poses have different arm placement from A: for example A alternates low palms, side-reaching, and bent-elbow gestures, while B often keeps the raised-arm/forward-hand configuration longer."
+      },
+      {
+        "deduction": 4,
+        "observation": "Foot placement and weight shifts are not always synchronized; B often has a wider, more static stance where A shows more varied knee bend and stepping."
+      }
+    ],
+    "wardrobe": [
+      {
+        "deduction": 6,
+        "observation": "A wears a darker, shinier black suit; B's suit appears more gray and less glossy."
+      },
+      {
+        "deduction": 8,
+        "observation": "A has a more formal white shirt and visible tie arrangement; B's collar looks more open and the tie/suspender-like dark strips hang looser and less like the source."
+      },
+      {
+        "deduction": 5,
+        "observation": "The jacket and pants drape differ: A's outfit looks baggier and more oversized with stronger shiny folds, while B is somewhat neater and less exaggerated."
+      },
+      {
+        "deduction": 3,
+        "observation": "Small belt/suspender details do not match consistently across the frames."
+      }
+    ],
+    "background": [
+      {
+        "deduction": 7,
+        "observation": "A has a bright white seamless background; B's background has a pale green/off-white tint."
+      },
+      {
+        "deduction": 2,
+        "observation": "Lighting/exposure on the plain backdrop is slightly different, with A appearing more starkly white."
+      }
+    ],
+    "camera_framing": [
+      {
+        "deduction": 4,
+        "observation": "Both are full-body and similarly framed, but B's subject scale and placement differ slightly from A in several cells."
+      },
+      {
+        "deduction": 2,
+        "observation": "The figure's vertical position within the cells is not always the same as A."
+      },
+      {
+        "deduction": 2,
+        "observation": "Because the pose timing differs, the resulting silhouettes occupy the frame differently in matched sampled moments."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "deduction": 6,
+        "observation": "B keeps the plain studio dance-video setup but has a slightly cleaner, greener color cast than A."
+      },
+      {
+        "deduction": 5,
+        "observation": "A has stronger high-key white exposure and shinier, more contrasty suit highlights."
+      },
+      {
+        "deduction": 5,
+        "observation": "B is close in concept but does not fully reproduce the source's stark, glossy, low-budget retro-video texture."
+      }
+    ]
+  },
+  "uncertainty_due_to_sampled_frames": {
+    "level": "moderate",
+    "explanation": "The comparison is based on 30 sampled frames at 1/6-second spacing, so some in-between motion could be better or worse than shown. However, the repeated early B poses and visible wardrobe/background differences are directly observable in the sampled frames."
+  }
+}

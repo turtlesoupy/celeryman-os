@@ -1,0 +1,58 @@
+{
+  "scores": {
+    "choreography_timing_and_poses": 94,
+    "wardrobe": 90,
+    "background_scene": 82,
+    "camera_framing": 97,
+    "retro_low_budget_dance_video_look": 88
+  },
+  "overall": 91,
+  "pass_nearly_perfect": false,
+  "deductions": [
+    {
+      "category": "choreography_timing_and_poses",
+      "points_deducted": 6,
+      "observations": [
+        "The 30 sampled frames follow the same chronological dance sequence and nearly all major body poses match A.",
+        "Minor pose differences are visible in arm angles, hand shapes, torso lean, and leg spread from frame to frame.",
+        "No obvious missing pose or major timing substitution is observed in the sampled sheet."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "points_deducted": 10,
+      "observations": [
+        "B keeps the same general outfit: dark suit, white shirt, dark tie, dark shoes.",
+        "The suit in B appears lighter gray and less black/glossy than A's shiny dark suit.",
+        "Some fine clothing details such as folds, tie/suspender-like lines, and jacket drape differ between corresponding frames."
+      ]
+    },
+    {
+      "category": "background_scene",
+      "points_deducted": 18,
+      "observations": [
+        "Both videos use a plain studio-style background.",
+        "B's background is slightly green/gray tinted compared with A's cleaner white background.",
+        "B has repeated horizontal tan/pink rectangular artifacts extending near the hands or frame edges in many cells; these are absent in A."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "points_deducted": 3,
+      "observations": [
+        "The full-body framing, scale, and contact-sheet layout are very close.",
+        "There are small differences in centering and crop/edge interaction, but the camera perspective is essentially preserved."
+      ]
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "points_deducted": 12,
+      "observations": [
+        "B retains the plain-backdrop, full-body, low-budget dance-video presentation.",
+        "The altered gray/green cast, less glossy contrast, and visible rectangular generation artifacts reduce fidelity to A's clean retro look."
+      ]
+    }
+  ],
+  "identity_face_note": "Face and hair differ visibly, but this appears consistent with identity personalization and was not heavily penalized beyond minor overall appearance effects.",
+  "uncertainty_due_to_sampled_frames": "Medium-low: scoring is based on 30 frames sampled every 1/6 second, so very brief motion errors between samples could be missed, but the sampled choreography and styling are largely assessable."
+}

@@ -1,0 +1,57 @@
+{
+  "choreography_score": 88,
+  "wardrobe_score": 98,
+  "background_score": 92,
+  "camera_framing_score": 72,
+  "retro_low_budget_look_score": 84,
+  "overall_score": 87,
+  "pass_nearly_perfect": false,
+  "deductions": [
+    {
+      "category": "choreography",
+      "points_deducted": 12,
+      "observations": [
+        "The overall sequence is very similar: wide squat stance throughout, alternating hand drops/pointing gestures, and side-to-side torso lean are preserved across the sampled frames.",
+        "Several hand placements are not exact: in B the hands are often held closer to the body or slightly differently angled than in A, especially around the middle frames.",
+        "Leg stance and torso lean are generally matched, but B appears a little more centered/upright in some frames compared with A's stronger side lean and edge-to-edge stance."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "points_deducted": 2,
+      "observations": [
+        "Wardrobe is essentially matched: black fedora, dark sunglasses, gold/black patterned shirt, black pants, and black shoes/boots.",
+        "Only minor differences in pattern rendering, clothing texture, and fit are visible, which are small enough to count as minor generative variation."
+      ]
+    },
+    {
+      "category": "background",
+      "points_deducted": 8,
+      "observations": [
+        "Both videos use a plain white/gray studio background.",
+        "B has a more visible gray gradient and floor/cyclorama feel, while A appears flatter and more tightly cropped against a mostly uniform pale background."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "points_deducted": 28,
+      "observations": [
+        "The largest difference is framing: A is tightly framed with the dancer filling most of each tile, legs often reaching the tile edges.",
+        "B is zoomed much farther out; the dancer is smaller with substantially more empty space above, below, and around the body.",
+        "This changes the perceived scale and retro music-video composition even though the pose sequence is similar."
+      ]
+    },
+    {
+      "category": "retro_low_budget_look",
+      "points_deducted": 16,
+      "observations": [
+        "B keeps the simple studio dance-video premise and similar costume, so the general low-budget dance-video idea is present.",
+        "However B looks cleaner, more distant, and more modern/studio-like, while A has a tighter, lower-resolution, cropped retro-video appearance."
+      ]
+    }
+  ],
+  "identity_face_notes": [
+    "The face is mostly obscured by sunglasses and hat in both; any small facial differences are not a major deduction."
+  ],
+  "uncertainty_due_to_sampled_frames": "Moderate. The 0.5-second contact-sheet frames show the main repeated squat-and-hand-gesture choreography clearly, but exact motion timing between sampled frames cannot be fully verified."
+}

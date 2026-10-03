@@ -1,0 +1,14 @@
+{
+  "scores": {
+    "choreography": 72,
+    "costume": 74,
+    "framing_background": 73,
+    "temporal_consistency": 72,
+    "overall_fidelity": 73
+  },
+  "concrete_mismatches": [
+    "Generated clip matches reference clip frame-for-frame with minimal discernable variation, showing no significant visual deviation."
+  ],
+  "pass_nearly_perfect": false,
+  "improvement_recommendations": "Ensure slight compression artifacts and frame cadence remain completely synchronized across all transitions."
+}

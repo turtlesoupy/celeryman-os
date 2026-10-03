@@ -1,0 +1,37 @@
+{
+  "scores": {
+    "choreography": 96,
+    "wardrobe": 96,
+    "background": 98,
+    "camera_framing": 97,
+    "retro_low_budget_dance_video_look": 97
+  },
+  "deductions": {
+    "choreography": [
+      "The overall hands-on-hips/back, hip-sway stance sequence is preserved across the sampled frames.",
+      "Minor observed pose differences: B is often a little more upright/centered than A, with slightly different hip lean and leg spread in several cells.",
+      "Some coat-swing moments differ subtly, especially where A's jacket flares farther outward or hangs at a slightly different angle."
+    ],
+    "wardrobe": [
+      "Same general outfit is retained: shiny dark suit/jacket and trousers, white shirt, narrow dark tie/suspenders, black shoes.",
+      "B shows different wrinkle patterns and fabric highlights on the trousers and shirt.",
+      "The jacket shape and flare differ slightly frame to frame; B's coat sometimes looks cleaner/stiffer or less wind-swept than A.",
+      "Face/hair identity differs, but this is treated as minor personalization rather than a major wardrobe/choreography issue."
+    ],
+    "background": [
+      "Both use a plain studio background with no scene change.",
+      "B's background appears slightly cooler/greener gray compared with A's whiter gray."
+    ],
+    "camera_framing": [
+      "Full-body framing and scale are very close.",
+      "There are small differences in exact body placement within cells and apparent scale/margins, but no major crop or viewpoint change."
+    ],
+    "retro_low_budget_dance_video_look": [
+      "The simple isolated dancer-on-plain-background look is preserved.",
+      "B is slightly cleaner/smoother in rendering, with subtly different contrast and fabric sheen, but maintains the same low-budget dance-video style."
+    ]
+  },
+  "overall": 97,
+  "pass_nearly_perfect": true,
+  "uncertainty_due_to_sampled_frames": "Moderate-low. The 30 sampled frames show very close timing and pose correspondence, but motion between the 1/6-second samples cannot be fully evaluated."
+}

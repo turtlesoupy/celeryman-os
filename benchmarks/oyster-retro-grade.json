@@ -1,0 +1,22 @@
+{
+  "scores": {
+    "choreography": 68,
+    "costume": 66,
+    "framing_background": 71,
+    "temporal_consistency": 67,
+    "overall_fidelity": 68
+  },
+  "pass_nearly_perfect": false,
+  "concrete_mismatches": [
+    "Head accessory / hat physics missing at 00:04 where hat flips off in Reference A but not B",
+    "Pants red stripe details and side embellishments present in A are faint or missing in B",
+    "Head/body pose in frame 00:00 differs (A is fully bent down, B is semi-upright looking forward)",
+    "Severe motion blur/distortion artifacts across the face and cap in generated B at 00:03"
+  ],
+  "observable_improvements": [
+    "Replicate the cap flip animation occurring at 00:04",
+    "Synchronize the initial bowing posture at 00:00",
+    "Add missing decorative red details on the track pants",
+    "Reduce facial motion artifacting around 00:03"
+  ]
+}

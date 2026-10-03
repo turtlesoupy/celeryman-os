@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "all-sketch-inputs",
+    "pass": false
+  },
+  {
+    "kind": "schedule-jitter-under-150ms",
+    "pass": true
+  },
+  {
+    "kind": "live-generated-only",
+    "pass": true
+  },
+  {
+    "kind": "no-runtime-errors",
+    "pass": true
+  },
+  {
+    "kind": "virtual-printer",
+    "pass": true
+  },
+  {
+    "kind": "emergency-call",
+    "pass": true
+  }
+]

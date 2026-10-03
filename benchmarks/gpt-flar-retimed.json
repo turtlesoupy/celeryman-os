@@ -1,0 +1,68 @@
+{
+  "scores": {
+    "choreography_timing": 96,
+    "wardrobe": 78,
+    "background": 93,
+    "camera_framing": 96,
+    "retro_low_budget_dance_video_look": 90
+  },
+  "deductions": {
+    "choreography_timing": [
+      {
+        "points": 3,
+        "observation": "The sampled poses align closely frame-by-frame: jumps, high kicks, side-pointing arm gestures, and repeated stance poses occur in the same chronological positions. Minor differences are visible in exact arm/hand angles and leg extension height in several frames, but no major pose is missing."
+      },
+      {
+        "points": 1,
+        "observation": "Some generated frames show slightly softer or altered limb shapes during fast motion, especially hands/forearms during pointing and raised-arm poses."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 14,
+        "observation": "The shirt pattern is visibly different: A has a darker black/orange flame/floral-looking pattern, while B has a brighter gold baroque/paisley pattern."
+      },
+      {
+        "points": 5,
+        "observation": "B's shirt is much more open at the chest in many frames, while A appears more closed/darker across the torso."
+      },
+      {
+        "points": 3,
+        "observation": "Overall clothing silhouette is similar—black fedora, sunglasses, black shiny pants/boots—but fabric highlights and shirt color balance differ noticeably."
+      }
+    ],
+    "background": [
+      {
+        "points": 5,
+        "observation": "Both use a plain studio white background, but B has a slightly cooler/blue-gray tint and more visible floor/shadow gradient compared with A's flatter white background."
+      },
+      {
+        "points": 2,
+        "observation": "Subtle contact shadows and lighting falloff differ between the two sheets."
+      }
+    ],
+    "camera_framing": [
+      {
+        "points": 2,
+        "observation": "Framing is very close, with the dancer occupying similar size and position across the grid, but B appears slightly differently scaled/centered in a few cells."
+      },
+      {
+        "points": 2,
+        "observation": "Some edges/crops around limbs differ slightly during wide arm or jump poses."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 6,
+        "observation": "The simple white studio, full-body dancer, sunglasses/fedora styling, and low-budget music-video feel are preserved."
+      },
+      {
+        "points": 4,
+        "observation": "B looks slightly cleaner/brighter and less flat than A, reducing the exact retro/cheap compositing feel."
+      }
+    ]
+  },
+  "overall": 91,
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": "Low to moderate. The contact sheets sample every 1/6 second and show strong frame-by-frame pose correspondence, but unsampled in-between motion could contain additional timing or artifact differences not visible here."
+}

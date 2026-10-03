@@ -1,0 +1,61 @@
+{
+  "scores": {
+    "choreography_and_timing": 76,
+    "wardrobe": 91,
+    "background": 94,
+    "camera_and_framing": 92,
+    "retro_low_budget_dance_video_look": 83
+  },
+  "overall": 83,
+  "pass_nearly_perfect": false,
+  "concrete_observable_deductions": [
+    {
+      "category": "choreography_and_timing",
+      "deduction": 24,
+      "observations": [
+        "Many frames preserve the general dance vocabulary: side-to-side leaning, bent knees, arms held out or swung upward, and the loose suit movement.",
+        "However, several sampled frames are not in the same chronological pose as A. For example, A row 2 column 1 shows a strong left-leaning pose with an arm raised, while B row 2 column 1 is a more centered squat-like pose.",
+        "B row 2 column 3 shows the high-arm leaning pose that appears earlier in A, indicating visible timing/ordering mismatch in the sampled sequence.",
+        "B row 3 column 6 is not a usable matching dance pose: the body is mostly a pale/fragmented silhouette, while A row 3 column 6 is a clear leaning pose.",
+        "B row 5 column 3 is also severely overexposed/washed out and does not clearly reproduce A row 5 column 3's centered squat pose."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "deduction": 9,
+      "observations": [
+        "The main wardrobe is largely retained: shiny oversized black suit, white shirt, tie/suspenders, black shoes.",
+        "Some regenerated frames show small inconsistencies in tie/suspender placement and shirt brightness.",
+        "Two corrupted frames, especially B row 3 column 6 and B row 5 column 3, make the suit/wardrobe partially disappear or wash out."
+      ]
+    },
+    {
+      "category": "background",
+      "deduction": 6,
+      "observations": [
+        "The plain studio background is mostly preserved.",
+        "B has a slightly green-gray cast compared with A's cleaner white/light-gray background.",
+        "The severe artifact frames introduce visible non-source-like pale blotches/silhouette fragments against the background."
+      ]
+    },
+    {
+      "category": "camera_and_framing",
+      "deduction": 8,
+      "observations": [
+        "Most frames keep a similar full-body, front-facing contact-sheet framing and scale.",
+        "B row 1 column 1 appears slightly tighter/closer to the top edge than the corresponding A frame.",
+        "The corrupted frames reduce effective framing fidelity because the whole person is not clearly preserved."
+      ]
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction": 17,
+      "observations": [
+        "The low-resolution, plain-background, retro dance-video feel is mostly matched.",
+        "B introduces stronger generative artifacts than A, especially two overexposed/fragmented body frames.",
+        "The greenish tint and washed-out frames look less like the consistent source contact sheet."
+      ]
+    }
+  ],
+  "uncertainty_due_to_sampled_frames": "Moderate. The comparison is based on 30 sampled frames at 1/6-second spacing, so exact in-between motion cannot be verified. The visible pose-order mismatches and two severe corrupted frames are directly observable in the sampled contact sheets."
+}

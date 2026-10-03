@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/qwen-paul-pcm.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 82,
+      "pitch": 80,
+      "rhythm": 75,
+      "overall": 78,
+      "concrete_differences": "The candidate has noticeably more audible breathiness/room reverb and slightly weaker low-end warmth than the target. The pacing is slightly more rushed, and the inflection on 'Paul' and 'day be' is flatter and less smoothly modulated."
+    },
+    {
+      "file": "analysis/minimax28.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 97,
+      "pitch": 96,
+      "rhythm": 98,
+      "overall": 97,
+      "concrete_differences": "Extremely close match to the target synthesizer; identical cadence, pitch contour, pacing, and vocal tract resonance, with only microscopic differences in breath texture."
+    }
+  ],
+  "best_file": "analysis/minimax28.wav"
+}

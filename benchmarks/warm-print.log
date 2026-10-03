@@ -1,0 +1,11 @@
+{
+  id: 'da45976bd875641a35d2',
+  status: 'complete',
+  stage: 'Ready',
+  started: 1791016047292,
+  image: '/media/generated/da45976bd875641a35d2-print.png',
+  requestId: '01a100e0-50b1-7ff0-8197-06a0c09a0505',
+  providerStatus: 'COMPLETED',
+  url: '/media/generated/da45976bd875641a35d2.mp4',
+  elapsed: 19586
+}

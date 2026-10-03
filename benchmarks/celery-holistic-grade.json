@@ -1,0 +1,20 @@
+{
+  "scores": {
+    "choreography": 62,
+    "costume": 74,
+    "framing_background": 58,
+    "temporal_consistency": 60,
+    "overall_fidelity": 61
+  },
+  "pass_nearly_perfect": false,
+  "concrete_mismatches": [
+    "Clip B omits the alternating cuts to the office computer worker present at 00:02 and 00:04 in Clip A.",
+    "Clip B maintains continuous dancing on a plain white backdrop rather than cutting between scenes.",
+    "Choreography diverges around 00:03-00:04 with different arm positions and finger points.",
+    "Costume fabric sheen and fit differ slightly from the original looser, darker aesthetic."
+  ],
+  "observable_improvements": [
+    "Replicate the rapid cutaways to the office setting at 00:02 and 00:04.",
+    "Match the exact arm motions, pose repetitions, and timing from the reference video."
+  ]
+}

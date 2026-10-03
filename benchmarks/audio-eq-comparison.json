@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None. Identical recording down to background noise profile and phase."
+    },
+    {
+      "file": "analysis/minimax28.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 82,
+      "pitch": 86,
+      "rhythm": 89,
+      "overall": 84,
+      "concrete_differences": "Lacks the distinct analog microphone hum/room noise present in the target. The high-frequency robotic metallic resonance is noticeably drier and smoother than the original, with slightly darker presence around 3-5 kHz."
+    },
+    {
+      "file": "analysis/minimax28-eq.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 85,
+      "pitch": 86,
+      "rhythm": 89,
+      "overall": 86,
+      "concrete_differences": "EQ adjustment brings the mid-high presence closer to the target's frequency balance, but still lacks the exact spatial resonance and analog tape/noise artifacts present in the original reference clip."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}

@@ -1,0 +1,72 @@
+{
+  "scores": {
+    "choreography_timing": 72,
+    "wardrobe": 68,
+    "background": 96,
+    "camera_framing": 91,
+    "retro_low_budget_dance_video_look": 78
+  },
+  "deductions": {
+    "choreography_timing": [
+      {
+        "points": 18,
+        "observation": "The regenerated video contains many of the same general dance elements—airborne jumps, high knee/kick poses, and repeated forward-pointing stances—but they are not aligned frame-for-frame with the source. For example, A begins with an airborne arms-up jump, while B begins in a grounded wide stance with hands near the torso."
+      },
+      {
+        "points": 6,
+        "observation": "Several jump/kick clusters occur at different positions in the sampled chronology: A has a jump sequence around row 2 columns 4-6 and again row 3 column 6, while B places comparable jump/kick poses earlier in row 1 and row 3."
+      },
+      {
+        "points": 4,
+        "observation": "The ending differs: A ends on a running/arm-pump transition pose, while B ends on a forward-pointing stance."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 24,
+        "observation": "A wears a black fedora in every sampled frame; B has no hat throughout."
+      },
+      {
+        "points": 8,
+        "observation": "A wears dark sunglasses throughout; B has no sunglasses."
+      },
+      {
+        "points": 0,
+        "observation": "The orange-and-black patterned shirt, black shiny pants, and black footwear are broadly preserved."
+      }
+    ],
+    "background": [
+      {
+        "points": 4,
+        "observation": "Both videos use a plain light studio background. B appears slightly warmer/off-white and smoother, but the scene is essentially the same."
+      }
+    ],
+    "camera_framing": [
+      {
+        "points": 5,
+        "observation": "Both are full-body, static, centered dance shots, but B appears slightly larger/tighter in some frames."
+      },
+      {
+        "points": 4,
+        "observation": "Some edge cropping/positioning differs between corresponding frames, especially during wide jumps and side steps."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 12,
+        "observation": "The missing fedora and sunglasses noticeably reduce the source's retro dance-video styling."
+      },
+      {
+        "points": 6,
+        "observation": "B has a somewhat cleaner, less accessory-heavy look than A, though it keeps the plain studio setup and bold patterned shirt."
+      },
+      {
+        "points": 4,
+        "observation": "Temporal mismatch in the contact sheet weakens the impression of recreating the same low-budget choreography clip."
+      }
+    ]
+  },
+  "overall": 79,
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": "Moderate. The contact sheets sample frames every 1/6 second, so small in-between motion differences cannot be assessed. However, the missing hat and sunglasses are visible in every sampled B frame, and the choreography/timing offsets are observable across many sampled frames."
+}

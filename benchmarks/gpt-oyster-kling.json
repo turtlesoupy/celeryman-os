@@ -1,0 +1,57 @@
+{
+  "scores": {
+    "choreography_timing": 86,
+    "wardrobe_appearance": 96,
+    "background": 98,
+    "camera_framing": 97,
+    "retro_low_budget_dance_video_look": 96,
+    "overall": 91
+  },
+  "pass_nearly_perfect": false,
+  "deductions": {
+    "choreography_timing": [
+      {
+        "deduction": 6,
+        "observation": "Several sampled poses are close but not exact: in row 1 frame 5, A is bent more deeply with the upper body dropped toward the dancer's right, while B is more upright/centered."
+      },
+      {
+        "deduction": 5,
+        "observation": "In row 2 frame 3, A is more upright with head/torso lifted, while B remains more folded forward with the head lower, suggesting a timing or pose mismatch."
+      },
+      {
+        "deduction": 3,
+        "observation": "Arm and hand placements vary slightly across multiple frames, especially the hands near the waist/crotch during bent poses and the fists at the sides during upright poses."
+      }
+    ],
+    "wardrobe_appearance": [
+      {
+        "deduction": 2,
+        "observation": "The main outfit is preserved: red open jacket, black shirt/pants, dark footwear, and chain. Minor differences appear in jacket shape/folds and how the sleeves/shoulders sit."
+      },
+      {
+        "deduction": 2,
+        "observation": "Hair/head appearance differs: A shows a more upright/spiked mohawk-like silhouette in several frames, while B appears darker/flatter and sometimes with a band-like detail. Face/identity differences are treated as minor."
+      }
+    ],
+    "background": [
+      {
+        "deduction": 2,
+        "observation": "The pale yellow/green studio gradient background is very similar, with only slight color/gradient placement differences visible."
+      }
+    ],
+    "camera_framing": [
+      {
+        "deduction": 3,
+        "observation": "Framing is highly similar, full-body and centered, but B's body scale/vertical placement varies slightly in a few frames compared with A."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "deduction": 4,
+        "observation": "The simple studio setup, saturated red clothing, and flat retro music-video look are preserved, though B looks slightly cleaner/smoother and less like the exact same sampled footage."
+      }
+    ]
+  },
+  "summary": "B strongly preserves the source scene, outfit, full-body framing, and general bend-and-rise dance pattern, but it is not identical. The main losses are pose/timing mismatches in a few sampled frames, especially around row 1 frame 5 and row 2 frame 3, plus small appearance differences in hair/head shape and clothing folds.",
+  "uncertainty_due_to_sampled_frames": "Moderate. The contact sheets sample every 0.5 seconds, so in-between motion quality and exact transitions cannot be fully judged. The visible sampled frames are sufficient to identify several real pose/timing differences, but the exact severity over the whole video may vary."
+}

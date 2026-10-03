@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None. The audio file is an exact identical match to the target clip."
+    },
+    {
+      "file": "analysis/h3-voice-thomas.wav",
+      "transcript": "Good morning Paul. What will your first sequence of the day be?",
+      "timbre": 97,
+      "pitch": 96,
+      "rhythm": 95,
+      "overall": 96,
+      "concrete_differences": "Nearly indistinguishable from the target. Minor subtle differences in the trailing breath/reverb decay and micro-timing of the word transitions."
+    },
+    {
+      "file": "analysis/h3-voice-novel.wav",
+      "transcript": "Lori xanarian sea hived mustard shimmy engaged",
+      "timbre": 94,
+      "pitch": 88,
+      "rhythm": 75,
+      "overall": 80,
+      "concrete_differences": "Completely different text/words. While the synthesized voice model and timbre are very similar, the inflection, prosodic contour, and pacing differ entirely to accommodate the nonsensical test sentence."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}

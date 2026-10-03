@@ -1,0 +1,118 @@
+{
+  "method": "Normalized waveform cross-correlation against actual browser output, including Opus compression and concurrent music. Threshold 0.8 verifies source audio is audible; not a perceptual clone score.",
+  "checks": [
+    {
+      "phrase": "Good morning Paul. What will your first sequence of the day be?",
+      "source": "/media/original/greeting.wav",
+      "best_correlation": 0.99737,
+      "output_time_s": 0.028,
+      "duration_s": 4.15,
+      "pass": true
+    },
+    {
+      "phrase": "Yes, Paul!",
+      "source": "/media/original/yes-paul.wav",
+      "best_correlation": 0.9961,
+      "output_time_s": 6.199,
+      "duration_s": 0.85,
+      "pass": true
+    },
+    {
+      "phrase": "4d3d3d3 Engaged.",
+      "source": "/media/original/engaged.wav",
+      "best_correlation": 0.97244,
+      "output_time_s": 24.497,
+      "duration_s": 1.3,
+      "pass": true
+    },
+    {
+      "phrase": "Okay.",
+      "source": "/media/original/print.wav",
+      "best_correlation": 0.97355,
+      "output_time_s": 35.548,
+      "duration_s": 0.65,
+      "pass": true
+    },
+    {
+      "phrase": "Yes.",
+      "source": "/media/original/yes.wav",
+      "best_correlation": 0.95882,
+      "output_time_s": 37.58,
+      "duration_s": 0.58,
+      "pass": true
+    },
+    {
+      "phrase": "I have a beta sequence I've been working on. Would you like to see it?",
+      "source": "/media/original/beta.wav",
+      "best_correlation": 0.99782,
+      "output_time_s": 39.9,
+      "duration_s": 3.45,
+      "pass": true
+    },
+    {
+      "phrase": "Okay.",
+      "source": "/media/original/okay.wav",
+      "best_correlation": 0.99674,
+      "output_time_s": 45.67,
+      "duration_s": 0.58,
+      "pass": true
+    },
+    {
+      "phrase": "Yes.",
+      "source": "/media/original/hat.wav",
+      "best_correlation": 0.9938,
+      "output_time_s": 60.967,
+      "duration_s": 0.48,
+      "pass": true
+    },
+    {
+      "phrase": "Yes.",
+      "source": "/media/original/flower.wav",
+      "best_correlation": 0.9887,
+      "output_time_s": 62.849,
+      "duration_s": 0.58,
+      "pass": true
+    },
+    {
+      "phrase": "Not computing. Please repeat.",
+      "source": "/media/original/repeat.wav",
+      "best_correlation": 0.9841,
+      "output_time_s": 67.425,
+      "duration_s": 1.86,
+      "pass": true
+    },
+    {
+      "phrase": "This is not suitable for work. Are you sure?",
+      "source": "/media/original/nsfw.wav",
+      "best_correlation": 0.98551,
+      "output_time_s": 71.319,
+      "duration_s": 2.87,
+      "pass": true
+    },
+    {
+      "phrase": "Okay.",
+      "source": "/media/original/confirm.wav",
+      "best_correlation": 0.9857,
+      "output_time_s": 74.806,
+      "duration_s": 0.62,
+      "pass": true
+    },
+    {
+      "phrase": "Excuse me Paul. Your wife is on the phone. It's an emergency.",
+      "source": "/media/original/call.wav",
+      "best_correlation": 0.9859,
+      "output_time_s": 81.703,
+      "duration_s": 3.42,
+      "pass": true
+    },
+    {
+      "phrase": "Tayne introduction, original dialogue in generated video",
+      "source": "/media/original/intro.wav",
+      "best_correlation": 0.86936,
+      "output_time_s": 46.837,
+      "duration_s": 3.7,
+      "pass": true
+    }
+  ],
+  "pass": true
+}

@@ -1,0 +1,23 @@
+{
+  "scores": {
+    "choreography": 62,
+    "costume": 68,
+    "framing_background": 58,
+    "temporal_consistency": 65,
+    "overall_fidelity": 63
+  },
+  "concrete_mismatches": [
+    "Framing in B is wider with full shoes visible, whereas A is tightly cropped at shoe level.",
+    "Background in B is neutral light gray/white, missing the warm yellow-to-cyan gradient/glow from A.",
+    "Reference A features a floating hat animation at 00:02, which is completely absent in B.",
+    "Jacket in B is an Adidas-style track jacket with triple white stripes, unlike the plain red zip-up hoodie in A.",
+    "Timing and depth of torso bow/headbanging differ, with B lacking the upward recovery bounce shown in A at 00:04."
+  ],
+  "pass_nearly_perfect": false,
+  "recommended_improvements": [
+    "Replicate the warm-tinted studio gradient background instead of a flat gray backdrop.",
+    "Tighten camera framing to match Reference A's closer vertical crop.",
+    "Include the detached floating hat visual effect occurring around the two-second mark.",
+    "Match the hoodie styling without prominent sleeve striping and align torso bounce dynamics."
+  ]
+}

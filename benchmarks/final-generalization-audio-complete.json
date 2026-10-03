@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    {
+      "file": "public/media/original/greeting.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None; identical target reference file."
+    },
+    {
+      "file": "analysis/final-generalization-greeting-complete.wav",
+      "transcript": "Good morning, Thomas. What will your first se-",
+      "timbre": 88,
+      "pitch": 82,
+      "rhythm": 70,
+      "overall": 65,
+      "concrete_differences": "Says 'Thomas' instead of 'Paul'; audio cuts off abruptly on the word 'sequence' ('se-'); missing the words 'quence of the day be?'."
+    }
+  ],
+  "best_file": "public/media/original/greeting.wav"
+}

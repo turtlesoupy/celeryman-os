@@ -1,0 +1,58 @@
+{
+  "scores": {
+    "faithful_choreography": 94,
+    "wardrobe": 96,
+    "background": 94,
+    "camera_framing": 97,
+    "retro_low_budget_dance_video_look": 96
+  },
+  "deductions": {
+    "faithful_choreography": [
+      {
+        "points": 4,
+        "observation": "The overall hands-on-hips dance sequence and chronological pose progression match closely, but several sampled frames show small differences in leg spread, foot angle, torso lean, and hip placement rather than being pixel/pose identical."
+      },
+      {
+        "points": 2,
+        "observation": "Jacket/arm silhouette changes slightly in some frames, especially the flared coat side and bent elbow shape, indicating minor pose/cloth-motion mismatch."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 2,
+        "observation": "Wardrobe is essentially the same: shiny dark jacket and pants, white shirt, dark tie/suspenders/belt/shoes. Minor differences appear in shirt wrinkle pattern and dark markings/tie-suspender alignment."
+      },
+      {
+        "points": 2,
+        "observation": "The jacket drape and trouser highlights are not identical frame-to-frame, though the costume category remains clearly matched."
+      }
+    ],
+    "background": [
+      {
+        "points": 6,
+        "observation": "Both use a plain studio background, but B appears slightly green/gray tinted compared with A's cleaner white/light gray background."
+      }
+    ],
+    "camera_framing": [
+      {
+        "points": 3,
+        "observation": "Framing is very close full-body contact-sheet framing, but subject scale and placement vary slightly across cells, with small differences in headroom/footroom and lateral position."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 4,
+        "observation": "The simple full-body studio dance-video look is preserved, including flat backdrop and shiny 1980s-style wardrobe, but the background tint and slightly cleaner/generated facial detail make it not perfectly identical."
+      }
+    ],
+    "identity_face_hair": [
+      {
+        "points": 1,
+        "observation": "B has noticeably different personalized face/hair, including curlier darker hair and facial-hair/stubble appearance, but this is treated as a minor allowed identity personalization difference."
+      }
+    ]
+  },
+  "overall": 95,
+  "pass_nearly_perfect": true,
+  "uncertainty_due_to_sampled_frames": "Medium-low. The 30 sampled frames at 1/6-second spacing show very close pose and costume fidelity, but unsampled motion between frames could contain additional timing or cloth-motion deviations not visible in the contact sheets."
+}

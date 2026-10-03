@@ -1,0 +1,445 @@
+{
+  "created": "2026-10-03T08:47:14.929Z",
+  "checks": {
+    "sketch": {
+      "passed": 41,
+      "total": 41,
+      "errors": [],
+      "report": "benchmarks/live-report.json"
+    },
+    "timed": {
+      "passed": 6,
+      "total": 6,
+      "errors": [],
+      "report": "benchmarks/timed-live/report.json"
+    },
+    "generalization": {
+      "passed": 6,
+      "total": 6,
+      "errors": [],
+      "report": "benchmarks/generalization/report.json"
+    },
+    "audio": {
+      "passed": 14,
+      "total": 14,
+      "errors": [],
+      "report": "benchmarks/final-output-audio.json"
+    }
+  },
+  "windowControls": [
+    {
+      "name": "minimize",
+      "pass": true
+    },
+    {
+      "name": "restore-minimize",
+      "pass": true
+    },
+    {
+      "name": "maximize",
+      "pass": true
+    },
+    {
+      "name": "restore-maximize",
+      "pass": true
+    },
+    {
+      "name": "resize",
+      "pass": true
+    },
+    {
+      "name": "window-menu-close",
+      "pass": true
+    },
+    {
+      "name": "reset",
+      "pass": true
+    }
+  ],
+  "autoplay": true,
+  "uiGrade": {
+    "cases": [
+      {
+        "name": "engaged",
+        "layout": 96,
+        "chrome": 93,
+        "typography": 92,
+        "overall": 94,
+        "observed_differences": [
+          "Overall window positions and sizes are very close, including the left portrait window, right CINCO ID window, and lower console.",
+          "The clone's title-bar text and console text appear slightly heavier/sharper than the softer source rendering.",
+          "The left portrait window's active blue title-bar span is slightly shorter in the clone, with the Close area beginning a bit farther left.",
+          "The bottom control strip of the console is simplified/different in small widget details compared with the source."
+        ]
+      },
+      {
+        "name": "oyster",
+        "layout": 97,
+        "chrome": 94,
+        "typography": 93,
+        "overall": 95,
+        "observed_differences": [
+          "The overlapping OYSTER window is placed and sized almost identically, with only a few-pixel vertical difference.",
+          "The clone's chrome lines and title text are crisper/heavier than the blurred source.",
+          "Small title-bar button proportions differ slightly, especially the Close/button group on the OYSTER window.",
+          "The gradient/content area in the front OYSTER window appears a little cleaner and more uniform in the clone."
+        ]
+      },
+      {
+        "name": "intro",
+        "layout": 98,
+        "chrome": 95,
+        "typography": 95,
+        "overall": 96,
+        "observed_differences": [
+          "The single Tayne window matches the original placement and size very closely.",
+          "The clone's interior image area is cleaner and more horizontally scanlined, while the source is softer/blurrier.",
+          "Title-bar text and buttons are very close, though the clone's text appears slightly darker and sharper."
+        ]
+      },
+      {
+        "name": "tayne",
+        "layout": 97,
+        "chrome": 94,
+        "typography": 93,
+        "overall": 95,
+        "observed_differences": [
+          "The two side Tayne windows and central OYSTER window match the original layout and z-order closely.",
+          "The center orange logo panel is slightly cleaner and more saturated in the clone.",
+          "The title-bar typography in the clone is a bit bolder/sharper than in the source.",
+          "Small button dividers and bevels in the title bars are not quite as soft as the source."
+        ]
+      },
+      {
+        "name": "squat",
+        "layout": 97,
+        "chrome": 95,
+        "typography": 94,
+        "overall": 96,
+        "observed_differences": [
+          "The cascade of Tayne windows and the larger front/right window align very closely with the source.",
+          "The clone's title bars and borders are slightly crisper, with darker text than the source.",
+          "The visible stacked-window spacing is very close, but some rear window edges differ by a few pixels."
+        ]
+      },
+      {
+        "name": "hat",
+        "layout": 97,
+        "chrome": 95,
+        "typography": 94,
+        "overall": 96,
+        "observed_differences": [
+          "The nested portrait-window stack in the upper right is positioned and cropped very close to the source.",
+          "The lower console window matches position and size closely.",
+          "The clone's console text is sharper and slightly cleaner than the analog-blurred source.",
+          "Nested title-bar button details and bevel softness differ slightly."
+        ]
+      },
+      {
+        "name": "flar",
+        "layout": 96,
+        "chrome": 87,
+        "typography": 93,
+        "overall": 91,
+        "observed_differences": [
+          "The three tall Tayne windows are placed and sized almost identically.",
+          "In the source, the left window shows a visible vertical scrollbar/thumb along its right edge; the clone does not reproduce that scrollbar detail.",
+          "The clone's title bars are sharper and the title text is heavier than the softened source.",
+          "Interior content begins at a very similar height, but the clone's panel rendering is cleaner and more uniform."
+        ]
+      },
+      {
+        "name": "nsfw",
+        "layout": 98,
+        "chrome": 96,
+        "typography": 96,
+        "overall": 97,
+        "observed_differences": [
+          "The rear Tayne window and front NSFW dialog match the source placement, size, and overlap very closely.",
+          "The large NSFW text is very close in scale and position.",
+          "The clone is slightly sharper overall, with more distinct scanlines and darker chrome text.",
+          "Small title-bar button bevels are a little cleaner than in the source."
+        ]
+      },
+      {
+        "name": "call",
+        "layout": 97,
+        "chrome": 94,
+        "typography": 95,
+        "overall": 95,
+        "observed_differences": [
+          "The main Tayne window and centered incoming-call popup match the source layout closely.",
+          "The clone's main window interior is paler/yellower, while the source has a warmer peach/tan tint.",
+          "The popup shadow, red number display, and WIFE panel are very close, though the clone is sharper.",
+          "Title-bar and button details are close but slightly cleaner and less analog-soft in the clone."
+        ]
+      },
+      {
+        "name": "chaos",
+        "layout": 95,
+        "chrome": 92,
+        "typography": 92,
+        "overall": 94,
+        "observed_differences": [
+          "The dense stack of CINCO ID windows, the MOZARELL window, and the foreground error dialogs are reproduced with close overall placement and z-order.",
+          "The clone's foreground error dialog appears slightly cleaner and sharper, with heavier title-bar and message text.",
+          "Some stacked rear-window edges and offsets differ by a few pixels, especially in the lower cascaded area.",
+          "The source has softer analog-blurred chrome and text, while the clone uses crisper lines and more uniform scanlines."
+        ]
+      }
+    ],
+    "overall": 95
+  },
+  "canonicalVideoGrades": [
+    {
+      "report": "final-celery.json",
+      "score": 95
+    },
+    {
+      "report": "final-engaged.json",
+      "score": 98
+    },
+    {
+      "report": "final-oyster.json",
+      "score": 94
+    },
+    {
+      "report": "final-tayne.json",
+      "score": 98.4
+    },
+    {
+      "report": "final-hat.json",
+      "score": 93
+    },
+    {
+      "report": "gpt-flar-corrected.json",
+      "score": 96
+    },
+    {
+      "report": "final-sway-fixed.json",
+      "score": 96
+    }
+  ],
+  "canonicalMean": 95.77142857142857,
+  "generalizationVideoGrades": [
+    {
+      "file": "public/media/generated/7a6e83fdbb2e81b3f454.mp4",
+      "identity_consistency": 93,
+      "instruction_following": 90,
+      "coherent_body_and_motion": 96,
+      "retro_style": 94,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "deduction": 7,
+          "reason": "The performer preserves the key visual traits from the reference—messy dark hair, glasses, light facial hair, and similar general face shape—but the full-body video face is small and slightly less exact in facial proportions."
+        },
+        {
+          "category": "instruction_following",
+          "deduction": 10,
+          "reason": "Mustard yellow tracksuit and full-body view are present, and the shoulders do shift/tilt across frames, but the shoulder shimmy appears fairly subtle and not very energetic or rapid in the sampled contact sheet."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "deduction": 4,
+          "reason": "Body remains coherent with visible feet and stable proportions; only minor stiffness and limited motion amplitude are apparent."
+        },
+        {
+          "category": "retro_style",
+          "deduction": 6,
+          "reason": "The locked camera and flat studio background fit the requested desktop-dance-software feel, though the rendering is somewhat clean/modern rather than strongly late-1990s software-like."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    },
+    {
+      "file": "public/media/generated/59fdf866aa8c09f0ac47.mp4",
+      "identity_consistency": 92,
+      "instruction_following": 91,
+      "coherent_body_and_motion": 95,
+      "retro_style": 94,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "points": 8,
+          "reason": "Performer preserves the general visual traits from the reference, including messy dark hair, round glasses, light skin, and facial hair, but the face/beard detail is somewhat simplified at full-body distance."
+        },
+        {
+          "category": "instruction_following",
+          "points": 9,
+          "reason": "Yellow tracksuit is maintained and the feet show alternating backward movement, but the motion reads a bit more like a cautious backward walk/step than a distinctly tiny shuffle in some frames."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "points": 5,
+          "reason": "Body remains coherent with visible feet and stable proportions; minor stiffness and slight foot-sliding ambiguity are present."
+        },
+        {
+          "category": "retro_style",
+          "points": 6,
+          "reason": "Locked camera, plain studio, and full-body dance-software framing are present, though the rendering is cleaner and more modern than strongly late-1990s desktop software."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    },
+    {
+      "file": "public/media/generated/547fd0e737d8987bbed0.mp4",
+      "identity_consistency": 92,
+      "instruction_following": 94,
+      "coherent_body_and_motion": 96,
+      "retro_style": 93,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "deduction": 8,
+          "reason": "The performer preserves key visual traits from the identity photo such as round dark eyeglasses, dark tousled hair, light skin, and facial hair, but the face is small and somewhat generalized in the full-body frames."
+        },
+        {
+          "category": "instruction_following",
+          "deduction": 6,
+          "reason": "A tall purple top hat is present and visibly tilts/wobbles slowly, but the wobble appears partly driven by head/upper-body leaning rather than an independently wobbling hat, and the exact two-slow-wobble timing is only approximately clear from the contact sheet."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "deduction": 4,
+          "reason": "The body remains coherent with feet visible and planted, though the slow lean gives the motion a slightly posed quality rather than a fully fluid dance-software wobble."
+        },
+        {
+          "category": "retro_style",
+          "deduction": 7,
+          "reason": "The locked camera, full-body studio view, flat background, and simple performer presentation fit the requested desktop-dance setup, but the rendering is relatively modern/photographic rather than strongly late-1990s software-like."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    },
+    {
+      "file": "public/media/generated/ffc4ada401fe6f03b1a1.mp4",
+      "identity_consistency": 94,
+      "instruction_following": 97,
+      "coherent_body_and_motion": 98,
+      "retro_style": 96,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "points": 6,
+          "reason": "Overall facial resemblance is strong, with similar glasses, beard, hair texture, and face shape, but the tall hat obscures much of the hairstyle and the generated facial proportions/expression are slightly stylized."
+        },
+        {
+          "category": "instruction_following",
+          "points": 3,
+          "reason": "The video presents a clear smiling head-and-shoulders portrait with no feet visible, but includes added costume/hat/background elements beyond the simple portrait request."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "points": 2,
+          "reason": "Motion is minimal but coherent; the expression changes into and holds a smile without obvious body artifacts."
+        },
+        {
+          "category": "retro_style",
+          "points": 4,
+          "reason": "Locked camera, flat studio background, and simple performer presentation fit the retro desktop style, with only minor modern polish/stylization."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    }
+  ],
+  "personalizedVoice": {
+    "candidates": [
+      {
+        "file": "public/media/original/greeting.wav",
+        "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+        "timbre": 100,
+        "pitch": 100,
+        "rhythm": 100,
+        "overall": 100,
+        "concrete_differences": "Exact match (identical file)."
+      },
+      {
+        "file": "analysis/final-personalized-greeting-v4.wav",
+        "transcript": "Good morning, Thomas. What will your first sequence of the day be?",
+        "timbre": 97,
+        "pitch": 96,
+        "rhythm": 95,
+        "overall": 96,
+        "concrete_differences": "The name is changed from 'Paul' to 'Thomas'. The spliced/synthesized name 'Thomas' has slightly different acoustic boundary transitions compared to the original, but the robotic filter, vocoder quality, pitch contour, and underlying speaker profile are extremely closely matched."
+      }
+    ],
+    "best_file": "public/media/original/greeting.wav"
+  },
+  "music": {
+    "clips": [
+      {
+        "name": "SHIMMYCELERY base",
+        "style": 96,
+        "coherence": 94,
+        "unwanted_speech": false,
+        "observations": "Authentic cheesy 1990s dance-pop MIDI sound with bright synth brass/lead stabs, electro-toms, and a classic four-on-the-floor beat matching the retro novelty aesthetic cleanly."
+      },
+      {
+        "name": "SHIMMYCELERY base (duplicate)",
+        "style": 96,
+        "coherence": 94,
+        "unwanted_speech": false,
+        "observations": "Identical musical take featuring clean synth percussion, snappy retro MIDI brass hooks, and continuous energetic groove with no speech."
+      },
+      {
+        "name": "WOBBLETOPPURPLE base",
+        "style": 93,
+        "coherence": 95,
+        "unwanted_speech": false,
+        "observations": "Playful 90s dance track featuring bright synth leads, funky bassline, and punchy drum machine groove. Clean mix with zero vocal artifacts."
+      },
+      {
+        "name": "WOBBLETOPPURPLE smile",
+        "style": 94,
+        "coherence": 95,
+        "unwanted_speech": false,
+        "observations": "Consistent upbeat 90s eurodance/novelty MIDI instrumentation with percussive synth bells, steady dance beat, and clear rhythmic structure."
+      }
+    ],
+    "overall": "All clips nail the low-budget early 90s computer dance sketch aesthetic with bright MIDI synths, clean rhythmic drive, and completely instrumental, speech-free audio."
+  },
+  "generationSeconds": [
+    {
+      "character": "SHIMMYCELERY",
+      "variant": "base",
+      "seconds": 24.122399999976157
+    },
+    {
+      "character": "SHIMMYCELERY",
+      "variant": "base",
+      "seconds": 4.013799999952316
+    },
+    {
+      "character": "WOBBLETOPPURPLE",
+      "variant": "base",
+      "seconds": 21.09790000009537
+    },
+    {
+      "character": "WOBBLETOPPURPLE",
+      "variant": "smile",
+      "seconds": 21.089899999976158
+    }
+  ],
+  "limits": [
+    "Perceptual model grades are estimates and vary across runs; source/clone screenshots and recordings are retained.",
+    "Timed replay uses cached generated Paul assets and real STT transcripts scheduled at reference response times; fresh generation latency is measured separately.",
+    "Scripted computer replies and canonical music are source recordings. Personalized name units and arbitrary novel speech are synthesized approximations.",
+    "Whole-person generated video only; no face overlays. The reviewed engaged Paul clip uses an authorized whole-body source pose and generated frames aligned to the reference cycle.",
+    "Virtual printer; local-only server; no public deployment."
+  ],
+  "sourceHashes": {
+    "src/main.ts": "4e5b49f15b2090c340fe10a501a9980f42dce9763b76b15fedcff530cfa399f5",
+    "src/style.css": "5d557d5a43fbe01b887cd6cbd10017e90dc707677f427917d313c5a11e74b3f3",
+    "src/audio.ts": "c412eff48b8a137f66c722115b244fb5c98b12f24188b88d94237df773b1ef73",
+    "src/protocol.ts": "091068d5fa87fb004270379676d91329ced577b31f4789ebe6d61ab49d08e40e",
+    "server/api.ts": "2b3513fee9d64869c5f58086b076f32115e385f4d9150f19b4d5b98880bbc456",
+    "server/choreography.ts": "f3c48fa1131b4414c7cf96c3a5c4804e70ee903b84d50c1a86d436fa035f2e01",
+    "server/personalized-voice.ts": "b8c7cbeb744c1e821a804ccdb0c27ddbf8f61f6ed3a4e0cf48a8e13e27cf767e",
+    "vite.config.ts": "50bcb0d9f9aa2a90e5dc0d5fdd64fbca3698a02b3e5999e2565a2db39dec588b"
+  }
+}

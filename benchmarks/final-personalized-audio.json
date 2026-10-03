@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    {
+      "file": "public/media/original/greeting.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "Exact match (identical file)."
+    },
+    {
+      "file": "analysis/final-personalized-greeting-v4.wav",
+      "transcript": "Good morning, Thomas. What will your first sequence of the day be?",
+      "timbre": 97,
+      "pitch": 96,
+      "rhythm": 95,
+      "overall": 96,
+      "concrete_differences": "The name is changed from 'Paul' to 'Thomas'. The spliced/synthesized name 'Thomas' has slightly different acoustic boundary transitions compared to the original, but the robotic filter, vocoder quality, pitch contour, and underlying speaker profile are extremely closely matched."
+    }
+  ],
+  "best_file": "public/media/original/greeting.wav"
+}

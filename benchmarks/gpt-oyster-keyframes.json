@@ -1,0 +1,64 @@
+{
+  "scores": {
+    "choreography_timing": 76,
+    "wardrobe": 88,
+    "background": 94,
+    "camera_framing": 92,
+    "retro_low_budget_dance_video_look": 93
+  },
+  "overall": 85,
+  "pass_nearly_perfect": false,
+  "concrete_observable_deductions": [
+    {
+      "category": "choreography_timing",
+      "deduction": 24,
+      "observations": [
+        "The same general wide-legged dance motif is present, with repeated forward bends and upright rebounds, but many sampled poses do not line up frame-for-frame.",
+        "In the first row, B holds a more upright hands-clasped stance for the first two frames, while A is already transitioning into a stronger bend by the second and third frames.",
+        "Across the middle rows, A alternates more abruptly between deep forward bends and upright/arms-down poses, while B has longer runs of similar leaning or bent poses.",
+        "Hat/cap toss moments are not synchronized: A shows the loose hat/headwear at different sampled positions and frames than B.",
+        "Several arm positions differ: A has more frames with arms dropped outward or fists down at the sides, while B more often keeps the hands clasped low in front."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "deduction": 12,
+      "observations": [
+        "Both videos preserve the main outfit: red jacket over dark shirt, black pants, black shoes, and loose/throwing headwear.",
+        "B's jacket reads slightly smoother/neater and less bulky than A's in several frames.",
+        "A shows clearer red striping or detailing along the black pants in multiple frames; this is less visible or less consistent in B.",
+        "The headwear/hair presentation differs: A often reads as having a red cap or raised red headwear, while B shows darker hair and a darker loose cap in several samples."
+      ]
+    },
+    {
+      "category": "background",
+      "deduction": 6,
+      "observations": [
+        "The pale yellow studio background with cyan/greenish gradient areas is closely reproduced.",
+        "B's cyan patching/gradient appears somewhat cleaner and more block-like in places, but the overall background color scheme and simplicity match well."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "deduction": 8,
+      "observations": [
+        "Both are full-body, slightly high-angle, centered dance-video shots.",
+        "B is very similar in scale, but the body appears slightly differently placed and sometimes a bit larger/lower in the frame compared with A.",
+        "No major camera or scene mismatch is observed."
+      ]
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction": 7,
+      "observations": [
+        "The low-budget studio dance-video look is largely preserved: simple colored backdrop, full-body dancer, minimal set, saturated red jacket.",
+        "B looks a little cleaner and more digitally polished than A, with slightly less of the rough/quirky sampled-video feel."
+      ]
+    }
+  ],
+  "identity_face_note": "Face and beard differences are visible, but minor identity/face personalization differences were not heavily penalized per instruction.",
+  "uncertainty_due_to_sampled_frames": {
+    "level": "medium",
+    "reason": "The comparison is based on 30 sampled contact-sheet frames at 1/6 second spacing. Some timing differences could be partly due to sampling phase, but the repeated pose-order and hat-timing mismatches are visible across many frames."
+  }
+}

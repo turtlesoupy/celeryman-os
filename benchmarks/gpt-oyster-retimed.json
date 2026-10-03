@@ -1,0 +1,44 @@
+{
+  "scores": {
+    "choreography_pose_timing": 87,
+    "wardrobe": 98,
+    "background": 99,
+    "camera_framing": 99,
+    "retro_low_budget_dance_video_look": 99
+  },
+  "deductions": [
+    {
+      "category": "choreography_pose_timing",
+      "points": 8,
+      "observation": "In frame 3, A is more upright with arms/fists lowered out to the sides, while B still has the hands gathered lower/front and the torso less opened, suggesting a timing/pose mismatch."
+    },
+    {
+      "category": "choreography_pose_timing",
+      "points": 5,
+      "observation": "In frame 9, A is more upright with the head/torso raised and arms down, while B is bent farther forward with the head lower, closer to a different moment in the move."
+    },
+    {
+      "category": "wardrobe",
+      "points": 2,
+      "observation": "Wardrobe is highly consistent: red jacket, black shirt/pants, dark boots, and white trim/chain details match. Only very small differences in jacket edge/trim rendering are visible."
+    },
+    {
+      "category": "background",
+      "points": 1,
+      "observation": "The pale yellow-green gradient background matches closely; only minimal color/gradient variation is visible."
+    },
+    {
+      "category": "camera_framing",
+      "points": 1,
+      "observation": "Full-body framing and static camera angle match closely; only tiny differences in body placement/scale are visible."
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "points": 1,
+      "observation": "The simple studio setup, saturated red costume, flat lighting, and retro low-budget dance-video feel are preserved very closely."
+    }
+  ],
+  "overall": 94,
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": "Moderate-low. The 0.5-second contact sheets show strong scene/wardrobe/framing consistency, but a couple sampled frames show observable pose/timing differences. Unsampled motion between frames could slightly improve or worsen the choreography score."
+}

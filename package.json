@@ -1,0 +1,33 @@
+{
+  "name": "celeryman",
+  "version": "1.0.0",
+  "description": "Private Cinco desktop with personalized whole-person generated dance videos",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "test": "tsx scripts/benchmark.ts",
+    "assets": "python3 scripts/extract.py",
+    "benchmark:live": "tsx scripts/benchmark.ts --live",
+    "benchmark:audio": "tsx scripts/benchmark.ts --live --audio",
+    "benchmark:timed": "tsx scripts/timed-sketch.ts",
+    "benchmark:generalization": "tsx scripts/generalization.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "playwright": "^1.63.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2"
+  },
+  "dependencies": {
+    "@fal-ai/client": "^1.10.1",
+    "dotenv": "^18.0.5",
+    "openai": "^7.27.0"
+  },
+  "private": true
+}

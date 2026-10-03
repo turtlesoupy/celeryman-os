@@ -1,0 +1,77 @@
+{
+  "scores": {
+    "faithful_choreography": 90,
+    "wardrobe": 86,
+    "background": 95,
+    "camera_framing": 94,
+    "retro_low_budget_dance_video_look": 89
+  },
+  "deductions": {
+    "faithful_choreography": [
+      {
+        "points": 4,
+        "observation": "The overall sequence and most sampled poses align, but several frames have different arm height or arm extension, especially where A has a more extended forward hand or higher raised fist while B keeps the hand closer to the torso."
+      },
+      {
+        "points": 3,
+        "observation": "Some torso leans are less exaggerated in B; A often has a stronger backward/side lean and more belly-forward posture."
+      },
+      {
+        "points": 3,
+        "observation": "Leg stance and knee bend differ in a few cells: B is sometimes more upright or has straighter legs where A is squatting or more bow-legged."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 5,
+        "observation": "B keeps the same black suit/white shirt/tie concept, but the suit appears darker and cleaner, while A has a shinier gray-black, more crinkled low-budget fabric look."
+      },
+      {
+        "points": 4,
+        "observation": "A's pants look more baggy, loose, and wrinkled; B's pants are generally smoother and sometimes narrower."
+      },
+      {
+        "points": 3,
+        "observation": "A shows more visible rumpling/open jacket flare and strap/tie details varying with motion; B's tie and shirt front look more regular and simplified."
+      },
+      {
+        "points": 2,
+        "observation": "Minor differences in jacket length/shape and sleeve bunching are visible across multiple frames."
+      }
+    ],
+    "background": [
+      {
+        "points": 5,
+        "observation": "Both are plain studio backgrounds, but A is closer to white while B has a pale green-gray tint."
+      }
+    ],
+    "camera_framing": [
+      {
+        "points": 3,
+        "observation": "Full-body framing and scale are very similar, but B is slightly more consistently centered/upright in some frames where A has more lateral lean or edge cropping."
+      },
+      {
+        "points": 3,
+        "observation": "The per-frame body scale and bottom crop are close but not perfectly identical across the sheet."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 4,
+        "observation": "B preserves the plain-background cutout dance-video feel, but looks somewhat cleaner and more digitally regenerated than A."
+      },
+      {
+        "points": 4,
+        "observation": "A has stronger shiny, wrinkled, overlit costume texture that contributes to the retro low-budget look; B smooths some of that texture."
+      },
+      {
+        "points": 3,
+        "observation": "The background tint and cleaner facial/body rendering in B reduce the exact vintage source-video impression."
+      }
+    ]
+  },
+  "observed_face_identity_note": "B's face/identity is different from A, but this was treated as allowable identity personalization and not heavily penalized except where it contributes to the cleaner regenerated look.",
+  "overall": 91,
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": "Moderate-low. The sampled frames show strong pose and timing correspondence, but motion smoothness and any between-frame timing errors cannot be fully verified from a 1/6-second contact sheet."
+}

@@ -1,0 +1,56 @@
+{
+  "scores": {
+    "choreography": 93,
+    "wardrobe": 90,
+    "background": 98,
+    "camera_framing": 96,
+    "retro_low_budget_dance_video_look": 96
+  },
+  "overall": 94,
+  "pass_nearly_perfect": false,
+  "deductions": [
+    {
+      "category": "choreography",
+      "points_deducted": 7,
+      "observations": [
+        "The broad dance sequence is closely matched: wide stance, repeated forward bends, upright returns, side leans, and hand positions occur in the same chronological order.",
+        "Some sampled poses are not exact: several frames show different head angle or torso height, especially in upright/transition poses such as around row 1 column 5, row 3 column 3, and row 5 column 6.",
+        "No major pose is missing in the sampled frames, but the regenerated version is not frame-identical in timing and body/head orientation."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "points_deducted": 10,
+      "observations": [
+        "Main costume is faithful: red jacket, dark shirt, dark pants, dark shoes, and necklace/chain are retained.",
+        "A has a very visible tall/flipping red-gray hair or headwear silhouette in multiple frames, including row 1 columns 4-5, row 3 column 1, and row 5 column 3. B instead shows short/dark hair or a different head silhouette and does not reproduce that flipping/tall red head detail.",
+        "Minor clothing shape and trim differences are visible in the jacket opening/collar area, but the overall outfit color scheme remains correct."
+      ]
+    },
+    {
+      "category": "background",
+      "points_deducted": 2,
+      "observations": [
+        "The simple pale yellow/green studio background with cyan tinting is preserved.",
+        "B appears slightly more saturated/yellow in some cells, with subtly different cyan gradient patches, but the scene is clearly the same type of background."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "points_deducted": 4,
+      "observations": [
+        "Both videos use a fixed, full-body, front-facing framing with the dancer centered similarly.",
+        "There are small scale/centering differences; in some sampled frames B places the head or upper body slightly differently within the frame, for example near the final frame where the head appears closer to the top edge than in A."
+      ]
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "points_deducted": 4,
+      "observations": [
+        "The low-budget studio dance-video look is largely retained: flat lighting, simple color-gradient backdrop, saturated red jacket, and fixed-camera full-body performance.",
+        "B looks a little cleaner and more uniformly generated, and the missing tall/flipping head silhouette slightly changes the quirky retro performance feel."
+      ]
+    }
+  ],
+  "uncertainty_due_to_sampled_frames": "Low to moderate. The contact sheets provide 30 frames at 1/6-second spacing, enough to judge the main pose sequence and visual setup, but not enough to verify exact in-between motion timing, smoothness, or brief unsampled pose errors."
+}

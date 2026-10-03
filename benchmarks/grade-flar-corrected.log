@@ -1,0 +1,56 @@
+{
+  "scores": {
+    "choreography_timing": 97,
+    "wardrobe": 95,
+    "background": 96,
+    "camera_framing": 98,
+    "retro_low_budget_dance_video_look": 96
+  },
+  "deductions": [
+    {
+      "category": "choreography_timing",
+      "points": 3,
+      "observations": [
+        "The chronological pose sequence is preserved across the sheet: jumps, side-pointing arm poses, and high-knee kicks occur in the same sampled positions.",
+        "Only small pose-angle differences are visible, such as the raised leg/arm angle in row 1 column 3 and the jump leg positions around row 5 columns 4-5.",
+        "No sampled pose appears missing or replaced."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "points": 5,
+      "observations": [
+        "The hat, sunglasses, orange/black patterned shirt, shiny black pants, and black footwear are all retained.",
+        "The shirt pattern is not identical: B shows slightly different distribution/shape of the ornate gold-black motifs, especially on the torso and sleeves.",
+        "Minor fabric shine and wrinkle differences are visible on the pants."
+      ]
+    },
+    {
+      "category": "background",
+      "points": 4,
+      "observations": [
+        "Both videos use a plain studio-like background with no set changes.",
+        "B has a slight greenish/off-white tint compared with A's more neutral light gray/white background."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "points": 2,
+      "observations": [
+        "Framing and scale are very close, with the dancer occupying nearly the same area in corresponding frames.",
+        "There are only tiny crop/position differences at some edges, not enough to affect the choreography match."
+      ]
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "points": 4,
+      "observations": [
+        "The low-budget isolated dancer-on-plain-background aesthetic is preserved.",
+        "B appears slightly cleaner/more color-tinted, with subtly different contrast and saturation from A."
+      ]
+    }
+  ],
+  "overall": 96,
+  "pass_nearly_perfect": true,
+  "uncertainty_due_to_sampled_frames": "Low to moderate. The 30 sampled frames show highly consistent choreography and styling, but motion between the 1/6-second samples cannot be fully verified."
+}

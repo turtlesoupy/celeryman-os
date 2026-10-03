@@ -1,0 +1,1151 @@
+{
+  "started": "2026-10-03T07:09:15.333Z",
+  "mode": "reference-protocol",
+  "checks": [
+    {
+      "kind": "protocol",
+      "input": "Good morning",
+      "expected": "greeting",
+      "actual": "greeting",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Computer, load up Celery Man, please.",
+      "expected": "celery",
+      "actual": "celery",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Could you kick up the 4d3d3d3?",
+      "expected": "engage",
+      "actual": "engage",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "add sequence: OYSTER",
+      "expected": "oyster",
+      "actual": "oyster",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Give me a printout of Oyster smiling.",
+      "expected": "print",
+      "actual": "print",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Computer?",
+      "expected": "attention",
+      "actual": "attention",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Do we have any new sequences?",
+      "expected": "beta",
+      "actual": "beta",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "All right.",
+      "expected": "tayne",
+      "actual": "tayne",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Now Tayne I can get into.",
+      "expected": "reaction",
+      "actual": "reaction",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Could I see a hat wobble?",
+      "expected": "hat",
+      "actual": "hat",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "And a flarhgunnstow?",
+      "expected": "flarhgunnstow",
+      "actual": "flarhgunnstow",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Is there any way to generate a nude Tayne?",
+      "expected": "repeat",
+      "actual": "repeat",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Nude Tayne.",
+      "expected": "nsfw",
+      "actual": "nsfw",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Mm-hmm.",
+      "expected": "confirm",
+      "actual": "confirm",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "Oh shit!",
+      "expected": "reaction",
+      "actual": "reaction",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "I'm okay.",
+      "expected": "reaction",
+      "actual": "reaction",
+      "pass": true
+    },
+    {
+      "kind": "protocol",
+      "input": "I'll get it later. We have important work to do.",
+      "expected": "chaos",
+      "actual": "chaos",
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Good morning",
+      "action": "greeting",
+      "lastAction": "greeting",
+      "windows": 2,
+      "elapsedMs": 1976,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Computer, load up Celery Man, please.",
+      "action": "celery",
+      "lastAction": "celery",
+      "windows": 3,
+      "elapsedMs": 2746,
+      "pass": true
+    },
+    {
+      "kind": "drag",
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Could you kick up the 4d3d3d3?",
+      "action": "engage",
+      "lastAction": "engage",
+      "windows": 3,
+      "elapsedMs": 2458,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "add sequence: OYSTER",
+      "action": "oyster",
+      "lastAction": "oyster",
+      "windows": 5,
+      "elapsedMs": 2016,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Give me a printout of Oyster smiling.",
+      "action": "print",
+      "lastAction": "print",
+      "windows": 6,
+      "elapsedMs": 2450,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Computer?",
+      "action": "attention",
+      "lastAction": "attention",
+      "windows": 6,
+      "elapsedMs": 2305,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Do we have any new sequences?",
+      "action": "beta",
+      "lastAction": "beta",
+      "windows": 1,
+      "elapsedMs": 2488,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "All right.",
+      "action": "tayne",
+      "lastAction": "tayne",
+      "windows": 3,
+      "elapsedMs": 6943,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Now Tayne I can get into.",
+      "action": "reaction",
+      "lastAction": "reaction",
+      "windows": 3,
+      "elapsedMs": 2507,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Could I see a hat wobble?",
+      "action": "hat",
+      "lastAction": "hat",
+      "windows": 7,
+      "elapsedMs": 2949,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "And a flarhgunnstow?",
+      "action": "flarhgunnstow",
+      "lastAction": "flarhgunnstow",
+      "windows": 3,
+      "elapsedMs": 2442,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Is there any way to generate a nude Tayne?",
+      "action": "repeat",
+      "lastAction": "repeat",
+      "windows": 4,
+      "elapsedMs": 2470,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Nude Tayne.",
+      "action": "nsfw",
+      "lastAction": "nsfw",
+      "windows": 2,
+      "elapsedMs": 2746,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Mm-hmm.",
+      "action": "confirm",
+      "lastAction": "call",
+      "windows": 2,
+      "elapsedMs": 9235,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "Oh shit!",
+      "action": "reaction",
+      "lastAction": "reaction",
+      "windows": 2,
+      "elapsedMs": 3197,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "I'm okay.",
+      "action": "reaction",
+      "lastAction": "reaction",
+      "windows": 2,
+      "elapsedMs": 2433,
+      "pass": true
+    },
+    {
+      "kind": "ui-sequence",
+      "input": "I'll get it later. We have important work to do.",
+      "action": "chaos",
+      "lastAction": "chaos",
+      "windows": 47,
+      "elapsedMs": 7405,
+      "pass": true
+    },
+    {
+      "kind": "video-playback",
+      "pass": true
+    },
+    {
+      "kind": "audible-computer",
+      "pass": true
+    },
+    {
+      "kind": "voice-playback-errors",
+      "pass": true
+    },
+    {
+      "kind": "console",
+      "pass": true
+    },
+    {
+      "kind": "generation-errors",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "events": [
+    {
+      "kind": "input",
+      "text": "Good morning",
+      "source": "benchmark-voice-transcript",
+      "time": 212
+    },
+    {
+      "kind": "action",
+      "action": "greeting",
+      "response": "Good morning Paul.\nWhat will your first sequence of the day be?",
+      "audio": "greeting",
+      "provider": "reference-protocol",
+      "time": 219.10000002384186
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/greeting.wav",
+      "text": "Good morning Paul.\nWhat will your first sequence of the day be?",
+      "time": 220.10000002384186
+    },
+    {
+      "kind": "command-complete",
+      "text": "Good morning",
+      "action": "greeting",
+      "time": 232.69999992847443
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/greeting.wav",
+      "text": "Good morning Paul.\nWhat will your first sequence of the day be?",
+      "time": 246.89999997615814
+    },
+    {
+      "kind": "terminal",
+      "text": "Good morning Paul.\nWhat will your first sequence of the day be?",
+      "time": 1734.6000000238419
+    },
+    {
+      "kind": "transcription",
+      "text": "Computer, load up Celery Man, please."
+    },
+    {
+      "kind": "input",
+      "text": "Computer, load up Celery Man, please.",
+      "source": "microphone",
+      "time": 2947.2999999523163
+    },
+    {
+      "kind": "action",
+      "action": "celery",
+      "response": "Yes, Paul!",
+      "audio": "yes-paul",
+      "provider": "reference-protocol",
+      "time": 2948.5
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/yes-paul.wav",
+      "text": "Yes, Paul!",
+      "time": 2948.6999999284744
+    },
+    {
+      "kind": "command-complete",
+      "text": "Computer, load up Celery Man, please.",
+      "action": "celery",
+      "time": 2949.399999976158
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/yes-paul.wav",
+      "text": "Yes, Paul!",
+      "time": 2956.2999999523163
+    },
+    {
+      "kind": "terminal",
+      "text": "Yes, Paul!",
+      "time": 3187
+    },
+    {
+      "kind": "transcription",
+      "text": "Could you kick up the 43d3d3?"
+    },
+    {
+      "kind": "input",
+      "text": "Could you kick up the 43d3d3?",
+      "source": "microphone",
+      "time": 5636.899999976158
+    },
+    {
+      "kind": "action",
+      "action": "engage",
+      "response": "4d3d3d3 Engaged.",
+      "audio": "engaged",
+      "provider": "reference-protocol",
+      "time": 5637.699999928474
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/engaged.wav",
+      "text": "4d3d3d3 Engaged.",
+      "time": 5637.799999952316
+    },
+    {
+      "kind": "command-complete",
+      "text": "Could you kick up the 43d3d3?",
+      "action": "engage",
+      "time": 5641.100000023842
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/engaged.wav",
+      "text": "4d3d3d3 Engaged.",
+      "time": 5649
+    },
+    {
+      "kind": "terminal",
+      "text": "4d3d3d3 Engaged.",
+      "time": 6021.100000023842
+    },
+    {
+      "kind": "input",
+      "text": "add sequence: OYSTER",
+      "source": "keyboard",
+      "time": 7616.5
+    },
+    {
+      "kind": "action",
+      "action": "oyster",
+      "response": "add sequence: OYSTER",
+      "provider": "reference-protocol",
+      "time": 7631
+    },
+    {
+      "kind": "command-complete",
+      "text": "add sequence: OYSTER",
+      "action": "oyster",
+      "time": 7632
+    },
+    {
+      "kind": "terminal",
+      "text": "add sequence: OYSTER",
+      "time": 8119.799999952316
+    },
+    {
+      "kind": "transcription",
+      "text": "Give me a printout of Oyster smiling."
+    },
+    {
+      "kind": "input",
+      "text": "Give me a printout of Oyster smiling.",
+      "source": "microphone",
+      "time": 10102.799999952316
+    },
+    {
+      "kind": "action",
+      "action": "print",
+      "response": "Okay.",
+      "audio": "print",
+      "target": "oyster",
+      "provider": "reference-protocol",
+      "time": 10103.5
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/print.wav",
+      "text": "Okay.",
+      "time": 10103.600000023842
+    },
+    {
+      "kind": "command-complete",
+      "text": "Give me a printout of Oyster smiling.",
+      "action": "print",
+      "time": 10103.799999952316
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/print.wav",
+      "text": "Okay.",
+      "time": 10111
+    },
+    {
+      "kind": "transcription",
+      "text": "Computer?"
+    },
+    {
+      "kind": "input",
+      "text": "Computer?",
+      "source": "microphone",
+      "time": 12407.600000023842
+    },
+    {
+      "kind": "action",
+      "action": "attention",
+      "response": "Yes.",
+      "audio": "yes",
+      "provider": "reference-protocol",
+      "time": 12409
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/yes.wav",
+      "text": "Yes.",
+      "time": 12409
+    },
+    {
+      "kind": "command-complete",
+      "text": "Computer?",
+      "action": "attention",
+      "time": 12409.199999928474
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/yes.wav",
+      "text": "Yes.",
+      "time": 12411.299999952316
+    },
+    {
+      "kind": "terminal",
+      "text": "Yes.",
+      "time": 12504
+    },
+    {
+      "kind": "transcription",
+      "text": "Do we have any new sequences?"
+    },
+    {
+      "kind": "input",
+      "text": "Do we have any new sequences?",
+      "source": "microphone",
+      "time": 14921.600000023842
+    },
+    {
+      "kind": "action",
+      "action": "beta",
+      "response": "I have a BETA sequence\nI have been working on\n\nWould you like to see it?",
+      "audio": "beta",
+      "provider": "reference-protocol",
+      "time": 14923
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/beta.wav",
+      "text": "I have a BETA sequence\nI have been working on\n\nWould you like to see it?",
+      "time": 14923.100000023842
+    },
+    {
+      "kind": "command-complete",
+      "text": "Do we have any new sequences?",
+      "action": "beta",
+      "time": 14926.799999952316
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/beta.wav",
+      "text": "I have a BETA sequence\nI have been working on\n\nWould you like to see it?",
+      "time": 14930.899999976158
+    },
+    {
+      "kind": "terminal",
+      "text": "I have a BETA sequence\nI have been working on\n\nWould you like to see it?",
+      "time": 16649.399999976158
+    },
+    {
+      "kind": "transcription",
+      "text": "All right."
+    },
+    {
+      "kind": "input",
+      "text": "All right.",
+      "source": "microphone",
+      "time": 17239.799999952316
+    },
+    {
+      "kind": "action",
+      "action": "tayne",
+      "response": "Okay.",
+      "audio": "okay",
+      "provider": "reference-protocol",
+      "time": 17241.100000023842
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/okay.wav",
+      "text": "Okay.",
+      "time": 17241.199999928474
+    },
+    {
+      "kind": "command-complete",
+      "text": "All right.",
+      "action": "tayne",
+      "time": 17241.399999976158
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/okay.wav",
+      "text": "Okay.",
+      "time": 17248.199999928474
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/intro.wav",
+      "text": "Hey Paul. I'm Tayne, your latest dancer. I can't wait to entertain you.",
+      "time": 18396.199999928474
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/intro.wav",
+      "text": "Hey Paul. I'm Tayne, your latest dancer. I can't wait to entertain you.",
+      "time": 18407.199999928474
+    },
+    {
+      "kind": "transcription",
+      "text": "Now Tayne I can get into."
+    },
+    {
+      "kind": "input",
+      "text": "Now Tayne I can get into.",
+      "source": "microphone",
+      "time": 24342.299999952316
+    },
+    {
+      "kind": "action",
+      "action": "reaction",
+      "response": "",
+      "provider": "reference-protocol",
+      "time": 24343
+    },
+    {
+      "kind": "command-complete",
+      "text": "Now Tayne I can get into.",
+      "action": "reaction",
+      "time": 24343.100000023842
+    },
+    {
+      "kind": "transcription",
+      "text": "Could I see a hat wobble?"
+    },
+    {
+      "kind": "input",
+      "text": "Could I see a hat wobble?",
+      "source": "microphone",
+      "time": 27307.299999952316
+    },
+    {
+      "kind": "action",
+      "action": "hat",
+      "response": "HAT WOBBLE",
+      "audio": "hat",
+      "provider": "reference-protocol",
+      "time": 27308.399999976158
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/hat.wav",
+      "text": "HAT WOBBLE",
+      "time": 27308.5
+    },
+    {
+      "kind": "command-complete",
+      "text": "Could I see a hat wobble?",
+      "action": "hat",
+      "time": 27310.199999928474
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/hat.wav",
+      "text": "HAT WOBBLE",
+      "time": 27317.399999976158
+    },
+    {
+      "kind": "terminal",
+      "text": "HAT WOBBLE",
+      "time": 27551.699999928474
+    },
+    {
+      "kind": "transcription",
+      "text": "and a flarhgunnstow"
+    },
+    {
+      "kind": "input",
+      "text": "and a flarhgunnstow",
+      "source": "microphone",
+      "time": 29755.899999976158
+    },
+    {
+      "kind": "action",
+      "action": "flarhgunnstow",
+      "response": "FLARHGUNNSTOW",
+      "audio": "flower",
+      "provider": "reference-protocol",
+      "time": 29756.699999928474
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/flower.wav",
+      "text": "FLARHGUNNSTOW",
+      "time": 29756.899999976158
+    },
+    {
+      "kind": "command-complete",
+      "text": "and a flarhgunnstow",
+      "action": "flarhgunnstow",
+      "time": 29758
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/flower.wav",
+      "text": "FLARHGUNNSTOW",
+      "time": 29769.5
+    },
+    {
+      "kind": "terminal",
+      "text": "FLARHGUNNSTOW",
+      "time": 30077.299999952316
+    },
+    {
+      "kind": "transcription",
+      "text": "Is there any way to generate a nude Tayne?"
+    },
+    {
+      "kind": "input",
+      "text": "Is there any way to generate a nude Tayne?",
+      "source": "microphone",
+      "time": 32210.699999928474
+    },
+    {
+      "kind": "action",
+      "action": "repeat",
+      "response": "Not computing. Please repeat.",
+      "audio": "repeat",
+      "provider": "reference-protocol",
+      "time": 32211.5
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/repeat.wav",
+      "text": "Not computing. Please repeat.",
+      "time": 32211.600000023842
+    },
+    {
+      "kind": "command-complete",
+      "text": "Is there any way to generate a nude Tayne?",
+      "action": "repeat",
+      "time": 32212.199999928474
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/repeat.wav",
+      "text": "Not computing. Please repeat.",
+      "time": 32215.699999928474
+    },
+    {
+      "kind": "terminal",
+      "text": "Not computing. Please repeat.",
+      "time": 32920.699999928474
+    },
+    {
+      "kind": "transcription",
+      "text": "Nude Tayne."
+    },
+    {
+      "kind": "input",
+      "text": "Nude Tayne.",
+      "source": "microphone",
+      "time": 34989.5
+    },
+    {
+      "kind": "action",
+      "action": "nsfw",
+      "response": "This is not suitable for work.\nAre you sure?",
+      "audio": "nsfw",
+      "provider": "reference-protocol",
+      "time": 34990.199999928474
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/nsfw.wav",
+      "text": "This is not suitable for work.\nAre you sure?",
+      "time": 34990.299999952316
+    },
+    {
+      "kind": "command-complete",
+      "text": "Nude Tayne.",
+      "action": "nsfw",
+      "time": 34990.799999952316
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/nsfw.wav",
+      "text": "This is not suitable for work.\nAre you sure?",
+      "time": 34997.39999997616
+    },
+    {
+      "kind": "transcription",
+      "text": "Mm-hmm."
+    },
+    {
+      "kind": "input",
+      "text": "Mm-hmm.",
+      "source": "microphone",
+      "time": 38568.799999952316
+    },
+    {
+      "kind": "action",
+      "action": "confirm",
+      "response": "Okay.",
+      "audio": "confirm",
+      "provider": "reference-protocol",
+      "time": 38569.699999928474
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/confirm.wav",
+      "text": "Okay.",
+      "time": 38569.799999952316
+    },
+    {
+      "kind": "command-complete",
+      "text": "Mm-hmm.",
+      "action": "confirm",
+      "time": 38570.299999952316
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/confirm.wav",
+      "text": "Okay.",
+      "time": 38577.60000002384
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/call.wav",
+      "text": "Excuse me Paul. Your wife is on the phone. It's an emergency.",
+      "time": 45471.39999997616
+    },
+    {
+      "kind": "action",
+      "action": "call",
+      "time": 45471.5
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/call.wav",
+      "text": "Excuse me Paul. Your wife is on the phone. It's an emergency.",
+      "time": 45487.199999928474
+    },
+    {
+      "kind": "transcription",
+      "text": "Oh, s***."
+    },
+    {
+      "kind": "input",
+      "text": "Oh, s***.",
+      "source": "microphone",
+      "time": 47362.10000002384
+    },
+    {
+      "kind": "action",
+      "action": "reaction",
+      "response": "",
+      "provider": "reference-protocol",
+      "time": 47362.799999952316
+    },
+    {
+      "kind": "command-complete",
+      "text": "Oh, s***.",
+      "action": "reaction",
+      "time": 47362.799999952316
+    },
+    {
+      "kind": "transcription",
+      "text": "I'm okay."
+    },
+    {
+      "kind": "input",
+      "text": "I'm okay.",
+      "source": "microphone",
+      "time": 49805.60000002384
+    },
+    {
+      "kind": "action",
+      "action": "reaction",
+      "response": "",
+      "provider": "reference-protocol",
+      "time": 49806.39999997616
+    },
+    {
+      "kind": "command-complete",
+      "text": "I'm okay.",
+      "action": "reaction",
+      "time": 49806.39999997616
+    },
+    {
+      "kind": "transcription",
+      "text": "I'll get it later. We have important work to do."
+    },
+    {
+      "kind": "input",
+      "text": "I'll get it later. We have important work to do.",
+      "source": "microphone",
+      "time": 52531.5
+    },
+    {
+      "kind": "action",
+      "action": "chaos",
+      "response": "ERROR: BETA TAYNE\nIMPROPER CODING",
+      "provider": "reference-protocol",
+      "time": 52532.199999928474
+    },
+    {
+      "kind": "command-complete",
+      "text": "I'll get it later. We have important work to do.",
+      "action": "chaos",
+      "time": 52532.39999997616
+    }
+  ],
+  "media": [
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery.mp4",
+      "readyState": 4,
+      "currentTime": 0.806575
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster.mp4",
+      "readyState": 4,
+      "currentTime": 1.754443
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne.mp4",
+      "readyState": 4,
+      "currentTime": 0.265814
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery.mp4",
+      "readyState": 4,
+      "currentTime": 0.554622
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster.mp4",
+      "readyState": 4,
+      "currentTime": 1.491933
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne.mp4",
+      "readyState": 4,
+      "currentTime": 1.568233
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery.mp4",
+      "readyState": 4,
+      "currentTime": 0.291023
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster.mp4",
+      "readyState": 4,
+      "currentTime": 1.244048
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne.mp4",
+      "readyState": 4,
+      "currentTime": 1.331139
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery.mp4",
+      "readyState": 4,
+      "currentTime": 0.041939
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster.mp4",
+      "readyState": 4,
+      "currentTime": 0.987105
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne.mp4",
+      "readyState": 4,
+      "currentTime": 1.060743
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery.mp4",
+      "readyState": 4,
+      "currentTime": 1.761758
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster.mp4",
+      "readyState": 4,
+      "currentTime": 0.729384
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne.mp4",
+      "readyState": 4,
+      "currentTime": 0.825409
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery.mp4",
+      "readyState": 4,
+      "currentTime": 1.506979
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster.mp4",
+      "readyState": 4,
+      "currentTime": 0.476365
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne.mp4",
+      "readyState": 4,
+      "currentTime": 0.564649
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.575301
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.388519
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne-intro.mp4",
+      "readyState": 4,
+      "currentTime": 3.536867
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.306082
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.108819
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne-intro.mp4",
+      "readyState": 4,
+      "currentTime": 3.279003
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.035366
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster-face.mp4",
+      "readyState": 4,
+      "currentTime": 1.44432
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne-intro.mp4",
+      "readyState": 4,
+      "currentTime": 3.010429
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 1.343312
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster-face.mp4",
+      "readyState": 4,
+      "currentTime": 1.183479
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne-intro.mp4",
+      "readyState": 4,
+      "currentTime": 2.740535
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 1.064889
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.910075
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne-intro.mp4",
+      "readyState": 4,
+      "currentTime": 2.47029
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.796161
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.650045
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne-intro.mp4",
+      "readyState": 4,
+      "currentTime": 2.198113
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.52862
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.379407
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne-intro.mp4",
+      "readyState": 4,
+      "currentTime": 1.924962
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.257631
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster-face.mp4",
+      "readyState": 4,
+      "currentTime": 0.104039
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne-intro.mp4",
+      "readyState": 4,
+      "currentTime": 1.654515
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 1.560589
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/oyster-face.mp4",
+      "readyState": 4,
+      "currentTime": 1.442607
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/tayne-intro.mp4",
+      "readyState": 4,
+      "currentTime": 1.390269
+    },
+    {
+      "src": "http://127.0.0.1:5173/media/original/celery-face.mp4",
+      "readyState": 4,
+      "currentTime": 1.286147
+    }
+  ]
+}

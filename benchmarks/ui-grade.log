@@ -1,0 +1,101 @@
+{
+  "cases": [
+    {
+      "name": "engaged",
+      "layout": 96,
+      "chrome": 93,
+      "typography": 90,
+      "overall": 94,
+      "observed_differences": [
+        "Window positions, sizes, and stacking closely match the source, including the Celery Man, CINCO ID, and Paul's COMPUTER windows.",
+        "Clone window title text and controls are visibly heavier/bolder and cleaner than the softer original.",
+        "The desktop and window interiors have stronger scanline/sharpened rendering in the clone.",
+        "CINCO ID dancer/video content is less washed-out and more detailed than the original frame."
+      ]
+    },
+    {
+      "name": "oyster",
+      "layout": 96,
+      "chrome": 93,
+      "typography": 90,
+      "overall": 94,
+      "observed_differences": [
+        "Foreground OYSTER window placement and overlap over the CINCO ID and Celery Man windows closely matches.",
+        "Paul's COMPUTER window placement and text line match well.",
+        "Clone chrome is crisper and heavier, with stronger bevels and darker title text.",
+        "The OYSTER video/image content is clearer and larger-looking than the blurred original, though the window framing is similar."
+      ]
+    },
+    {
+      "name": "intro",
+      "layout": 97,
+      "chrome": 93,
+      "typography": 91,
+      "overall": 94,
+      "observed_differences": [
+        "Single Tayne window position and size are very close to the original.",
+        "Clone titlebar controls and title text are bolder and cleaner than the source.",
+        "The inner portrait framing is not identical: the clone face is more centered and sharply rendered, while the original appears softer and more right-cropped.",
+        "Desktop cyan color and scanline treatment are close."
+      ]
+    },
+    {
+      "name": "tayne",
+      "layout": 94,
+      "chrome": 92,
+      "typography": 88,
+      "overall": 91,
+      "observed_differences": [
+        "Three-window composition is reproduced: two tall Tayne windows flanking a centered OYSTER window.",
+        "Window sizes and general spacing are close, but the center OYSTER window in the clone sits slightly lower relative to the side windows.",
+        "The side Tayne window contents in the clone have a darker blue/gray tint compared with the whiter interiors in the original.",
+        "Titlebar text and controls are noticeably bolder and sharper in the clone.",
+        "The central TAYNE logo is close but appears cleaner and slightly differently proportioned."
+      ]
+    },
+    {
+      "name": "squat",
+      "layout": 95,
+      "chrome": 92,
+      "typography": 89,
+      "overall": 93,
+      "observed_differences": [
+        "Stacked cascading Tayne windows are closely recreated, with similar offsets and foreground placement.",
+        "Foreground right window size and position are very close to the original.",
+        "Clone chrome and labels are heavier and cleaner than the softer period source.",
+        "Some of the overlapped rear titlebars look more legible/prominent in the clone than in the original.",
+        "The dancer content crop and clarity differ, though the window arrangement is similar."
+      ]
+    },
+    {
+      "name": "hat",
+      "layout": 95,
+      "chrome": 93,
+      "typography": 90,
+      "overall": 94,
+      "observed_differences": [
+        "Nested Tayne windows in the upper-right and Paul's COMPUTER window in the lower-left closely match the source layout.",
+        "The outer nested window in the clone begins slightly below the top edge rather than being as tightly cropped against the top border.",
+        "Chrome, bevels, and titlebar controls are sharper and heavier in the clone.",
+        "The HAT WOBBLE console text is positioned and styled closely, but appears cleaner and more regular in the clone.",
+        "The nested portrait/video content is much sharper in the clone."
+      ]
+    },
+    {
+      "name": "flar",
+      "layout": 5,
+      "chrome": 38,
+      "typography": 30,
+      "overall": 12,
+      "observed_differences": [
+        "Original shows three tall Tayne windows arranged side by side across the screen.",
+        "Clone instead shows a nested stack of pink Tayne windows on the right, not the three equal side-by-side windows.",
+        "Clone adds a large foreground 'Cinco Identity Generator 2.5' dialog that is absent from the original.",
+        "Clone adds a Paul's COMPUTER window at bottom left with 'Initial', absent from the original.",
+        "Original has no large central progress dialog or nested pink-window stack.",
+        "Overall z-order, window count, content, and composition do not match."
+      ]
+    }
+  ],
+  "overall": 82
+}

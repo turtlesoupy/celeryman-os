@@ -1,0 +1,48 @@
+{
+  "scores": {
+    "choreography": 96,
+    "wardrobe": 97,
+    "background": 95,
+    "camera_framing": 96,
+    "retro_low_budget_dance_video_look": 95
+  },
+  "deductions": {
+    "choreography": [
+      {
+        "points": 4,
+        "observation": "The sampled poses match the source very closely: same bent-knee stance, side-facing torso, repeated forward/right arm punch and lower counter-arm. Minor frame-to-frame differences are visible in exact arm extension and hand height in several cells, suggesting very small timing/pose drift rather than missing choreography."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 2,
+        "observation": "Costume is correctly reproduced: black fedora, dark sunglasses, gold/black patterned shirt, shiny black pants and black boots. The shirt pattern and highlights on the pants are not pixel-identical and vary slightly."
+      },
+      {
+        "points": 1,
+        "observation": "Face/skin rendering differs slightly, but this is minor and consistent with allowed identity personalization."
+      }
+    ],
+    "background": [
+      {
+        "points": 5,
+        "observation": "Both are plain studio backgrounds, but A appears closer to clean white while B has a slightly pale green/gray cast. No wrong scene or added objects are visible."
+      }
+    ],
+    "camera_framing": [
+      {
+        "points": 4,
+        "observation": "Full-body framing and scale are very close across the contact sheet. B appears slightly differently centered/spaced in some frames, but the dancer remains fully visible with matching orientation."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 5,
+        "observation": "The simple cutout/studio dance-video look is preserved. B looks slightly smoother/cleaner and less stark-white than A, reducing exact retro low-budget fidelity a little."
+      }
+    ]
+  },
+  "overall": 96,
+  "pass_nearly_perfect": true,
+  "uncertainty_due_to_sampled_frames": "Low to moderate. The 30 sampled frames at 1/6-second spacing show very close matching choreography and styling, but unsampled in-between motion could contain additional timing or limb-position deviations not visible here."
+}

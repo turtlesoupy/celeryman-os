@@ -1,0 +1,55 @@
+{
+  "choreography_score": 96,
+  "wardrobe_score": 96,
+  "background_score": 94,
+  "camera_framing_score": 90,
+  "retro_low_budget_look_score": 92,
+  "overall_score": 94,
+  "pass_nearly_perfect": false,
+  "deductions": [
+    {
+      "category": "choreography",
+      "points": 4,
+      "observations": [
+        "The sequence of hip/hand placement, torso leans, jacket flaring, and leg stances is very closely matched across the sampled frames.",
+        "Minor pose differences are visible: B sometimes has slightly wider or clearer foot placement and subtly different knee/hip angles than A, especially in the standing/leaning frames.",
+        "No missing major pose or obvious timing swap is observed from the contact sheets."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "points": 4,
+      "observations": [
+        "B preserves the black shiny suit, white shirt, dark tie, belt, and loose jacket silhouette.",
+        "Small differences in shirt wrinkling, tie shape/length, jacket folds, and trouser sheen are visible.",
+        "Face and hair differ noticeably, but this is treated as mostly acceptable identity personalization rather than a major wardrobe/choreography error."
+      ]
+    },
+    {
+      "category": "background",
+      "points": 6,
+      "observations": [
+        "Both are plain studio backgrounds.",
+        "A appears closer to a flat white background, while B appears slightly gray with more visible floor/shadow cues."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "points": 10,
+      "observations": [
+        "B is framed farther out / lower, showing the full body and shoes in nearly every sampled frame.",
+        "A is more tightly cropped vertically, with feet or lower legs cut off in several sampled frames, especially the top row.",
+        "Subject scale and vertical placement therefore do not perfectly match."
+      ]
+    },
+    {
+      "category": "retro_low_budget_look",
+      "points": 8,
+      "observations": [
+        "B keeps the simple studio dance-video look and shiny low-budget wardrobe style.",
+        "B looks somewhat cleaner, sharper, and more modern/gray-studio than A, which appears flatter, more washed-out, and more archival."
+      ]
+    }
+  ],
+  "uncertainty_due_to_sampled_frames": "Moderate. The contact sheets sample frames every 0.5 seconds, so fine timing, in-between motion, and brief pose errors cannot be fully evaluated. Based on the visible frames, the choreography is very faithful, while the main observed differences are framing/crop, background tone, and minor styling/rendering changes."
+}

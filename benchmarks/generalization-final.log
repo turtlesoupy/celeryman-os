@@ -1,0 +1,31 @@
+{
+  "checks": [
+    {
+      "kind": "arbitrary-upload",
+      "pass": true
+    },
+    {
+      "kind": "microphone-to-STT-to-LLM-to-video",
+      "pass": true,
+      "transcript": "Computer, show me a shoulder shimmy in a mustard yellow tracksuit."
+    },
+    {
+      "kind": "generation-does-not-reload-page",
+      "pass": true,
+      "navigations": 1
+    },
+    {
+      "kind": "novel-motion-generation",
+      "pass": true
+    },
+    {
+      "kind": "no-reference-dancer-assets",
+      "pass": true
+    },
+    {
+      "kind": "no-runtime-errors",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

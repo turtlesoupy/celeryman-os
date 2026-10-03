@@ -1,0 +1,364 @@
+{
+  "started": "2026-10-03T08:11:10.183Z",
+  "identity": "Thomas Dimson uploaded via file chooser",
+  "checks": [
+    {
+      "kind": "arbitrary-upload",
+      "pass": true
+    },
+    {
+      "kind": "microphone-to-STT-to-LLM-to-video",
+      "pass": true,
+      "transcript": "Computer, show me a shoulder shimmy in a mustard yellow tracksuit."
+    },
+    {
+      "kind": "novel-motion-generation",
+      "pass": true
+    },
+    {
+      "kind": "no-reference-dancer-assets",
+      "pass": true
+    },
+    {
+      "kind": "no-runtime-errors",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "profile": "d0f75fe7-f299-4b2b-b923-615fa08cf651",
+  "events": [
+    {
+      "kind": "input",
+      "text": "Good morning",
+      "source": "boot",
+      "time": 306.09999990463257
+    },
+    {
+      "kind": "action",
+      "action": "greeting",
+      "response": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "provider": "reference-protocol",
+      "time": 332.39999997615814
+    },
+    {
+      "kind": "audio",
+      "src": "/media/voice/bfc96cd43d6a3aacdb9a.wav",
+      "text": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "spokenText": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "time": 1522.0999999046326
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/voice/bfc96cd43d6a3aacdb9a.wav",
+      "text": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "spokenText": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "time": 1530.0999999046326
+    },
+    {
+      "kind": "command-complete",
+      "text": "Good morning",
+      "action": "greeting",
+      "time": 1539.7999999523163
+    },
+    {
+      "kind": "terminal",
+      "text": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "time": 3165.5999999046326
+    },
+    {
+      "kind": "transcription",
+      "text": "Computer, show me a shoulder shimmy in a mustard yellow tracksuit."
+    },
+    {
+      "kind": "input",
+      "text": "Computer, show me a shoulder shimmy in a mustard yellow tracksuit.",
+      "source": "microphone",
+      "time": 10792.899999976158
+    },
+    {
+      "kind": "action",
+      "action": "custom",
+      "response": "Mustard yellow tracksuit shoulder shimmy ready.",
+      "label": "SHIMMYTROOPER",
+      "motion": "Begin with feet shoulder-width apart. Shift weight to the left foot as the right shoulder lifts upward and forward sharply over 0.5 seconds, then drop it back down over 0.5 seconds as the left shoulder lifts similarly over the next second. Alternate this shoulder lifting and dropping rhythmically for five seconds, keeping elbows slightly bent and arms relaxed at sides. Body leans subtly side to side in sync with shoulder movements, head held straight forward.",
+      "costume": "A mustard yellow tracksuit consisting of a zip-up jacket with a high collar and matching tapered pants, white sneakers, and no accessories.",
+      "audio": "okay",
+      "provider": "gpt-4.1-mini",
+      "time": 12648.599999904633
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/okay.wav",
+      "text": "Mustard yellow tracksuit shoulder shimmy ready.",
+      "spokenText": "Okay.",
+      "time": 12648.699999928474
+    },
+    {
+      "kind": "generation",
+      "id": "4e1c414a78857874eac1",
+      "request": {
+        "profile": "d0f75fe7-f299-4b2b-b923-615fa08cf651",
+        "character": "SHIMMYTROOPER",
+        "variant": "base",
+        "canonical": false,
+        "motion": "Begin with feet shoulder-width apart. Shift weight to the left foot as the right shoulder lifts upward and forward sharply over 0.5 seconds, then drop it back down over 0.5 seconds as the left shoulder lifts similarly over the next second. Alternate this shoulder lifting and dropping rhythmically for five seconds, keeping elbows slightly bent and arms relaxed at sides. Body leans subtly side to side in sync with shoulder movements, head held straight forward.",
+        "costume": "A mustard yellow tracksuit consisting of a zip-up jacket with a high collar and matching tapered pants, white sneakers, and no accessories."
+      },
+      "time": 12651.599999904633
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/okay.wav",
+      "text": "Mustard yellow tracksuit shoulder shimmy ready.",
+      "spokenText": "Okay.",
+      "time": 12653.099999904633
+    },
+    {
+      "kind": "terminal",
+      "text": "Mustard yellow tracksuit shoulder shimmy ready.",
+      "time": 13806.399999976158
+    },
+    {
+      "kind": "generated-ready",
+      "url": "/media/generated/4e1c414a78857874eac1.mp4",
+      "elapsedMs": 17066.399999976158,
+      "character": "SHIMMYTROOPER",
+      "variant": "base"
+    },
+    {
+      "kind": "command-complete",
+      "text": "Computer, show me a shoulder shimmy in a mustard yellow tracksuit.",
+      "action": "custom",
+      "time": 29716.5
+    },
+    {
+      "kind": "input",
+      "text": "Now give him a tiny backwards shuffle while keeping the yellow tracksuit.",
+      "source": "keyboard",
+      "time": 30791.899999976158
+    },
+    {
+      "kind": "action",
+      "action": "custom",
+      "response": "Backward shuffle initiated.",
+      "label": "SHIMMYTROOPER_BACKSHUFFLE",
+      "motion": "The dancer alternates sliding the left foot backward for half a second, then shifts weight to the left foot while sliding the right foot backward similarly, repeating short backward steps with a smooth rhythm. Arms remain loosely bent at the elbows, swinging gently opposite to the foot movement to maintain balance. The dancer's torso stays upright with a slight forward lean to accentuate the backward motion. The head turns slightly to the left and right in sync with the feet, completing a continuous five-second loop.",
+      "costume": "A mustard yellow tracksuit consisting of a zip-up jacket with a high collar and matching tapered pants, white sneakers, and no accessories.",
+      "audio": "okay",
+      "provider": "gpt-4.1-mini",
+      "time": 32489.5
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/okay.wav",
+      "text": "Backward shuffle initiated.",
+      "spokenText": "Okay.",
+      "time": 32489.599999904633
+    },
+    {
+      "kind": "generation",
+      "id": "4a277cf334f0c63bfbd4",
+      "request": {
+        "profile": "d0f75fe7-f299-4b2b-b923-615fa08cf651",
+        "character": "SHIMMYTROOPER_BACKSHUFFLE",
+        "variant": "base",
+        "canonical": false,
+        "motion": "The dancer alternates sliding the left foot backward for half a second, then shifts weight to the left foot while sliding the right foot backward similarly, repeating short backward steps with a smooth rhythm. Arms remain loosely bent at the elbows, swinging gently opposite to the foot movement to maintain balance. The dancer's torso stays upright with a slight forward lean to accentuate the backward motion. The head turns slightly to the left and right in sync with the feet, completing a continuous five-second loop.",
+        "costume": "A mustard yellow tracksuit consisting of a zip-up jacket with a high collar and matching tapered pants, white sneakers, and no accessories."
+      },
+      "time": 32491.099999904633
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/okay.wav",
+      "text": "Backward shuffle initiated.",
+      "spokenText": "Okay.",
+      "time": 32491.299999952316
+    },
+    {
+      "kind": "terminal",
+      "text": "Backward shuffle initiated.",
+      "time": 33152.89999997616
+    },
+    {
+      "kind": "generated-ready",
+      "url": "/media/generated/4a277cf334f0c63bfbd4.mp4",
+      "elapsedMs": 4011.1999999284744,
+      "character": "SHIMMYTROOPER_BACKSHUFFLE",
+      "variant": "base"
+    },
+    {
+      "kind": "command-complete",
+      "text": "Now give him a tiny backwards shuffle while keeping the yellow tracksuit.",
+      "action": "custom",
+      "time": 36501.59999990463
+    },
+    {
+      "kind": "input",
+      "text": "Could I see a hat wobble, but wearing a tall purple top hat and wobbling twice as slowly?",
+      "source": "keyboard",
+      "time": 38090.699999928474
+    },
+    {
+      "kind": "action",
+      "action": "custom",
+      "response": "Hat wobble initiated with slow rhythm.",
+      "label": "PURPLEHAT_WOBBLESLOW",
+      "motion": "Starting from a neutral stance, the dancer places a tall purple top hat firmly on the head. Over five seconds, they perform a slow, deliberate wobble of the hat itself, tilting it left and right twice. Each tilt lasts about 1.25 seconds, with the head and neck muscles stabilizing to allow the hat to wobble independently. Arms remain relaxed at sides, with minimal body movement to emphasize the hat's motion. The wobble is exactly half the speed of a normal wobble, creating a smooth, exaggerated effect.",
+      "costume": "A mustard yellow tracksuit consisting of a zip-up jacket with a high collar and matching tapered pants, white sneakers, and a tall purple top hat.",
+      "audio": "okay",
+      "provider": "gpt-4.1-mini",
+      "time": 39393
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/okay.wav",
+      "text": "Hat wobble initiated with slow rhythm.",
+      "spokenText": "Okay.",
+      "time": 39393.199999928474
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/okay.wav",
+      "text": "Hat wobble initiated with slow rhythm.",
+      "spokenText": "Okay.",
+      "time": 39395.299999952316
+    },
+    {
+      "kind": "generation",
+      "id": "e3d2b06424bc52fa99df",
+      "request": {
+        "profile": "d0f75fe7-f299-4b2b-b923-615fa08cf651",
+        "character": "PURPLEHAT_WOBBLESLOW",
+        "variant": "base",
+        "canonical": false,
+        "motion": "Starting from a neutral stance, the dancer places a tall purple top hat firmly on the head. Over five seconds, they perform a slow, deliberate wobble of the hat itself, tilting it left and right twice. Each tilt lasts about 1.25 seconds, with the head and neck muscles stabilizing to allow the hat to wobble independently. Arms remain relaxed at sides, with minimal body movement to emphasize the hat's motion. The wobble is exactly half the speed of a normal wobble, creating a smooth, exaggerated effect.",
+        "costume": "A mustard yellow tracksuit consisting of a zip-up jacket with a high collar and matching tapered pants, white sneakers, and a tall purple top hat."
+      },
+      "time": 39395.299999952316
+    },
+    {
+      "kind": "terminal",
+      "text": "Hat wobble initiated with slow rhythm.",
+      "time": 40346.5
+    },
+    {
+      "kind": "generated-ready",
+      "url": "/media/generated/e3d2b06424bc52fa99df.mp4",
+      "elapsedMs": 17084.600000023842,
+      "character": "PURPLEHAT_WOBBLESLOW",
+      "variant": "base"
+    },
+    {
+      "kind": "command-complete",
+      "text": "Could I see a hat wobble, but wearing a tall purple top hat and wobbling twice as slowly?",
+      "action": "custom",
+      "time": 56478.59999990463
+    },
+    {
+      "kind": "input",
+      "text": "Print a smiling portrait.",
+      "source": "keyboard",
+      "time": 58065.09999990463
+    },
+    {
+      "kind": "action",
+      "action": "print",
+      "response": "Okay.",
+      "audio": "print",
+      "target": "PURPLEHAT_WOBBLESLOW",
+      "costume": "A mustard yellow tracksuit consisting of a zip-up jacket with a high collar and matching tapered pants, white sneakers, and a tall purple top hat.",
+      "provider": "reference-protocol",
+      "time": 58081.199999928474
+    },
+    {
+      "kind": "audio",
+      "src": "/media/original/print.wav",
+      "text": "Okay.",
+      "spokenText": "Okay.",
+      "time": 58081.39999997616
+    },
+    {
+      "kind": "generation",
+      "id": "e97cedd3d8fcab318bfe",
+      "request": {
+        "profile": "d0f75fe7-f299-4b2b-b923-615fa08cf651",
+        "character": "PURPLEHAT_WOBBLESLOW",
+        "variant": "smile",
+        "canonical": false,
+        "motion": "Head and shoulders close-up, look straight at viewer and slowly form an awkward broad closed-mouth smile. Hold smile. Flat hot pink background.",
+        "costume": "A mustard yellow tracksuit consisting of a zip-up jacket with a high collar and matching tapered pants, white sneakers, and a tall purple top hat."
+      },
+      "time": 58085
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/print.wav",
+      "text": "Okay.",
+      "spokenText": "Okay.",
+      "time": 58088.5
+    },
+    {
+      "kind": "generated-ready",
+      "url": "/media/generated/e97cedd3d8fcab318bfe.mp4",
+      "elapsedMs": 18071.200000047684,
+      "character": "PURPLEHAT_WOBBLESLOW",
+      "variant": "smile"
+    },
+    {
+      "kind": "print-spooled",
+      "image": "/media/generated/e97cedd3d8fcab318bfe-print.png",
+      "character": "PURPLEHAT_WOBBLESLOW",
+      "time": 76152.89999997616
+    },
+    {
+      "kind": "command-complete",
+      "text": "Print a smiling portrait.",
+      "action": "print",
+      "time": 76152.89999997616
+    }
+  ],
+  "final": {
+    "mode": "live",
+    "liveAssets": {
+      "d0f75fe7-f299-4b2b-b923-615fa08cf651:SHIMMYTROOPER:base": {
+        "url": "/media/generated/4e1c414a78857874eac1.mp4",
+        "image": "/media/generated/4e1c414a78857874eac1.png"
+      },
+      "d0f75fe7-f299-4b2b-b923-615fa08cf651:SHIMMYTROOPER_BACKSHUFFLE:base": {
+        "url": "/media/generated/4a277cf334f0c63bfbd4.mp4",
+        "image": "/media/generated/4a277cf334f0c63bfbd4.png"
+      },
+      "d0f75fe7-f299-4b2b-b923-615fa08cf651:PURPLEHAT_WOBBLESLOW:base": {
+        "url": "/media/generated/e3d2b06424bc52fa99df.mp4",
+        "image": "/media/generated/e3d2b06424bc52fa99df.png"
+      },
+      "d0f75fe7-f299-4b2b-b923-615fa08cf651:PURPLEHAT_WOBBLESLOW:smile": {
+        "url": "/media/generated/e97cedd3d8fcab318bfe.mp4",
+        "image": "/media/generated/e97cedd3d8fcab318bfe-print.png"
+      }
+    },
+    "profile": "d0f75fe7-f299-4b2b-b923-615fa08cf651",
+    "context": {
+      "identity": "Thomas",
+      "character": "PURPLEHAT_WOBBLESLOW",
+      "pending": "",
+      "history": [
+        "Good morning",
+        "Computer, show me a shoulder shimmy in a mustard yellow tracksuit.",
+        "Now give him a tiny backwards shuffle while keeping the yellow tracksuit.",
+        "Could I see a hat wobble, but wearing a tall purple top hat and wobbling twice as slowly?",
+        "Print a smiling portrait."
+      ],
+      "costume": "A mustard yellow tracksuit consisting of a zip-up jacket with a high collar and matching tapered pants, white sneakers, and a tall purple top hat."
+    },
+    "lastPrint": {
+      "image": "/media/generated/e97cedd3d8fcab318bfe-print.png",
+      "character": "PURPLEHAT_WOBBLESLOW"
+    },
+    "started": true,
+    "replaying": false,
+    "paused": false,
+    "windows": 4
+  }
+}

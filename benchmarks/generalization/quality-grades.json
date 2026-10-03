@@ -1,0 +1,69 @@
+[
+  {
+    "video": "public/media/generated/842a0874b44caef2c7d9.mp4",
+    "motion": "shoulder shimmy with precise side-to-side shoulder rolls",
+    "costume": "mustard yellow tracksuit with zip-up jacket and matching pants, white sneakers",
+    "grade": {
+      "identity_consistency": 68,
+      "instruction_following": 70,
+      "coherent_body_and_motion": 65,
+      "retro_style": 68,
+      "audio_music": 72,
+      "outfit_retained": true,
+      "observations": "The character features strong facial, hair, and eyewear resemblance to the reference image. The mustard yellow tracksuit and white sneakers are accurately rendered and stay consistent throughout. The background is a flat, neutral studio setup with a static camera and no cuts. The dance consists of rhythmic shoulder shimmies and rolls synced to quirky instrumental synth music, fulfilling the deadpan awkward dancer theme.",
+      "failures": "The body movement exhibits minor temporal warping and robotic artifacts around the shoulders during the shimmy. Movement is relatively subtle and constrained."
+    }
+  },
+  {
+    "video": "public/media/generated/a29ee5a5ae8b7e2fad51.mp4",
+    "motion": "tiny backward shuffle with small precise steps",
+    "costume": "mustard yellow tracksuit with zip-up jacket and matching pants, white sneakers",
+    "grade": {
+      "identity_consistency": 68,
+      "instruction_following": 42,
+      "coherent_body_and_motion": 60,
+      "retro_style": 65,
+      "audio_music": 72,
+      "outfit_retained": true,
+      "concrete_observations": [
+        "Subject stands completely stationary against a light gray studio background.",
+        "Outfit is a mustard yellow zip-up tracksuit and white sneakers, which is retained throughout.",
+        "Upbeat quirky synth music plays during the clip.",
+        "Static framing, full-body shot, and deadpan expression match the style prompt."
+      ],
+      "failures": [
+        "The requested motion (tiny backward shuffle with small precise steps) was not performed; the subject remains entirely still."
+      ]
+    }
+  },
+  {
+    "video": "public/media/generated/1e405816838a7c667d03.mp4",
+    "motion": "wobble head with tall purple top hat, wobbling at half normal speed, two full cycles",
+    "costume": "mustard yellow tracksuit with zip-up jacket and matching pants, white sneakers, tall purple top hat",
+    "grade": {
+      "identity_consistency": 68,
+      "instruction_following": 70,
+      "coherent_body_and_motion": 65,
+      "retro_style": 67,
+      "audio_music": 66,
+      "outfit_retained": true,
+      "concrete_observations": "The person wears the requested mustard yellow tracksuit with white side stripes, white sneakers, and a tall purple top hat against a light neutral studio background. The camera is static with no cuts. The subject tilts and wobbles the head in a slow, deadpan manner while upbeat synth music plays.",
+      "failures": "The head wobbling movement is slightly stiff rather than a continuous fluid wobble cycle, and the hat moves rigidly with the head."
+    }
+  },
+  {
+    "video": "public/media/generated/6e5bc7ce224031bcb5cc.mp4",
+    "motion": "Head and shoulders close-up, look straight at viewer and slowly form an awkward broad closed-mouth smile. Hold smile. Flat hot pink background.",
+    "costume": "mustard yellow tracksuit with zip-up jacket and matching pants, white sneakers, tall purple top hat",
+    "grade": {
+      "identity_consistency": 68,
+      "instruction_following": 72,
+      "coherent_body_and_motion": 70,
+      "retro_style": 67,
+      "audio_music": 70,
+      "outfit_retained": true,
+      "observations": "The video features a head-and-shoulders portrait of the subject wearing a purple top hat and a mustard zip-up tracksuit top against a solid hot pink backdrop. The subject begins with a neutral deadpan look and slowly forms a broad, awkward closed-mouth smile, holding it consistently. Quirky synth instrumental music accompanies the clip. Facial resemblance to the reference image is well preserved.",
+      "failures": "Pants and shoes are not visible due to the requested close-up framing."
+    }
+  }
+]

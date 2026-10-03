@@ -1,0 +1,59 @@
+{
+  "faithful_choreography": {
+    "score": 90,
+    "deductions": [
+      "The overall dance phrase is preserved: same side-to-side swaying, bent raised arm, opposite palm-out gestures, wide-legged stepping, and recurring lean-back poses across the sampled frames.",
+      "Several sampled poses are close but not exact: B is often a little more upright with straighter legs where A has deeper crouches or stronger hip/torso lean, especially around row 1 columns 2-4, row 2 columns 2-4, and row 5 column 6.",
+      "Some arm/hand timing differs slightly: B's palms and wrists are more open/extended in a few frames while A's hands are more compact or fist-like.",
+      "Jacket-flare moments broadly match but are not always at the same intensity or position, e.g. the stronger coat swing in A around row 2 column 1 and row 4 column 3 is softer/different in B."
+    ]
+  },
+  "wardrobe": {
+    "score": 88,
+    "deductions": [
+      "B keeps the main wardrobe concept: shiny dark oversized suit, white shirt, black belt/shoes, and loose tie/suspender-like dark lines.",
+      "The suit in B appears more gray/silver and less uniformly black-glossy than A.",
+      "B's shirt collar/tie area looks more open and disheveled, with the tie or neckwear less like A's centered tie in several frames.",
+      "B's trousers sometimes look straighter and less ballooned/pleated than A's very baggy retro pants."
+    ]
+  },
+  "background": {
+    "score": 95,
+    "deductions": [
+      "Both use a plain white studio/background with no added set elements.",
+      "B shows a slightly more visible floor plane and soft shadowing, while A looks flatter/cleaner white with a more cut-out or keyed appearance."
+    ]
+  },
+  "camera_framing": {
+    "score": 93,
+    "deductions": [
+      "Both are full-body, front-facing, centered dance shots with very similar scale.",
+      "B has a slightly more grounded studio framing with visible floor/shadow, whereas A appears more floating/composited on a flat white field.",
+      "There are small differences in body scale and vertical placement across frames, but no major crop or camera-angle mismatch."
+    ]
+  },
+  "retro_low_budget_dance_video_look": {
+    "score": 90,
+    "deductions": [
+      "B retains the low-budget white-background dance-video style and shiny suit aesthetic.",
+      "B looks somewhat cleaner and more modern/realistic, especially because of the floor shadow and more natural studio lighting.",
+      "A has a stronger retro composited/flat-white keyed look."
+    ]
+  },
+  "face_identity_personalization": {
+    "score": 98,
+    "deductions": [
+      "B's face, hair, and facial hair differ from A, but this is treated as allowed identity personalization.",
+      "No major deduction applied for facial identity differences."
+    ]
+  },
+  "overall": {
+    "score": 92,
+    "pass_nearly_perfect": false,
+    "summary": "B is a strong regeneration of A: same scene type, costume concept, framing, and most choreography beats. It is not nearly perfect because the body posing/timing has repeated small mismatches, the suit/tie details differ, and B has a cleaner grounded studio look instead of A's flatter retro keyed look."
+  },
+  "uncertainty_due_to_sampled_frames": {
+    "level": "moderate",
+    "explanation": "The comparison is based on 30 sampled frames at 1/6-second intervals, so between-frame motion, exact timing, and transitions may differ more or less than visible here."
+  }
+}

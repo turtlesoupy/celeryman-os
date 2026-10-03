@@ -1,0 +1,21 @@
+{
+  "scores": {
+    "choreography": 46,
+    "costume": 52,
+    "framing_background": 60,
+    "temporal_consistency": 58,
+    "overall_fidelity": 50
+  },
+  "concrete_mismatches": [
+    "Generated clip performs generic hand gestures and finger guns rather than matching the torso twist and hip sway mechanics of the reference.",
+    "Costume features a modern standard grey tie and plain white shirt instead of the reference's bolo tie and shiny silver collared shirt.",
+    "Sleeves are worn fully down in the generated clip, whereas the reference has rolled/scrunched up sleeves.",
+    "Motion timing and pose dynamics diverge significantly from the retro software loop cadence."
+  ],
+  "pass_nearly_perfect": false,
+  "improvement_recommendations": [
+    "Replicate the reference's hip-swaying dance mechanics and body rotations rather than generic gestures.",
+    "Update costume details to include rolled-up sleeves, a thin bolo tie, and a satin-sheen collared shirt.",
+    "Align the motion loop timing directly to match the original reference frames."
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "scores": {
+    "choreography_pose_timing": 88,
+    "wardrobe": 97,
+    "background": 90,
+    "camera_framing": 94,
+    "retro_low_budget_dance_video_look": 89
+  },
+  "overall": 91,
+  "pass_nearly_perfect": false,
+  "concrete_observable_deductions": [
+    {
+      "category": "choreography_pose_timing",
+      "deduction": 8,
+      "observation": "B is missing the final sampled pose visible in A: A has content at row 5 column 4, while B is already black there, indicating B ends about one sampled frame earlier."
+    },
+    {
+      "category": "choreography_pose_timing",
+      "deduction": 4,
+      "observation": "The broad front-facing head/shoulder sequence is preserved, but several subtle mouth/smile and head-angle changes do not align exactly; B tends to hold a steadier closed-mouth smirk than A."
+    },
+    {
+      "category": "wardrobe",
+      "deduction": 3,
+      "observation": "Hat, sunglasses, gold/black patterned shirt, open collar, and necklaces are all present and very close. Minor differences are visible in shirt pattern placement, sunglass reflections, and hat shape/edge sharpness."
+    },
+    {
+      "category": "background",
+      "deduction": 7,
+      "observation": "A's pink background has more mottled smoky texture and visible analog/noisy variation; B's background is cleaner, flatter, and more uniformly saturated hot pink."
+    },
+    {
+      "category": "background",
+      "deduction": 3,
+      "observation": "B shows small horizontal dark/yellowish strip artifacts near the lower edge in a few cells that are not clearly present in A."
+    },
+    {
+      "category": "camera_framing",
+      "deduction": 4,
+      "observation": "B keeps the subject slightly more consistently centered and stable, while A has small natural frame-to-frame shifts in position/scale."
+    },
+    {
+      "category": "camera_framing",
+      "deduction": 2,
+      "observation": "The missing final sampled frame in B also affects duration/framing continuity at the end."
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction": 8,
+      "observation": "B preserves the simple studio/dance-video setup, but its image appears cleaner and more digitally uniform, with less of A's grainy, mottled, low-budget/analog texture."
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction": 3,
+      "observation": "B's edges and background blocks look slightly more generated/clean than the softer, noisier source look."
+    }
+  ],
+  "identity_face_note": "Minor facial/identity differences are visible but were treated as low-weight personalization differences and not heavily penalized.",
+  "uncertainty_due_to_sampled_frames": "Moderate-low. The contact sheets sample every 1/6 second, so very brief motion differences between sampled frames could be missed, but the visible wardrobe, background, framing, pose sequence, and the one-frame shorter ending in B are directly observable."
+}

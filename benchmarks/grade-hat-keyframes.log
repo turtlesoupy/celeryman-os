@@ -1,0 +1,45 @@
+{
+  "scores": {
+    "choreography_timing": 86,
+    "wardrobe": 94,
+    "background": 90,
+    "camera_framing": 93,
+    "retro_low_budget_dance_video_look": 82
+  },
+  "overall": 89,
+  "pass_nearly_perfect": false,
+  "concrete_observable_deductions": [
+    {
+      "category": "choreography_timing",
+      "deduction": 10,
+      "observation": "Overall pose sequence is very similar and mostly static upper-body performance, but B repeatedly shows broader toothy smiles where A is often more neutral or only slightly smiling, especially across the first two rows and bottom row. This changes the timing/expression choreography rather than being only a tiny face wrinkle difference."
+    },
+    {
+      "category": "choreography_timing",
+      "deduction": 4,
+      "observation": "A has only four visible frames in the final row with the last two cells black/padded, while B contains visible performer frames in all six final-row cells. If the black cells represent missing source frames rather than sheet padding, B has extra duration/content."
+    },
+    {
+      "category": "wardrobe",
+      "deduction": 4,
+      "observation": "Wardrobe is closely matched: black hat, dark sunglasses, open orange/yellow patterned shirt and necklace. However, the shirt pattern and collar/neckline details are not identical, and the hat brim/crown shape appears slightly different in several frames."
+    },
+    {
+      "category": "background",
+      "deduction": 8,
+      "observation": "Both use a bright pink backdrop, but A has a more mottled, slightly noisy magenta background with visible retro texture; B is cleaner, smoother, and more uniformly saturated hot pink."
+    },
+    {
+      "category": "camera_framing",
+      "deduction": 5,
+      "observation": "Framing is very similar bust/shoulders centered, but B appears slightly cleaner and more consistently centered with a somewhat different crop/scale in some cells."
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction": 15,
+      "observation": "A shows more low-budget analog/contact-sheet character, including visible horizontal scanline-like texture, softer resolution, and noisier compression. B looks higher-resolution, smoother, brighter, and more polished, reducing the retro regenerated-video match."
+    }
+  ],
+  "identity_face_note": "Minor identity/face differences are allowed, but the main visible facial mismatch here is not just identity personalization: B changes the performance expression by adding frequent wide toothy smiles while A is more restrained.",
+  "uncertainty_due_to_sampled_frames": "Moderate. The sheets sample every 1/6 second, so small motion differences between sampled frames may be missed. The black final cells in A may be padding rather than true video content, so the possible duration/content mismatch is uncertain."
+}

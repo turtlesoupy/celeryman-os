@@ -1,0 +1,14 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/minimax28-call.wav",
+      "transcript": "Excuse me, Paul. Your wife is on the phone. It's an emergency.",
+      "timbre": 82,
+      "pitch": 85,
+      "rhythm": 88,
+      "overall": 84,
+      "concrete_differences": "The candidate has a fuller, slightly more bass-resonant body compared to the more nasal and compressed robotic timbre of the target. It also lacks the distinct mechanical, hollow processing artifacts and telephone-filter EQ heard throughout the original audio."
+    }
+  ],
+  "best_file": "analysis/minimax28-call.wav"
+}

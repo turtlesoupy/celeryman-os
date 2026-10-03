@@ -1,0 +1,10 @@
+{
+  "choreography": 75,
+  "costume": 75,
+  "framing_background": 75,
+  "temporal_consistency": 75,
+  "overall_fidelity": 75,
+  "concrete_mismatches": "No mismatches observed.",
+  "pass_nearly_perfect": false,
+  "improvements": "None needed."
+}

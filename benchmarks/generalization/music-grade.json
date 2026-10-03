@@ -1,0 +1,33 @@
+{
+  "clips": [
+    {
+      "name": "SHIMMYCELERY base",
+      "style": 96,
+      "coherence": 94,
+      "unwanted_speech": false,
+      "observations": "Authentic cheesy 1990s dance-pop MIDI sound with bright synth brass/lead stabs, electro-toms, and a classic four-on-the-floor beat matching the retro novelty aesthetic cleanly."
+    },
+    {
+      "name": "SHIMMYCELERY base (duplicate)",
+      "style": 96,
+      "coherence": 94,
+      "unwanted_speech": false,
+      "observations": "Identical musical take featuring clean synth percussion, snappy retro MIDI brass hooks, and continuous energetic groove with no speech."
+    },
+    {
+      "name": "WOBBLETOPPURPLE base",
+      "style": 93,
+      "coherence": 95,
+      "unwanted_speech": false,
+      "observations": "Playful 90s dance track featuring bright synth leads, funky bassline, and punchy drum machine groove. Clean mix with zero vocal artifacts."
+    },
+    {
+      "name": "WOBBLETOPPURPLE smile",
+      "style": 94,
+      "coherence": 95,
+      "unwanted_speech": false,
+      "observations": "Consistent upbeat 90s eurodance/novelty MIDI instrumentation with percussive synth bells, steady dance beat, and clear rhythmic structure."
+    }
+  ],
+  "overall": "All clips nail the low-budget early 90s computer dance sketch aesthetic with bright MIDI synths, clean rhythmic drive, and completely instrumental, speech-free audio."
+}

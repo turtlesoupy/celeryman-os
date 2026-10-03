@@ -1,0 +1,38 @@
+Here is the detailed comparison of the two synthetic speech recordings. 
+
+Transcriptions:
+
+Sample one transcription (from the provided reference):
+“Good morning, Paul. What will your first sequence of the day be? I have a beta sequence I’ve been working on. Would you like to see it?”
+
+Sample two transcription (from analysis/f5-greeting.wav):
+“Good morning, Paul. What will your first sequence of the day be?”
+
+Acoustic analysis:
+
+1. Pitch:
+Sample one has a moderate, fairly consistent pitch with slight natural inflections, especially where questions are asked. The pitch rises gently at the end of queries.
+Sample two has a similar initial pitch contour. It maintains a steady pitch through most of the sentence and has a subtle upward inflection at the phrase’s end. Sample two’s pitch range is slightly narrower and flatter compared to sample one.
+
+2. Rate:
+Sample one’s speaking rate is slightly slower overall, particularly in the second half of the sentence. The pauses between phrases are more pronounced.
+Sample two has a steady, consistent rate with less noticeable pause gaps. Although the sentence is shorter, it is delivered at a slightly quicker pace.
+
+3. Robotic texture:
+Sample one sounds relatively smooth but still retains a mild synthetic or robotic texture perceptible in the slight uniformity of vowel durations and a somewhat mechanical resonance.
+Sample two has a slightly more mechanical or robotic texture. Its vowel lengths are very even, and the transitions between certain consonants and vowels have a more artificial sound.
+
+4. Prosody:
+Sample one’s prosody is more varied, with gentle rises and falls in pitch and a slight elongation of key words which softens its synthetic nature.
+Sample two’s prosody is flatter. It has fewer dynamic changes in pitch or duration, giving it a more monotone or robotic quality overall. There is less emphasis on any particular words.
+
+5. Timbre:
+Sample one has a warmer, slightly fuller timbre. The voice sounds smoother, with a balanced frequency response making it feel a bit closer to a natural voice.
+Sample two has a slightly thinner timbre. It emphasizes mid to high frequencies more, which makes it sound less full and a bit more synthetic. There’s a subtle metallic quality to some of the vowels.
+
+Similarity rating:
+Overall, sample two is similar to the first portion of sample one in terms of content, pitch, and pacing, but it diverges in texture, prosody, and timbre. The shorter length makes a direct full-sentence comparison incomplete, but for the overlapping portion, the similarity is moderate.
+Based on the overlapping segment’s acoustic characteristics, I would rate the similarity of sample two versus sample one at around 65 on a scale from 0 to 100. 
+Supporting observations: The pitch contour and phrasing match closely, but differences in pacing, prosody variation, robotic texture, and timbre reduce the overall similarity. The second sample’s flatter prosody and more mechanical timbre are key distinguishing factors. 
+
+This concludes the comparison.

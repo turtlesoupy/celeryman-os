@@ -1,0 +1,49 @@
+{
+  "scores": {
+    "choreography_timing": 98,
+    "wardrobe": 90,
+    "background": 96,
+    "camera_framing": 99,
+    "retro_low_budget_dance_video_look": 89,
+    "person_rendering_fidelity": 86,
+    "overall": 92
+  },
+  "pass_nearly_perfect": false,
+  "observable_deductions": [
+    {
+      "category": "person_rendering_fidelity",
+      "deduction": 14,
+      "observations": "B has several clearly degraded/faded frames where the dancer becomes washed out and nearly faceless, with reduced body detail: row 1 col 1, row 2 col 2, row 3 col 3, and row 4 col 4. These are not just minor face changes; the whole figure loses contrast and detail."
+    },
+    {
+      "category": "wardrobe",
+      "deduction": 10,
+      "observations": "The black suit, white shirt, tie, and shoes match overall, but in the washed-out frames the jacket, shirt, tie, and trouser details are partially lost or blurred."
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction": 11,
+      "observations": "Most frames preserve the source's simple retro studio dance-video look, but the periodic ghosted/overexposed frames in B disrupt the consistent source appearance."
+    },
+    {
+      "category": "background",
+      "deduction": 4,
+      "observations": "The plain studio background matches, but B appears slightly more gray/green-tinted than A."
+    },
+    {
+      "category": "camera_framing",
+      "deduction": 1,
+      "observations": "Framing, scale, and placement are essentially the same across the sampled frames; only minor apparent edge/contrast changes occur in degraded frames."
+    },
+    {
+      "category": "choreography_timing",
+      "deduction": 2,
+      "observations": "The poses and timing align very closely across the contact sheet. No missing or wrong dance poses are apparent; the small deduction is only because the degraded frames make limb/body detail less clear."
+    }
+  ],
+  "summary": "B closely follows A's choreography, timing, costume, framing, and simple studio setup. The main fidelity issue is the repeated washed-out/faceless whole-body rendering in four sampled frames, which prevents a nearly perfect score.",
+  "uncertainty_due_to_sampled_frames": {
+    "level": "medium-low",
+    "reason": "The contact sheets sample the videos at 1/6 second intervals, so intermediate-frame motion could contain additional differences or recoveries not visible here. However, the sampled frames show strong pose alignment and also reveal recurring rendering artifacts in B."
+  }
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "file": "analysis/voice-Fred.wav",
+    "duration_s": 3.2720625,
+    "reference_duration_s": 3.85,
+    "rms_db": -20.467417533752265,
+    "mfcc_dtw_distance": 2.3561312951388116,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  },
+  {
+    "file": "analysis/voice-Ralph.wav",
+    "duration_s": 3.2720625,
+    "reference_duration_s": 3.85,
+    "rms_db": -22.143234306496158,
+    "mfcc_dtw_distance": 2.4940205905988018,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  },
+  {
+    "file": "analysis/voice-Albert.wav",
+    "duration_s": 3.2718125,
+    "reference_duration_s": 3.85,
+    "rms_db": -23.66394462742763,
+    "mfcc_dtw_distance": 2.2478943840067407,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  },
+  {
+    "file": "analysis/voice-Zarvox.wav",
+    "duration_s": 3.2720625,
+    "reference_duration_s": 3.85,
+    "rms_db": -22.92078007873181,
+    "mfcc_dtw_distance": 2.123645252265661,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  },
+  {
+    "file": "analysis/voice-Junior.wav",
+    "duration_s": 3.2720625,
+    "reference_duration_s": 3.85,
+    "rms_db": -20.13795645578202,
+    "mfcc_dtw_distance": 2.008056534494794,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  }
+]

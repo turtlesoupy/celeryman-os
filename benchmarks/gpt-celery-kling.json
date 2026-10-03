@@ -1,0 +1,42 @@
+{
+  "scores": {
+    "choreography_timing": 92,
+    "wardrobe": 91,
+    "background": 98,
+    "camera_framing": 91,
+    "retro_low_budget_dance_video_look": 88,
+    "overall": 92
+  },
+  "pass_nearly_perfect": false,
+  "deductions": {
+    "choreography_timing": [
+      "The sampled poses largely match: hands on hips/behind back, hip-swaying stance, alternating torso lean, and leg spread are preserved across the sequence.",
+      "Several frames show small pose deviations: B often has the torso slightly more upright and the feet/legs placed a little differently than A, especially in the middle and right-side samples.",
+      "Jacket flare and arm placement are close but not identical; B's jacket hangs more consistently while A's coat sometimes swings farther outward."
+    ],
+    "wardrobe": [
+      "Overall wardrobe is correctly reproduced: black leather jacket, white dress shirt, black tie, shiny dark trousers, belt, and dark shoes.",
+      "B's clothing fit and wrinkle pattern differ: trousers appear somewhat smoother/tapered in places, shirt/tie alignment is cleaner, and jacket sleeve/shoulder shape is not exactly the same.",
+      "Face and hair differ substantially due to identity personalization, but this is treated as minor per instruction and not heavily penalized."
+    ],
+    "background": [
+      "Both videos use the same plain white/light-gray studio background with no meaningful scene mismatch.",
+      "B appears slightly more uniformly gray/clean, while A has a slightly brighter, more washed studio look."
+    ],
+    "camera_framing": [
+      "Framing is very similar: full-body performer repeated in a contact-sheet layout with comparable scale and spacing.",
+      "B generally shows the shoes/feet a little more clearly and the performer appears slightly differently scaled/positioned in some cells compared with A.",
+      "A has slightly different crop pressure near the lower edge in some frames."
+    ],
+    "retro_low_budget_dance_video_look": [
+      "The simple studio setup, shiny costume, and repeated dance-pose structure are preserved.",
+      "B looks a bit cleaner, sharper, and more modern/AI-polished than A, which has a more washed, older low-budget music-video feel.",
+      "A's original has more analog softness/compression and less crisp facial/detail rendering."
+    ]
+  },
+  "observable_identity_notes_not_majorly_penalized": [
+    "B has a different face, darker curlier hair, and visible stubble/beard compared with A's cleaner-shaven, straighter-haired appearance.",
+    "These differences are consistent with the allowed identity personalization and only contribute minimally to the overall deduction."
+  ],
+  "uncertainty_due_to_sampled_frames": "Moderate-low. The contact sheets sample every 0.5 seconds and show strong pose correspondence, but exact motion timing between sampled frames, continuous jacket motion, and micro-choreography cannot be fully verified from still frames alone."
+}

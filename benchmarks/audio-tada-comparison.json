@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None. The file is an exact clone of the target audio."
+    },
+    {
+      "file": "analysis/tada.wav",
+      "transcript": "Good morning Thomas. What will your first sequence on the day be?",
+      "timbre": 65,
+      "pitch": 60,
+      "rhythm": 65,
+      "overall": 63,
+      "concrete_differences": "Words 'Paul' replaced with 'Thomas' and 'of' replaced with 'on'. Timbre sounds heavily muffled with significant low-pass filtering and artifacts. Robotic pitch modulation is unsteady with strange inflections on 'Thomas' and 'first'."
+    },
+    {
+      "file": "analysis/F5-TTS.wav",
+      "transcript": "Good morning Thomas. What will your first sequence of the day be?",
+      "timbre": 82,
+      "pitch": 80,
+      "rhythm": 85,
+      "overall": 82,
+      "concrete_differences": "Word 'Paul' replaced with 'Thomas'. The voice timbre is close in synthetic styling but slightly darker and less crisp in the high frequencies than the target. The intonation curve on 'Thomas' differs from the inflection on 'Paul'."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}

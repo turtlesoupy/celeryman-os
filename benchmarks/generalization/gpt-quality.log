@@ -1,0 +1,50 @@
+[
+  {
+    file: 'public/media/generated/68aac65a78429d79739f.mp4',
+    grade: {
+      identity_consistency: 95,
+      instruction_following: 91,
+      coherent_body_and_motion: 97,
+      retro_style: 95,
+      observed_deductions: [Array],
+      static_video: false,
+      pass: true
+    }
+  },
+  {
+    file: 'public/media/generated/5fbdb0137fd48af55893.mp4',
+    grade: {
+      identity_consistency: 93,
+      instruction_following: 91,
+      coherent_body_and_motion: 96,
+      retro_style: 94,
+      observed_deductions: [Array],
+      static_video: false,
+      pass: true
+    }
+  },
+  {
+    file: 'public/media/generated/df4a596ba80a71627028.mp4',
+    grade: {
+      identity_consistency: 93,
+      instruction_following: 96,
+      coherent_body_and_motion: 97,
+      retro_style: 95,
+      observed_deductions: [Array],
+      static_video: false,
+      pass: true
+    }
+  },
+  {
+    file: 'public/media/generated/c3889e7446c25cf70d12.mp4',
+    grade: {
+      identity_consistency: 92,
+      instruction_following: 98,
+      coherent_body_and_motion: 96,
+      retro_style: 95,
+      observed_deductions: [Array],
+      static_video: false,
+      pass: true
+    }
+  }
+]

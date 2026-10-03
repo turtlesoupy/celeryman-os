@@ -1,0 +1,182 @@
+[
+  {
+    "body": {
+      "profile": "paul",
+      "character": "celery",
+      "variant": "base",
+      "canonical": true,
+      "costume": "shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp, high-waisted matching baggy charcoal trousers, black belt, black dress shoes",
+      "motion": "Jaunty awkward side to side stepping dance. Hands on hips, then elbows out and bent, palms up, shrugging shoulders, bend knees and swing hips, extend one arm to point toward viewer, turn head with a deadpan face. Stay full body and centered."
+    },
+    "id": "dafa59643296dd91079f",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/dafa59643296dd91079f.mp4",
+    "image": "/media/generated/dafa59643296dd91079f.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "celery",
+      "variant": "face",
+      "canonical": true,
+      "costume": "shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp, high-waisted matching baggy charcoal trousers, black belt, black dress shoes",
+      "motion": "Close up portrait on solid hot pink background. Small rhythmic head bobs and glances, slight awkward smile, keep shoulders in frame. No speech, no cuts, no camera movement."
+    },
+    "id": "52c864d3d2d62fdd4542",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/52c864d3d2d62fdd4542.mp4",
+    "image": "/media/generated/52c864d3d2d62fdd4542.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "celery",
+      "variant": "engaged",
+      "canonical": true,
+      "costume": "shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp, high-waisted matching baggy charcoal trousers, black belt, black dress shoes",
+      "motion": "Full body dance with deep bouncy knees, energetic side-to-side hip sway and alternating bent arms held out palm-up in a loose joyful shrug. Match the 4d3d3d3 choreography."
+    },
+    "id": "45bb864d126bfa9b92bc",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/45bb864d126bfa9b92bc.mp4",
+    "image": "/media/generated/45bb864d126bfa9b92bc.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "oyster",
+      "variant": "base",
+      "canonical": true,
+      "costume": "loose red zip-up hoodie with a single thin white piping line down each sleeve, no logos or triple sports stripes over a black t-shirt, baggy black trousers with red side stripes, black shoes, black knit beanie with orange flame design, black studded choker",
+      "motion": "Energetic awkward dance: spread legs wide, hinge forward deeply at hips, fists together between knees, bob torso up and down, then stand up swaying and smiling. Whole body visible."
+    },
+    "id": "8bd1aab01f6b6e238f66",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/8bd1aab01f6b6e238f66.mp4",
+    "image": "/media/generated/8bd1aab01f6b6e238f66.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "oyster",
+      "variant": "face",
+      "canonical": true,
+      "costume": "loose red zip-up hoodie with a single thin white piping line down each sleeve, no logos or triple sports stripes over a black t-shirt, baggy black trousers with red side stripes, black shoes, black knit beanie with orange flame design, black studded choker",
+      "motion": "Close up portrait on solid hot pink background. Small rhythmic head bobs and glances, slight awkward smile, keep shoulders in frame. No speech, no cuts, no camera movement."
+    },
+    "id": "520c31bb73d608eaff60",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/520c31bb73d608eaff60.mp4",
+    "image": "/media/generated/520c31bb73d608eaff60.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "tayne",
+      "variant": "base",
+      "canonical": true,
+      "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots",
+      "motion": "Awkward confident disco dance. Step wide, point arms sideways, deeply squat with knees apart, hands low between thighs, rise and move hips, black hat and sunglasses stay on. Deadpan serious face."
+    },
+    "id": "51bc6fca5dd161716516",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/51bc6fca5dd161716516.mp4",
+    "image": "/media/generated/51bc6fca5dd161716516.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "tayne",
+      "variant": "intro",
+      "canonical": true,
+      "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots",
+      "motion": "Tight head-and-shoulders close up. Face fills most of the vertical frame, head and upper chest only. Light gray background. Look at camera and say in a warm natural American male voice: Hey Paul. I'm Tayne, your latest dancer. I can't wait to entertain you. Keep the same clothing, face, and fixed camera."
+    },
+    "id": "8f3360b79058120ba234",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/8f3360b79058120ba234.mp4",
+    "image": "/media/generated/8f3360b79058120ba234.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "tayne",
+      "variant": "sway",
+      "canonical": true,
+      "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots",
+      "motion": "Full body, upright confident disco sway: lean left and right, point one bent arm sideways and pull it back, alternately shift weight on feet. Keep hat and glasses, never squat. Copy the supplied motion reference precisely."
+    },
+    "id": "b88279be7f2f7faaaeae",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/b88279be7f2f7faaaeae.mp4",
+    "image": "/media/generated/b88279be7f2f7faaaeae.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "tayne",
+      "variant": "hat",
+      "canonical": true,
+      "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots",
+      "motion": "Close up head and shoulders. Keep torso still and stare directly at camera through sunglasses. The black fedora wobbles and tilts left and right on the head, then returns to level. Small absurd repeated head tilts. No hands touching the hat."
+    },
+    "id": "0dd4b43651a9e090c856",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/0dd4b43651a9e090c856.mp4",
+    "image": "/media/generated/0dd4b43651a9e090c856.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "tayne",
+      "variant": "flarhgunnstow",
+      "canonical": true,
+      "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots",
+      "motion": "Full body odd dance move: lift both bent arms, hop with one knee lifted, kick one leg forward, then land wide and point both arms sideways. Repeat alternating sides, quick and absurd, maintaining same costume and face."
+    },
+    "id": "29dda5518fa36e913b3f",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/29dda5518fa36e913b3f.mp4",
+    "image": "/media/generated/29dda5518fa36e913b3f.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "mozzarell",
+      "variant": "base",
+      "canonical": true,
+      "costume": "orange baseball cap, white sleeveless fitted cotton tank top, short royal blue athletic running shorts, black and silver high-top sneakers with white socks",
+      "motion": "Full-body goofy aerobic dance. Feet very wide, bend knees deeply, bob up and down, pump both bent elbows inward and outward with closed fists. Lean left and right while bouncing. Cheerful awkward grin, orange baseball cap stays on. White studio backdrop. Athletic comedy, nonsexual movement."
+    },
+    "id": "9d0fe34fe9b5c7308279",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/9d0fe34fe9b5c7308279.mp4",
+    "image": "/media/generated/9d0fe34fe9b5c7308279.png"
+  },
+  {
+    "body": {
+      "profile": "paul",
+      "character": "mozzarell",
+      "variant": "face",
+      "canonical": true,
+      "costume": "orange baseball cap, white sleeveless fitted cotton tank top, short royal blue athletic running shorts, black and silver high-top sneakers with white socks",
+      "motion": "Close up portrait on solid hot pink background. Small rhythmic head bobs and glances, slight awkward smile, keep shoulders in frame. No speech, no cuts, no camera movement."
+    },
+    "id": "cb3c3ef00dafcfd9ba02",
+    "status": "complete",
+    "stage": "Ready",
+    "url": "/media/generated/cb3c3ef00dafcfd9ba02.mp4",
+    "image": "/media/generated/cb3c3ef00dafcfd9ba02.png"
+  }
+]

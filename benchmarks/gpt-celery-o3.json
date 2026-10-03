@@ -1,0 +1,47 @@
+{
+  "scores": {
+    "faithful_choreography_timing": 98,
+    "wardrobe": 98,
+    "background_scene": 100,
+    "camera_framing": 98,
+    "retro_low_budget_dance_video_look": 97,
+    "overall": 97
+  },
+  "observed_differences_and_deductions": [
+    {
+      "category": "faithful_choreography_timing",
+      "deduction": 2,
+      "observations": "All sampled poses match the source sequence very closely: hands on hips/back, torso leans, leg stances, jacket flaring, and repeated side-to-side weight shifts are preserved. Only tiny pose/framing variations are visible, such as slight differences in shoulder angle, hip placement, and leg spacing in some frames."
+    },
+    {
+      "category": "wardrobe",
+      "deduction": 2,
+      "observations": "The black shiny suit/leather-like jacket and pants, white shirt, dark tie, and belt are all present and very similar. Minor differences include slightly different shirt wrinkles, jacket drape, and belt/tie detail clarity."
+    },
+    {
+      "category": "background_scene",
+      "deduction": 0,
+      "observations": "Both videos use the same plain bright white/gray studio background with no visible props or scene changes."
+    },
+    {
+      "category": "camera_framing",
+      "deduction": 2,
+      "observations": "The framing is very similar: full-body/near-full-body contact-sheet views with the dancer centered in each sampled frame. Minor scale and crop differences are visible, especially around the head and lower legs, but the composition is effectively preserved."
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction": 3,
+      "observations": "The regenerated video keeps the simple white studio, shiny outfit, static-camera dance-video feel. The main visible difference is the personalized performer appearance: B has a large curly hairstyle and different face/facial hair compared with A's short-haired performer, which slightly changes the silhouette and vintage-video impression, though identity differences are mostly allowed."
+    }
+  ],
+  "major_errors": {
+    "missing_poses_or_timing_errors": false,
+    "wrong_scene": false,
+    "wrong_costume": false,
+    "large_camera_mismatch": false
+  },
+  "identity_personalization_note": "B shows a clearly different personalized identity, especially the large curly hair and different face/facial hair. Because the task allows minor face differences from identity personalization and the choreography/costume/scene are otherwise highly faithful, this is treated as a small appearance/look deduction rather than a major failure.",
+  "overall": 97,
+  "pass_nearly_perfect": true,
+  "uncertainty_due_to_sampled_frames": "Low to moderate. The contact sheets sample every 0.5 seconds, so the visible key poses match very closely, but small between-frame timing or motion-continuity differences could be missed."
+}

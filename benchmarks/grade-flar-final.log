@@ -1,0 +1,68 @@
+{
+  "scores": {
+    "choreography_timing": 86,
+    "wardrobe": 80,
+    "background": 97,
+    "camera_framing": 93,
+    "retro_low_budget_dance_video_look": 91
+  },
+  "deductions": {
+    "choreography_timing": [
+      {
+        "points": 8,
+        "observation": "Several sampled frames are phase-shifted rather than matching exactly. In the first row, A shows an arms-wide jump sequence through columns 1-3, while B moves more quickly into the high-kick/step/pointing poses by columns 2-4."
+      },
+      {
+        "points": 4,
+        "observation": "Some held pointing poses occur at slightly different times: A holds the forward-pointing stance across row 2 columns 1-3, while B has only about two held frames there before returning to jumps."
+      },
+      {
+        "points": 2,
+        "observation": "Bottom row timing also differs: B reaches the jump/kick/transition poses about one sampled frame earlier than A in several columns."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 12,
+        "observation": "The overall costume type is preserved—black hat, sunglasses, patterned gold/black shirt, black shiny pants, black shoes—but the shirt design is visibly different. A has a denser orange/yellow-on-black pattern, while B has larger gold scroll/circular patterns."
+      },
+      {
+        "points": 6,
+        "observation": "B's shirt is much more open at the chest than A's, changing the wardrobe silhouette."
+      },
+      {
+        "points": 2,
+        "observation": "Pants remain black and shiny but appear slightly less baggy/less wrinkled in B."
+      }
+    ],
+    "background": [
+      {
+        "points": 3,
+        "observation": "Both use the same plain white/very light gray studio background, but B shows a slightly more visible floor gradient/shadow in some frames."
+      }
+    ],
+    "camera_framing": [
+      {
+        "points": 4,
+        "observation": "Framing is mostly full-body and static, but B has small scale/position differences relative to A across the sheet."
+      },
+      {
+        "points": 3,
+        "observation": "Some crops do not line up exactly; for example, the top-left frame in B cuts the raised arm/edge more noticeably than A."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 5,
+        "observation": "The plain studio, sunglasses, hat, shiny pants, and simple dance-video staging are retained."
+      },
+      {
+        "points": 4,
+        "observation": "B looks slightly cleaner/more polished and less like the exact source due to the altered shirt and smoother rendering."
+      }
+    ]
+  },
+  "overall": 89,
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": "Moderate. The 1/6-second contact sheets clearly show wardrobe and several timing/pose phase differences, but unsampled in-between motion could reduce or increase the perceived choreography mismatch in the full videos."
+}

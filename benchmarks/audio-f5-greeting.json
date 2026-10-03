@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None; exactly bit-identical file copy."
+    },
+    {
+      "file": "analysis/f5-greeting.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 78,
+      "pitch": 72,
+      "rhythm": 75,
+      "overall": 74,
+      "concrete_differences": "The voice sounds deeper and more muffled/bassy compared to the brighter, thinner synthetic robotic voice of the target. Pitch contour lacks the distinctive high-register robotic inflection, and pacing on 'first sequence of the day be' is flatter and less stylized."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}

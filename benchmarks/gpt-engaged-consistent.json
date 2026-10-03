@@ -1,0 +1,49 @@
+{
+  "scores": {
+    "choreography_and_timing": 76,
+    "wardrobe": 96,
+    "background": 90,
+    "camera_framing": 88,
+    "retro_low_budget_dance_video_look": 86
+  },
+  "deductions": [
+    {
+      "category": "choreography_and_timing",
+      "points": 14,
+      "observed_difference": "B begins with two full frames of the dancer standing with hands on hips, while A begins already in the side-to-side dance with arms out and knees bent. These are extra/wrong poses at the start."
+    },
+    {
+      "category": "choreography_and_timing",
+      "points": 6,
+      "observed_difference": "Several later poses in B appear phase-shifted or reordered relative to the same grid positions in A, though many of the individual dance poses are still present."
+    },
+    {
+      "category": "choreography_and_timing",
+      "points": 4,
+      "observed_difference": "B has at least two frames where the pose is not clearly recoverable because the dancer is heavily blurred/washed out, notably around row 2 column 4 and row 3 column 6."
+    },
+    {
+      "category": "wardrobe",
+      "points": 4,
+      "observed_difference": "Wardrobe is largely faithful: shiny dark suit, white shirt, tie/suspenders are retained. Minor differences include slightly different jacket drape, sheen, and shirt/tie rendering."
+    },
+    {
+      "category": "background",
+      "points": 10,
+      "observed_difference": "The plain white studio background is mostly retained, but B has visible pale green/gray tinting and bright rectangular washout regions around the corrupted/blurred frames."
+    },
+    {
+      "category": "camera_framing",
+      "points": 12,
+      "observed_difference": "Most frames keep a similar full-body studio framing, but B has inconsistent scale/placement and two washed-out blurred frames where the figure is poorly defined or partially lost."
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "points": 14,
+      "observed_difference": "B preserves much of the low-budget white-background dance-video style, but the obvious generative blur/washout artifacts and initial hands-on-hips frames disrupt the original retro performance look."
+    }
+  ],
+  "overall": 85,
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": "Moderate. The contact sheets sample every 1/6 second, so some in-between motion could differ unseen. However, the visible added hands-on-hips opening frames and the washed-out blurred frames are clear observed differences, so the pair is not nearly perfect."
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "file": "analysis/qwen-paul-pcm.wav",
+    "duration_s": 4.391375,
+    "reference_duration_s": 3.85,
+    "rms_db": -30.055501285459005,
+    "mfcc_dtw_distance": 1.1628916589964617,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  },
+  {
+    "file": "analysis/minimax28.wav",
+    "duration_s": 3.622375,
+    "reference_duration_s": 3.85,
+    "rms_db": -22.4349639020799,
+    "mfcc_dtw_distance": 1.1687568544713896,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  }
+]

@@ -1,0 +1,65 @@
+{
+  "choreography": {
+    "score": 84,
+    "deductions": [
+      {
+        "points": 5,
+        "observation": "Frame 1: B is more upright with the face/head more visible, while A is bent farther forward with the head down."
+      },
+      {
+        "points": 9,
+        "observation": "Frame 4: B is already in a deep forward bend, while A is still mostly upright/leaning with arms down; this is a clear timing/pose mismatch."
+      },
+      {
+        "points": 2,
+        "observation": "Frame 5: both are bent over, but B shows a different upper-body/arm silhouette, including a vertical raised limb/skin-toned shape above the back that is not present in A."
+      }
+    ]
+  },
+  "wardrobe": {
+    "score": 96,
+    "deductions": [
+      {
+        "points": 2,
+        "observation": "The red jacket, black shirt, black pants, and white trim/zipper details are preserved overall, but B has small variations in jacket opening/white trim placement across some frames."
+      },
+      {
+        "points": 2,
+        "observation": "B has a noticeable stray skin-toned/hand-like shape in frame 5 that affects the costume/body silhouette."
+      }
+    ]
+  },
+  "background": {
+    "score": 98,
+    "deductions": [
+      {
+        "points": 2,
+        "observation": "The pale yellow-green gradient studio background is essentially the same, with only slight color/brightness differences between A and B."
+      }
+    ]
+  },
+  "camera_framing": {
+    "score": 97,
+    "deductions": [
+      {
+        "points": 3,
+        "observation": "Full-body centered framing and scale are very close. Minor differences in body placement and silhouette width appear in a few frames, especially during the bent-over poses."
+      }
+    ]
+  },
+  "retro_low_budget_dance_video_look": {
+    "score": 97,
+    "deductions": [
+      {
+        "points": 3,
+        "observation": "B preserves the soft, slightly low-resolution, studio-dance-video look. Minor generative blur/artifacting is visible around the head/limbs in some frames."
+      }
+    ]
+  },
+  "overall": {
+    "score": 90,
+    "summary": "B is very faithful in wardrobe, background, camera setup, and overall retro dance-video style. The main issue is choreography/timing: most frames align well, but frame 4 is a clear pose/timing mismatch, frame 1 is noticeably less bent than A, and frame 5 has a different bent-over silhouette with a visible artifact-like raised limb/skin-toned shape."
+  },
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": "Moderate. The contact sheets sample at 0.5-second intervals, so some apparent pose mismatches could be timing offsets between sampled frames, but the visible frame-4 difference is large enough to count as a real observed choreography mismatch."
+}

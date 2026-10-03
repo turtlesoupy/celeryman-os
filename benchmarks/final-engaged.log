@@ -1,0 +1,41 @@
+{
+  "scores": {
+    "faithful_choreography": 92,
+    "wardrobe": 84,
+    "background": 95,
+    "camera_framing": 93,
+    "retro_low_budget_dance_video_look": 88
+  },
+  "overall": 90,
+  "pass_nearly_perfect": false,
+  "deductions": {
+    "faithful_choreography": [
+      "The chronological sequence of major side-to-side dance poses is largely preserved across the 30 sampled frames.",
+      "Several poses are not exact: B often stands a bit more upright or with a narrower/straighter leg stance than A, especially in frames where A has deeper bent knees.",
+      "Arm and wrist angles differ in multiple frames; B's hands are often more curled or held closer to the body while A's arms are more open/extended.",
+      "No clearly missing pose or large timing jump is visible from the sampled frames."
+    ],
+    "wardrobe": [
+      "The suit silhouette is similar, but B's suit appears lighter gray and less black/high-gloss than A's very shiny black suit.",
+      "A has a more distinct black tie; in B the neckwear often appears like a thin loose cord or partially missing/altered tie.",
+      "The jacket shape and drape differ: B's jacket often looks shorter/neater while A's coat flares and hangs more loosely in several poses.",
+      "Shirt/collar details differ, with B showing a more open/soft collar look than A."
+    ],
+    "background": [
+      "Both are isolated full-body figures on a plain studio background.",
+      "B's background is slightly pale gray/green compared with A's cleaner white background."
+    ],
+    "camera_framing": [
+      "Overall full-body scale and six-by-five contact-sheet framing are similar.",
+      "B has small differences in centering and scale from frame to frame.",
+      "Some lower-edge/side-edge proximity or cropping in B differs slightly from A, especially in bottom-row poses."
+    ],
+    "retro_low_budget_dance_video_look": [
+      "B keeps the simple studio cutout dance-video feel.",
+      "The regenerated image looks somewhat cleaner and more modern/digital, with less of A's high-contrast shiny-suit, stark-white-background look.",
+      "Specular highlights on the suit and the low-budget retro styling are close but not exact."
+    ]
+  },
+  "identity_face_note": "Face differences are visible but treated as minor personalization differences and not heavily penalized.",
+  "uncertainty_due_to_sampled_frames": "Moderate-low: the contact sheets show only 30 frames at 1/6-second spacing, so very brief motion errors between sampled frames could be missed, but the sampled choreography appears consistently close."
+}

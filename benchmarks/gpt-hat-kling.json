@@ -1,0 +1,71 @@
+{
+  "scores": {
+    "choreography_timing": 91,
+    "wardrobe": 96,
+    "background_scene": 90,
+    "camera_framing": 94,
+    "retro_low_budget_dance_video_look": 80
+  },
+  "deductions": {
+    "choreography_timing": [
+      {
+        "points": 5,
+        "observation": "The overall sequence of mostly centered head-and-shoulders poses is similar, but B is more static and uniformly centered while A shows slightly more varied head position/tilt across frames."
+      },
+      {
+        "points": 4,
+        "observation": "Several mouth/expression moments do not match exactly: A has more open/teeth-visible smiles in some sampled frames, while B often keeps a tighter closed-mouth expression."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 2,
+        "observation": "The black fedora, black sunglasses, gold chain, and orange/black patterned shirt are all present, but the shirt print shapes/placement are not identical."
+      },
+      {
+        "points": 2,
+        "observation": "Hat brim/crown highlights and shirt collar/neckline rendering differ slightly from A."
+      }
+    ],
+    "background_scene": [
+      {
+        "points": 6,
+        "observation": "Both use a bright pink/magenta backdrop, but B is smoother and cleaner, while A has more visible horizontal texture/banding."
+      },
+      {
+        "points": 4,
+        "observation": "The exact pink tone/gradient differs; B appears more evenly saturated and less noisy than A."
+      }
+    ],
+    "camera_framing": [
+      {
+        "points": 3,
+        "observation": "The bust framing and centered composition are close, but B's crop/scale and head placement vary slightly from the corresponding A frames."
+      },
+      {
+        "points": 3,
+        "observation": "B is sharper and cleaner, changing the perceived camera/source-video framing quality compared with A's softer sampled frames."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 12,
+        "observation": "B lacks much of A's low-resolution analog/video texture, scanline-like horizontal banding, and compression softness."
+      },
+      {
+        "points": 5,
+        "observation": "B has cleaner lighting and a more modern high-definition render, reducing the cheap retro music-video feel."
+      },
+      {
+        "points": 3,
+        "observation": "A's background and subject edges look softer and more degraded; B's edges and wardrobe details are noticeably more polished."
+      }
+    ]
+  },
+  "overall": 90,
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": {
+    "level": "medium-low",
+    "reason": "The contact sheets sample only every 0.5 seconds, so small between-frame motion or timing differences could be missed. However, the sampled frames are sufficient to judge the main wardrobe, scene, framing, and retro-look differences."
+  }
+}

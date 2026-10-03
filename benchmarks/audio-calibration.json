@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/minimax28.wav",
+      "transcript": "Good morning Paul. What will your first sequence of the day be?",
+      "timbre": 78,
+      "pitch": 82,
+      "rhythm": 85,
+      "overall": 80,
+      "concrete_differences": "Minimax lacks the distinct background tape hiss/room noise floor present in the target. The voice sounds drier, more modern, and lacks the slight phasey resonant character of the original computer synthesizer."
+    },
+    {
+      "file": "analysis/zonos2.wav",
+      "transcript": "Good morning Paul. What will your first sequence of the day be?",
+      "timbre": 82,
+      "pitch": 80,
+      "rhythm": 86,
+      "overall": 82,
+      "concrete_differences": "Slightly deeper base frequency than the original. Has a bit more vocal weight and a slightly lower pitch envelope on 'Paul' and 'day be'. Clean audio lacking the ambient noise floor of the target."
+    }
+  ],
+  "best_file": "analysis/zonos2.wav"
+}

@@ -1,0 +1,57 @@
+{
+  "scores": {
+    "faithful_choreography": 96,
+    "wardrobe": 94,
+    "background": 99,
+    "camera_framing": 98,
+    "retro_low_budget_dance_video_look": 98
+  },
+  "overall": 97,
+  "pass_nearly_perfect": true,
+  "concrete_observable_deductions": [
+    {
+      "category": "faithful_choreography",
+      "deduction": 4,
+      "observations": [
+        "The sequence of wide-legged bends, rises, arm drops, and side leans is very closely matched across the sampled frames.",
+        "Minor pose-angle differences are visible in several frames, especially where the source bends deeply or leans to one side; B sometimes has the head/torso angle slightly less extreme or rotated differently.",
+        "No major missing pose or clear timing shift is visible from the contact sheets."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "deduction": 6,
+      "observations": [
+        "The red outer jacket, black shirt, black pants, and dark shoes are preserved well.",
+        "The source shows a visible red/head-top element or protruding red motion/hood-like shape in some frames, especially around row 3 column 1 and row 5 columns 1-3; this is absent or replaced by dark hair/head shape in B.",
+        "B’s jacket silhouette/fit appears slightly different in some frames, but the overall costume reads as the same."
+      ]
+    },
+    {
+      "category": "background",
+      "deduction": 1,
+      "observations": [
+        "Both videos use the same simple pale yellow-to-cyan gradient background.",
+        "Only tiny gradient/color placement differences are visible."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "deduction": 2,
+      "observations": [
+        "Full-body framing, high/overhead-like view, and centered dance-video composition are closely matched.",
+        "B appears very slightly differently scaled or shifted in a few cells, but not enough to change the shot design."
+      ]
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction": 2,
+      "observations": [
+        "The flat studio background, simple lighting, saturated red jacket, and contact-sheet look are preserved.",
+        "Minor rendering/identity differences make B look a little cleaner/more regenerated, but the intended retro low-budget dance-video style remains faithful."
+      ]
+    }
+  ],
+  "identity_personalization_note": "Face, hairline, beard, and head-shape differences are visible, but these are treated as minor identity-personalization differences rather than primary choreography errors.",
+  "uncertainty_due_to_sampled_frames": "Moderate-low. The 30 sampled frames at 1/6-second spacing show strong temporal coverage, but brief motion errors between sampled frames could be missed."
+}

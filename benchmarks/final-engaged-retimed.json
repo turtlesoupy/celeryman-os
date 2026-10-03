@@ -1,0 +1,57 @@
+{
+  "scores": {
+    "faithful_choreography": 80,
+    "wardrobe": 99,
+    "background": 98,
+    "camera_framing": 99,
+    "retro_low_budget_dance_video_look": 98
+  },
+  "overall": 90,
+  "pass_nearly_perfect": false,
+  "observed_differences_and_deductions": [
+    {
+      "category": "faithful_choreography",
+      "deduction": 20,
+      "observations": [
+        "Rows 1-4 and the first frame of row 5 closely match the source poses and timing.",
+        "In the final row, B appears to repeat or hold the leaning-back pose with the forward arm and raised opposite arm for columns 2-6.",
+        "In A, those same final-row frames continue through distinct poses: crossed/stepping legs, more centered crouched stances, jacket-flap movement, and a final side-extended arm pose.",
+        "This is a real missing-pose/timing error over several sampled frames, not just a tiny face or wrinkle variation."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "deduction": 1,
+      "observations": [
+        "Black glossy suit, white shirt, tie/suspenders, belt, and shoes are preserved.",
+        "Only tiny local differences in folds/highlights are visible."
+      ]
+    },
+    {
+      "category": "background",
+      "deduction": 2,
+      "observations": [
+        "Both use the same plain studio background.",
+        "B appears slightly more green/gray tinted than A's whiter background."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "deduction": 1,
+      "observations": [
+        "Scale, full-body framing, and placement are very similar across matched frames.",
+        "No major crop or camera-angle change observed."
+      ]
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "deduction": 2,
+      "observations": [
+        "The glossy suit, isolated dancer, plain background, and dated dance-video styling are retained.",
+        "Slight tonal/color difference and the final repeated-pose artifact reduce faithfulness a little."
+      ]
+    }
+  ],
+  "face_identity_note": "Minor facial/identity differences are visible but small and not treated as a major error under the instruction allowing personalization.",
+  "uncertainty_due_to_sampled_frames": "Low to moderate. The 1/6-second contact sheets show a clear multi-frame mismatch at the end, but unsampled in-between motion cannot be evaluated."
+}

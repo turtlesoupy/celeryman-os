@@ -1,0 +1,64 @@
+{
+  "scores": {
+    "choreography_timing": 96,
+    "wardrobe": 97,
+    "background": 93,
+    "camera_framing": 97,
+    "retro_low_budget_dance_video_look": 94
+  },
+  "deductions": {
+    "choreography_timing": [
+      {
+        "points": 2,
+        "observation": "Overall head-and-shoulder bobbing/posing sequence is very close, but some sampled frames show slightly different facial/mouth timing, e.g. several B frames hold a tighter closed-mouth smirk where A has a more open or changing smile."
+      },
+      {
+        "points": 2,
+        "observation": "Minor head angle/centering differences appear frame-to-frame; B is a little more consistently centered and steady, while A has slightly more varied micro-tilts."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 1,
+        "observation": "Costume elements match: black fedora, black sunglasses, yellow/orange patterned shirt, open collar, necklace."
+      },
+      {
+        "points": 2,
+        "observation": "Exact shirt pattern and collar folds are not identical in the sampled frames, though the wardrobe design is faithfully preserved."
+      }
+    ],
+    "background": [
+      {
+        "points": 5,
+        "observation": "A's pink background has more mottled cloudy texture and visible analog/scanline-like banding; B's background is smoother, cleaner, and more uniformly hot pink."
+      },
+      {
+        "points": 2,
+        "observation": "B shows slight rectangular panel/block variations between cells rather than the softer noisy gradient seen in A."
+      }
+    ],
+    "camera_framing": [
+      {
+        "points": 2,
+        "observation": "Framing is very similar bust/upper-torso against a pink backdrop, but B appears a touch more consistently centered and stable than A."
+      },
+      {
+        "points": 1,
+        "observation": "Minor differences in apparent scale/headroom across sampled frames."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 4,
+        "observation": "The overall retro music-video styling is retained, but B looks slightly cleaner/sharper and less degraded than A."
+      },
+      {
+        "points": 2,
+        "observation": "A has more visible low-budget analog texture/noise in the background; B reduces that artifacting."
+      }
+    ]
+  },
+  "overall": 95,
+  "pass_nearly_perfect": true,
+  "uncertainty_due_to_sampled_frames": "Low-to-moderate. The 30 sampled frames show a very close match in costume, framing, and pose sequence, but the evaluation cannot confirm unsampled motion between the 1/6-second intervals."
+}

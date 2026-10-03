@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None. Identical bit-for-bit control copy."
+    },
+    {
+      "file": "analysis/F5-TTS.wav",
+      "transcript": "Good morning, Thomas. What will your first sequence of the day be?",
+      "timbre": 90,
+      "pitch": 88,
+      "rhythm": 89,
+      "overall": 88,
+      "concrete_differences": "Spoke 'Thomas' instead of 'Paul'. The synthesized voice captures the robotic timbre and metallic resonance well, but the pitch inflection on 'Thomas' differs slightly from 'Paul', and the pacing on 'first sequence' is slightly more separated."
+    },
+    {
+      "file": "analysis/minimax28-thomas.wav",
+      "transcript": "Good morning, Thomas. What will your first sequence of the day be?",
+      "timbre": 78,
+      "pitch": 80,
+      "rhythm": 85,
+      "overall": 79,
+      "concrete_differences": "Spoke 'Thomas' instead of 'Paul'. The acoustic environment is noticeably different, sounding muffled with weaker high-frequency presence and missing the distinctive ring modulation/vocoder texture found in the reference."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}

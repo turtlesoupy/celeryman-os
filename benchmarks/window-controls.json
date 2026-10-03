@@ -1,0 +1,30 @@
+[
+  {
+    "name": "minimize",
+    "pass": true
+  },
+  {
+    "name": "restore-minimize",
+    "pass": true
+  },
+  {
+    "name": "maximize",
+    "pass": true
+  },
+  {
+    "name": "restore-maximize",
+    "pass": true
+  },
+  {
+    "name": "resize",
+    "pass": true
+  },
+  {
+    "name": "window-menu-close",
+    "pass": true
+  },
+  {
+    "name": "reset",
+    "pass": true
+  }
+]

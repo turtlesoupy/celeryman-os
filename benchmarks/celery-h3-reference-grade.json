@@ -1,0 +1,20 @@
+{
+  "scores": {
+    "choreography": 68,
+    "costume": 74,
+    "framing_background": 71,
+    "temporal_consistency": 67,
+    "overall_fidelity": 70
+  },
+  "concrete_mismatches": [
+    "Pose pacing and hip-thrust timing slightly out of sync with reference loop cadence.",
+    "Jacket sleeve cuff tightness and fabric sheen differ slightly under higher resolution rendering.",
+    "Footwear placement and stance angle differ slightly relative to the camera plane."
+  ],
+  "pass_nearly_perfect": false,
+  "improvement_recommendations": [
+    "Align keyframe motion cycles and hip shift timing precisely to the original rate.",
+    "Match the low-fidelity video artifacting and contrast of the reference.",
+    "Adjust stance width and camera angle to match full body framing."
+  ]
+}

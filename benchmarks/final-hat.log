@@ -1,0 +1,64 @@
+{
+  "scores": {
+    "choreography": 95,
+    "wardrobe": 97,
+    "background": 90,
+    "camera_framing": 96,
+    "retro_low_budget_dance_video_look": 89
+  },
+  "deductions": {
+    "choreography": [
+      {
+        "points": 3,
+        "observation": "The head-and-shoulder pose sequence is very similar, but B appears a little more held/static across several sampled frames, with less of the subtle head bob/turn variation visible in A."
+      },
+      {
+        "points": 2,
+        "observation": "Mouth/smile timing differs in some cells: A alternates more between neutral, slight smile, and open-mouth expressions, while B often keeps a more consistent closed-mouth or small-smile expression."
+      }
+    ],
+    "wardrobe": [
+      {
+        "points": 2,
+        "observation": "Wardrobe matches closely: black fedora, dark sunglasses, orange/yellow patterned shirt, and necklace are all present, but the exact shirt pattern/collar rendering is not identical."
+      },
+      {
+        "points": 1,
+        "observation": "Small differences in sunglasses highlights and hat shape/edge rendering are visible."
+      }
+    ],
+    "background": [
+      {
+        "points": 7,
+        "observation": "A has a mottled/cloudy pink backdrop with visible tonal variation; B's background is more flat, clean, and uniformly saturated pink."
+      },
+      {
+        "points": 3,
+        "observation": "The fine horizontal/analog texture visible in A is reduced or absent in B."
+      }
+    ],
+    "camera_framing": [
+      {
+        "points": 3,
+        "observation": "Framing is very close, but B appears slightly cleaner and a bit differently scaled/centered in some frames compared with A."
+      },
+      {
+        "points": 1,
+        "observation": "The sampled sheet in B shows more prominent vertical gutters between columns; this may be a contact-sheet artifact rather than video framing."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "points": 7,
+        "observation": "B preserves the bright studio close-up dance-video setup, but looks smoother and more modern/clean than A."
+      },
+      {
+        "points": 4,
+        "observation": "A's retro feel is helped by visible grain/scanline-like texture and uneven pink backdrop, which are less apparent in B."
+      }
+    ]
+  },
+  "overall": 93,
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": "Moderate-low. The contact sheets sample every 1/6 second and show a very simple close-up performance, so major choreography, wardrobe, background, and framing differences are likely captured. However, subtle timing differences between sampled frames and whether the vertical gutters in B are only contact-sheet artifacts cannot be fully resolved from these stills."
+}

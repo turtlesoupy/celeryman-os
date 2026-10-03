@@ -1,0 +1,178 @@
+[
+  {
+    "file": "public/media/generated/7a6e83fdbb2e81b3f454.mp4",
+    "meta": {
+      "profile": "6041b171-a845-424a-9efc-ddcc0c04ebda",
+      "character": "SHIMMYCELERY",
+      "variant": "base",
+      "costume": "The dancer wears a complete mustard yellow tracksuit: a zip-up jacket with ribbed cuffs and waistband, matching mustard yellow track pants with side stripes, white sneakers, and preserved eyeglasses.",
+      "prompt": "Locked static camera. Entire body always within frame, head and shoes visible, uniform light gray background. Same adult person and clothing as the image. Keep ALL eyeglasses, facial hair and hairstyle from the image in every frame. Never remove glasses or other accessories. The dancer stands facing forward. Both shoulders alternately rise and fall rapidly in a rhythmic shimmy pattern, shoulders moving independently but synchronously, with a slight torso twist to the left on each lift and twist to the right on each drop. Arms hang loosely at sides, fingers relaxed, with a subtle side-to-side sway of the hips matching the shoulder shimmy. Shimmy speed maintains a steady tempo for the full five seconds loop. Awkward enthusiastic retro desktop dancer, deadpan expression. No cuts, no camera motion, no other people, no typography. Perform the requested movement visibly throughout all five seconds. No still-frame holds.  Audio: instrumental 1990s quirky electronic dance loop, bouncy synthetic bass, cheap MIDI brass and drum machine, 122 BPM, no singing, no speech.",
+      "motion": "The dancer stands facing forward. Both shoulders alternately rise and fall rapidly in a rhythmic shimmy pattern, shoulders moving independently but synchronously, with a slight torso twist to the left on each lift and twist to the right on each drop. Arms hang loosely at sides, fingers relaxed, with a subtle side-to-side sway of the hips matching the shoulder shimmy. Shimmy speed maintains a steady tempo for the full five seconds loop.",
+      "model": "minimax/h3-max-turbo/image-to-video",
+      "videoRequest": "01a100e6-0feb-7383-8156-cbd503d359d1",
+      "elapsedMs": 23333
+    },
+    "grade": {
+      "identity_consistency": 93,
+      "instruction_following": 90,
+      "coherent_body_and_motion": 96,
+      "retro_style": 94,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "deduction": 7,
+          "reason": "The performer preserves the key visual traits from the reference—messy dark hair, glasses, light facial hair, and similar general face shape—but the full-body video face is small and slightly less exact in facial proportions."
+        },
+        {
+          "category": "instruction_following",
+          "deduction": 10,
+          "reason": "Mustard yellow tracksuit and full-body view are present, and the shoulders do shift/tilt across frames, but the shoulder shimmy appears fairly subtle and not very energetic or rapid in the sampled contact sheet."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "deduction": 4,
+          "reason": "Body remains coherent with visible feet and stable proportions; only minor stiffness and limited motion amplitude are apparent."
+        },
+        {
+          "category": "retro_style",
+          "deduction": 6,
+          "reason": "The locked camera and flat studio background fit the requested desktop-dance-software feel, though the rendering is somewhat clean/modern rather than strongly late-1990s software-like."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    }
+  },
+  {
+    "file": "public/media/generated/59fdf866aa8c09f0ac47.mp4",
+    "meta": {
+      "profile": "6041b171-a845-424a-9efc-ddcc0c04ebda",
+      "character": "SHIMMYCELERY",
+      "variant": "base",
+      "costume": "The dancer wears a complete mustard yellow tracksuit: a zip-up jacket with ribbed cuffs and waistband, matching mustard yellow track pants with side stripes, white sneakers, and preserved eyeglasses.",
+      "prompt": "Locked static camera. Entire body always within frame, head and shoes visible, uniform light gray background. Same adult person and clothing as the image. Keep ALL eyeglasses, facial hair and hairstyle from the image in every frame. Never remove glasses or other accessories. The dancer orients three-quarters toward screen left. Feet alternate sliding backward toward screen right in small precise steps. The whole body visibly moves a short distance across the studio floor with each foot slide. Arms remain loosely bent at the elbows, swinging gently in opposition to the foot movement to maintain balance. Head stays level, eyes forward, maintaining focus. The tempo is steady, with each shuffle taking approximately one second, repeated to fill the five-second loop. Awkward enthusiastic retro desktop dancer, deadpan expression. No cuts, no camera motion, no other people, no typography. Perform the requested movement visibly throughout all five seconds. No still-frame holds. Make the backward travel clearly visible: begin at a three-quarter angle facing toward screen left, then alternate the feet in small sliding steps BACKWARDS toward screen right, translating the whole body about one fifth of the frame width. Keep the same facing direction and fixed camera. This is a backwards shuffle with actual rearward travel, not marching or swaying in place. Audio: instrumental 1990s quirky electronic dance loop, bouncy synthetic bass, cheap MIDI brass and drum machine, 122 BPM, no singing, no speech.",
+      "motion": "The dancer orients three-quarters toward screen left. Feet alternate sliding backward toward screen right in small precise steps. The whole body visibly moves a short distance across the studio floor with each foot slide. Arms remain loosely bent at the elbows, swinging gently in opposition to the foot movement to maintain balance. Head stays level, eyes forward, maintaining focus. The tempo is steady, with each shuffle taking approximately one second, repeated to fill the five-second loop.",
+      "model": "minimax/h3-max-turbo/image-to-video",
+      "videoRequest": "01a100e6-3607-7c72-81ac-2fdd7bf74b98",
+      "elapsedMs": 3803
+    },
+    "grade": {
+      "identity_consistency": 92,
+      "instruction_following": 91,
+      "coherent_body_and_motion": 95,
+      "retro_style": 94,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "points": 8,
+          "reason": "Performer preserves the general visual traits from the reference, including messy dark hair, round glasses, light skin, and facial hair, but the face/beard detail is somewhat simplified at full-body distance."
+        },
+        {
+          "category": "instruction_following",
+          "points": 9,
+          "reason": "Yellow tracksuit is maintained and the feet show alternating backward movement, but the motion reads a bit more like a cautious backward walk/step than a distinctly tiny shuffle in some frames."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "points": 5,
+          "reason": "Body remains coherent with visible feet and stable proportions; minor stiffness and slight foot-sliding ambiguity are present."
+        },
+        {
+          "category": "retro_style",
+          "points": 6,
+          "reason": "Locked camera, plain studio, and full-body dance-software framing are present, though the rendering is cleaner and more modern than strongly late-1990s desktop software."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    }
+  },
+  {
+    "file": "public/media/generated/547fd0e737d8987bbed0.mp4",
+    "meta": {
+      "profile": "6041b171-a845-424a-9efc-ddcc0c04ebda",
+      "character": "WOBBLETOPPURPLE",
+      "variant": "base",
+      "costume": "The dancer wears a mustard yellow tracksuit consisting of a zip-up jacket with ribbed cuffs and waistband, matching mustard yellow track pants with side stripes, white sneakers, preserved eyeglasses, and a tall purple top hat added to the ensemble.",
+      "prompt": "Locked static camera. Entire body always within frame, head and shoes visible, uniform light gray background. Same adult person and clothing as the image. Keep ALL eyeglasses, facial hair and hairstyle from the image in every frame. Never remove glasses or other accessories. The dancer stands facing forward with a tall purple top hat securely on their head. The hat tilts gently to the right over two and a half seconds, returning slowly to center over the next two and a half seconds, completing one wobble. This sequence repeats once more for a total of two slow wobbles. The dancer's torso remains mostly still, with subtle head movements to emphasize the hat's tilt. Arms are relaxed at the sides with slight, slow sways to complement the wobble timing. The feet remain planted firmly, maintaining balance throughout. Awkward enthusiastic retro desktop dancer, deadpan expression. No cuts, no camera motion, no other people, no typography. Perform the requested movement visibly throughout all five seconds. No still-frame holds.  Audio: instrumental 1990s quirky electronic dance loop, bouncy synthetic bass, cheap MIDI brass and drum machine, 122 BPM, no singing, no speech.",
+      "motion": "The dancer stands facing forward with a tall purple top hat securely on their head. The hat tilts gently to the right over two and a half seconds, returning slowly to center over the next two and a half seconds, completing one wobble. This sequence repeats once more for a total of two slow wobbles. The dancer's torso remains mostly still, with subtle head movements to emphasize the hat's tilt. Arms are relaxed at the sides with slight, slow sways to complement the wobble timing. The feet remain planted firmly, maintaining balance throughout.",
+      "model": "minimax/h3-max-turbo/image-to-video",
+      "videoRequest": "01a100e6-8e98-78d0-9c8f-232c144fe226",
+      "elapsedMs": 20281
+    },
+    "grade": {
+      "identity_consistency": 92,
+      "instruction_following": 94,
+      "coherent_body_and_motion": 96,
+      "retro_style": 93,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "deduction": 8,
+          "reason": "The performer preserves key visual traits from the identity photo such as round dark eyeglasses, dark tousled hair, light skin, and facial hair, but the face is small and somewhat generalized in the full-body frames."
+        },
+        {
+          "category": "instruction_following",
+          "deduction": 6,
+          "reason": "A tall purple top hat is present and visibly tilts/wobbles slowly, but the wobble appears partly driven by head/upper-body leaning rather than an independently wobbling hat, and the exact two-slow-wobble timing is only approximately clear from the contact sheet."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "deduction": 4,
+          "reason": "The body remains coherent with feet visible and planted, though the slow lean gives the motion a slightly posed quality rather than a fully fluid dance-software wobble."
+        },
+        {
+          "category": "retro_style",
+          "deduction": 7,
+          "reason": "The locked camera, full-body studio view, flat background, and simple performer presentation fit the requested desktop-dance setup, but the rendering is relatively modern/photographic rather than strongly late-1990s software-like."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    }
+  },
+  {
+    "file": "public/media/generated/ffc4ada401fe6f03b1a1.mp4",
+    "meta": {
+      "profile": "6041b171-a845-424a-9efc-ddcc0c04ebda",
+      "character": "WOBBLETOPPURPLE",
+      "variant": "smile",
+      "costume": "The dancer wears a mustard yellow tracksuit consisting of a zip-up jacket with ribbed cuffs and waistband, matching mustard yellow track pants with side stripes, white sneakers, preserved eyeglasses, and a tall purple top hat added to the ensemble.",
+      "prompt": "Locked static camera. Head and shoulders close-up. Same adult person and clothing as the image. Keep ALL eyeglasses, facial hair and hairstyle from the image in every frame. Never remove glasses or other accessories. Head and shoulders close-up, look straight at viewer and slowly form an awkward broad closed-mouth smile. Hold smile. Flat hot pink background. Awkward enthusiastic retro desktop dancer, deadpan expression. No cuts, no camera motion, no other people, no typography. Perform the requested movement visibly throughout all five seconds. No still-frame holds.  Audio: instrumental 1990s quirky electronic dance loop, bouncy synthetic bass, cheap MIDI brass and drum machine, 122 BPM, no singing, no speech.",
+      "motion": "Head and shoulders close-up, look straight at viewer and slowly form an awkward broad closed-mouth smile. Hold smile. Flat hot pink background.",
+      "model": "minimax/h3-max-turbo/image-to-video",
+      "videoRequest": "01a100e6-e5ce-78b1-9506-ec487ee800f0",
+      "elapsedMs": 20100
+    },
+    "grade": {
+      "identity_consistency": 94,
+      "instruction_following": 97,
+      "coherent_body_and_motion": 98,
+      "retro_style": 96,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "points": 6,
+          "reason": "Overall facial resemblance is strong, with similar glasses, beard, hair texture, and face shape, but the tall hat obscures much of the hairstyle and the generated facial proportions/expression are slightly stylized."
+        },
+        {
+          "category": "instruction_following",
+          "points": 3,
+          "reason": "The video presents a clear smiling head-and-shoulders portrait with no feet visible, but includes added costume/hat/background elements beyond the simple portrait request."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "points": 2,
+          "reason": "Motion is minimal but coherent; the expression changes into and holds a smile without obvious body artifacts."
+        },
+        {
+          "category": "retro_style",
+          "points": 4,
+          "reason": "Locked camera, flat studio background, and simple performer presentation fit the retro desktop style, with only minor modern polish/stylization."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    }
+  }
+]

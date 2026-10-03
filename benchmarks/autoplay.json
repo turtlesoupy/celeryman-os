@@ -1,0 +1,16 @@
+{
+  "contextStates": [
+    "running"
+  ],
+  "playing": [
+    {
+      "kind": "audio-playing",
+      "src": "/media/original/greeting.wav",
+      "text": "Good morning Paul.\nWhat will your first sequence of the day be?",
+      "spokenText": "Good morning Paul. What will your first sequence of the day be?",
+      "time": 198.5
+    }
+  ],
+  "errors": [],
+  "pass": true
+}

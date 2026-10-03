@@ -1,0 +1,20 @@
+{
+  "scores": {
+    "choreography": 74,
+    "costume": 72,
+    "framing_background": 71,
+    "temporal_consistency": 73,
+    "overall_fidelity": 72
+  },
+  "pass_nearly_perfect": false,
+  "concrete_mismatches": [
+    "Framing in B is slightly wider at the bottom, showing full shoes clearly compared to A's cropped baseline.",
+    "Costume sheen and fabric rendering differ slightly in texture and fold dynamics.",
+    "Resolution and facial clarity in B are noticeably higher and sharper than the compressed retro artifacting in A."
+  ],
+  "observable_improvements": [
+    "Crop framing slightly closer at the feet to match reference A.",
+    "Apply lower-resolution video compression artifacts to emulate the vintage desktop software aesthetic.",
+    "Match suit fabric sheen and collar proportions more precisely."
+  ]
+}

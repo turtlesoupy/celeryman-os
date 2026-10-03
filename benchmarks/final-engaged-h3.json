@@ -1,0 +1,75 @@
+{
+  "scores": {
+    "faithful_choreography": 76,
+    "wardrobe": 87,
+    "background": 94,
+    "camera_framing": 91,
+    "retro_low_budget_dance_video_look": 89
+  },
+  "overall": 85,
+  "pass_nearly_perfect": false,
+  "concrete_observable_deductions": {
+    "faithful_choreography": [
+      {
+        "deduction": 10,
+        "observation": "B row 1 column 1 is severely corrupted: most of the dancer/body is missing or reduced to fragments, so the opening pose in A is not faithfully reproduced."
+      },
+      {
+        "deduction": 8,
+        "observation": "B row 5 column 3 is also severely degraded/ghosted, with the head/torso washed out and the body pose only partially readable."
+      },
+      {
+        "deduction": 6,
+        "observation": "Several poses appear phase-shifted or reordered relative to A. For example, B row 2 columns 1-2 resemble adjacent/source poses but not in the same exact row/column order, and later lunge/lean poses appear in different sampled positions. The overall dance vocabulary is similar, but frame-by-frame timing is not nearly identical."
+      }
+    ],
+    "wardrobe": [
+      {
+        "deduction": 6,
+        "observation": "The main wardrobe is mostly correct: black shiny suit, white shirt, dark tie/suspenders. However, in some B frames the tie/suspenders and shirt details differ or become simplified/washed out."
+      },
+      {
+        "deduction": 7,
+        "observation": "The two heavily corrupted frames in B lose substantial wardrobe information, especially row 1 column 1 and row 5 column 3."
+      }
+    ],
+    "background": [
+      {
+        "deduction": 4,
+        "observation": "B keeps the same plain studio background, but it is slightly more pale green/gray compared with A's cleaner white/gray backdrop."
+      },
+      {
+        "deduction": 2,
+        "observation": "The corrupted frames introduce visible artifact blobs/ghosting against the background."
+      }
+    ],
+    "camera_framing": [
+      {
+        "deduction": 5,
+        "observation": "Most frames preserve the full-body, centered, contact-sheet framing, but some figures in B are slightly shifted or scaled differently from the corresponding A frames."
+      },
+      {
+        "deduction": 4,
+        "observation": "The two corrupted frames break framing continuity because the dancer is not cleanly visible as a full body."
+      }
+    ],
+    "retro_low_budget_dance_video_look": [
+      {
+        "deduction": 5,
+        "observation": "The blank studio, shiny suit, and simple dance-video staging are largely preserved."
+      },
+      {
+        "deduction": 6,
+        "observation": "AI-like degradation/ghosting in B makes several sampled frames look less like the clean retro source and more artifacted than the original low-budget video aesthetic."
+      }
+    ]
+  },
+  "notes": [
+    "Minor face/identity differences were not materially penalized except where the face/body is visibly missing or corrupted.",
+    "No wrong scene or wrong costume was observed; deductions are mainly for corrupted frames and frame-by-frame timing/pose mismatches."
+  ],
+  "uncertainty_due_to_sampled_frames": {
+    "level": "medium",
+    "reason": "The sheets sample every 1/6 second, so exact between-frame motion cannot be judged. Some pose mismatches could be adjacent-frame timing offsets, but the severe corrupted frames and visible ordering differences are directly observable in the sampled frames."
+  }
+}

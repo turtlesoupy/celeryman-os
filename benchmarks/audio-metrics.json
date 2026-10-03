@@ -1,0 +1,26 @@
+[
+  {
+    "file": "public/media/original/greeting.wav",
+    "duration_s": 3.85,
+    "reference_duration_s": 3.85,
+    "rms_db": -25.76491336243171,
+    "mfcc_dtw_distance": 0.0,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  },
+  {
+    "file": "public/media/voice/9fbb0ad0228caedf46a5.wav",
+    "duration_s": 20.18,
+    "reference_duration_s": 3.85,
+    "rms_db": -28.766109803440735,
+    "mfcc_dtw_distance": 1.447426850560802,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  },
+  {
+    "file": "analysis/qwen-paul-pcm.wav",
+    "duration_s": 4.391375,
+    "reference_duration_s": 3.85,
+    "rms_db": -30.055501285459005,
+    "mfcc_dtw_distance": 1.1628916589964617,
+    "note": "Lower MFCC distance is better; this is not a calibrated perceptual fidelity percentage."
+  }
+]

@@ -1,0 +1,44 @@
+{
+  "scores": {
+    "faithful_choreography": 94,
+    "wardrobe": 62,
+    "background": 92,
+    "camera_framing": 93,
+    "retro_low_budget_dance_video_look": 74
+  },
+  "deductions": [
+    {
+      "category": "wardrobe",
+      "points_off": 30,
+      "observed_difference": "B consistently omits the black fedora/hat that A wears in every sampled frame."
+    },
+    {
+      "category": "wardrobe",
+      "points_off": 8,
+      "observed_difference": "B consistently omits the dark sunglasses that A wears in every sampled frame. This is more than a minor face/identity difference because the glasses are visible wardrobe/accessory elements."
+    },
+    {
+      "category": "faithful_choreography",
+      "points_off": 6,
+      "observed_difference": "The overall dance timing and pose sequence are very close, but several sampled frames show small arm/hand-shape differences: B’s extended arm and bent forearm positions are slightly less precise or more rounded/blobby than A’s. No major missing pose is observed."
+    },
+    {
+      "category": "background",
+      "points_off": 8,
+      "observed_difference": "Both use a plain studio background, but B appears slightly pale green/gray compared with A’s cleaner white background."
+    },
+    {
+      "category": "camera_framing",
+      "points_off": 7,
+      "observed_difference": "Full-body scale and centering are broadly matched, but B’s figure placement and spacing differ slightly from A across the contact sheet."
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "points_off": 26,
+      "observed_difference": "The missing fedora and sunglasses noticeably reduce the match to A’s retro low-budget dance-video styling. B preserves the patterned shirt, black pants, boots, and plain studio setup, but the iconic silhouette/look is changed."
+    }
+  ],
+  "overall": 83,
+  "pass_nearly_perfect": false,
+  "uncertainty_due_to_sampled_frames": "Moderate-low. The 30 sampled frames show choreography that is mostly consistent, but only at 1/6-second intervals, so very brief timing or motion differences between samples could be missed. The wardrobe/accessory mismatch is consistent across all sampled frames and is therefore low-uncertainty."
+}

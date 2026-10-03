@@ -1,0 +1,8 @@
+import 'dotenv/config';import fs from 'node:fs/promises';import {fal} from '@fal-ai/client';import {execFileSync} from 'node:child_process';
+fal.config({credentials:process.env.FAL_KEY});
+const audio=await fal.storage.upload(new File([await fs.readFile('public/media/original/greeting.wav')],'computer.wav',{type:'audio/wav'}));
+const frame=await fal.storage.upload(new File([await fs.readFile('public/media/generated/d6ff076568741cd0d5bb.png')],'portrait.png',{type:'image/png'}));
+for(const [name,line]of [['greeting','Good morning Paul. What will your first sequence of the day be?'],['thomas','Good morning Thomas. What will your first sequence of the day be?'],['novel','Mustard shimmy engaged.']]){
+ const r=await fal.subscribe('minimax/h3-max/reference-to-video',{input:{reference_image_urls:[frame],reference_audio_urls:[audio],prompt:`Static portrait from Image 1. A computer speaks off screen. Copy EXACTLY the electronic synthesized computer voice in Audio 1: same pitch, timbre, retro robot formants, flat deadpan articulation, cadence and recording texture. Speak ONLY these exact words, naturally spaced, with the same voice: "${line}" No music, no background sounds, no other speech. Do not use a natural human narrator voice.`,duration:5,resolution:'480P',aspect_ratio:'4:3',prompt_expansion_mode:'disabled'}});
+ const file=`analysis/h3-voice-${name}.mp4`;await fs.writeFile(file,Buffer.from(await(await fetch(r.data.video.url)).arrayBuffer()));execFileSync('ffmpeg',['-y','-i',file,'-vn','-ar','24000','-c:a','pcm_s16le',file.replace('.mp4','.wav'),'-loglevel','error']);console.log(name,r.requestId);
+}

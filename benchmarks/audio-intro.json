@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/intro-reference.wav",
+      "transcript": "Hey Paul, I'm Tayne, your latest dancer. I can't wait to entertain you. T stay light dancer.",
+      "timbre": 98,
+      "pitch": 97,
+      "rhythm": 95,
+      "overall": 95,
+      "concrete_differences": "Matches the voice profile, processing, and robotic resonance nearly perfectly in the first sentence; however, it has an extraneous garbled continuation ('T stay light dancer') appended at the end."
+    },
+    {
+      "file": "analysis/tayne-intro-current.wav",
+      "transcript": "Hey Paul, I'm Tayne, your latest dancer. I can't wait to entertain you.",
+      "timbre": 35,
+      "pitch": 30,
+      "rhythm": 55,
+      "overall": 35,
+      "concrete_differences": "Completely different voice synthesis model; sounds like a modern, clean, generic neural text-to-speech engine with natural inflections, lacking the low-pitched, gritty, flanged vocoder robotic acoustic qualities of the original clip."
+    }
+  ],
+  "best_file": "analysis/intro-reference.wav"
+}

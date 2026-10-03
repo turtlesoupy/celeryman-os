@@ -1,0 +1,69 @@
+{
+  "scores": {
+    "choreography": 95,
+    "wardrobe": 88,
+    "background": 92,
+    "camera_framing": 94,
+    "retro_low_budget_dance_video_look": 91
+  },
+  "overall": 92,
+  "pass_nearly_perfect": false,
+  "deductions": [
+    {
+      "category": "choreography",
+      "points_off": 5,
+      "observations": [
+        "The regenerated video preserves the same overall chronological dance pattern: side-to-side leaning, bent elbows, palms/forearms out, alternating knee bends and leg placements.",
+        "Several sampled frames show small but visible pose offsets: arm bends and hand heights differ slightly, especially in the raised-arm lean poses and the palms-out crouched poses.",
+        "Jacket flare and body lean dynamics are close but not identical; some B frames look more upright or less exaggerated than A.",
+        "No major missing pose or clear timing swap is visible in the sampled contact sheet."
+      ]
+    },
+    {
+      "category": "wardrobe",
+      "points_off": 12,
+      "observations": [
+        "Both show a dark shiny suit with white shirt and dark shoes, so the costume concept is preserved.",
+        "A has a more glossy black suit; B reads more gray/satin and slightly less wet/shiny.",
+        "A’s shirt-and-tie styling appears neater with a centered dark tie; B often shows a looser/open collar with dark tie/strap elements hanging differently.",
+        "Pants silhouette is broadly similar but B’s trousers sometimes appear smoother/less baggy than A."
+      ]
+    },
+    {
+      "category": "background",
+      "points_off": 8,
+      "observations": [
+        "A is a very clean white studio/chroma-style background.",
+        "B has a slightly gray/green cast and more visible floor/shadow and panel/contact-sheet boundary feel.",
+        "The setting remains a plain studio background, not a wrong scene."
+      ]
+    },
+    {
+      "category": "camera_framing",
+      "points_off": 6,
+      "observations": [
+        "Full-body framing is preserved across the sampled frames.",
+        "Scale and centering are close, but B appears a little more consistently grounded with visible floor/shadow, while A looks more cut-out against white.",
+        "Some limb-to-frame spacing differs slightly, but there is no major crop or camera-angle mismatch."
+      ]
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "points_off": 9,
+      "observations": [
+        "B retains the plain studio, shiny suit, exaggerated dance-pose aesthetic.",
+        "B looks slightly cleaner/modernized and less starkly white/high-contrast than A.",
+        "The low-budget chroma/studio feel is still recognizable but not perfectly matched."
+      ]
+    }
+  ],
+  "face_identity_notes": {
+    "observed": "The face/hair/identity differs between A and B.",
+    "deduction_applied": 0,
+    "reason": "Minor face/identity personalization differences are allowed by the prompt and were not treated as a main fidelity error."
+  },
+  "uncertainty_due_to_sampled_frames": {
+    "level": "moderate",
+    "reason": "The judgment is based on 30 sampled frames at 1/6 second spacing. The visible frames show strong pose continuity, but unsampled in-between motion could contain additional timing, limb, or cloth-motion differences."
+  }
+}

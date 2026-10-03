@@ -1,0 +1,11 @@
+import 'dotenv/config';import fs from 'node:fs/promises';import {fal} from '@fal-ai/client';import {execFileSync} from 'node:child_process';
+fal.config({credentials:process.env.FAL_KEY});
+const upload=async(file,type)=>fal.storage.upload(new File([await fs.readFile(file)],file.split('/').pop(),{type}));
+const voice=await upload('public/media/original/greeting.wav','audio/wav'),image=await upload('public/media/generated/d6ff076568741cd0d5bb.png','image/png');
+const outcomes=await Promise.allSettled([['thomas','Good morning Thomas. What will your first sequence of the day be?'],['novel','Mustard shimmy engaged.']].map(async([name,line])=>{
+ const padded=`analysis/minimax28-${name}-padded.wav`;execFileSync('ffmpeg',['-y','-i',`analysis/minimax28-${name}.wav`,'-af','apad=pad_dur=1','-c:a','pcm_s16le',padded,'-loglevel','error']);const guide=await upload(padded,'audio/wav');
+ const r=await fal.subscribe('minimax/h3-max/reference-to-video',{input:{reference_image_urls:[image],reference_audio_urls:[voice,guide],prompt:`A still portrait. Audio generation task: say precisely the dialogue from Audio 2 in the electronic computer VOICE STYLE from Audio 1. Audio 1 is only a timbre/style example; its words must NOT be repeated. The exact new dialogue is: "${line}". Every word must match this new line. ${name==='thomas'?'The name is THOMAS, two syllables, never Paul.':'There are only THREE words: Mustard. Shimmy. Engaged. No greeting, no extra words before or after.'} Preserve the crisp resonant retro computer synthesizer formants, pitch and deadpan robotic articulation of Audio 1. After finishing the line, SILENCE for the remaining video. No music or other sounds.`,duration:5,resolution:'480P',aspect_ratio:'4:3',prompt_expansion_mode:'disabled'}});
+ const file=`analysis/h3-transfer-${name}.mp4`;await fs.writeFile(file,Buffer.from(await(await fetch(r.data.video.url)).arrayBuffer()));execFileSync('ffmpeg',['-y','-i',file,'-vn','-ar','24000','-c:a','pcm_s16le',file.replace('.mp4','.wav'),'-loglevel','error']);console.log(name,r.requestId);
+}));
+
+for(const outcome of outcomes)if(outcome.status==='rejected')console.error(outcome.reason?.body||outcome.reason?.message||outcome.reason);

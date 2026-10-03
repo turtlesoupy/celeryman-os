@@ -1,0 +1,14 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/minimax28-beta.wav",
+      "transcript": "I have a beta sequence I've been working on, would you like to see it?",
+      "timbre": 97,
+      "pitch": 96,
+      "rhythm": 98,
+      "overall": 97,
+      "concrete_differences": "Extremely close match; negligible differences in trailing breath on the final question."
+    }
+  ],
+  "best_file": "analysis/minimax28-beta.wav"
+}

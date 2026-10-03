@@ -1,0 +1,133 @@
+{
+  "cases": [
+    {
+      "name": "engaged",
+      "layout": 96,
+      "chrome": 93,
+      "typography": 92,
+      "overall": 94,
+      "observed_differences": [
+        "Overall window positions and sizes are very close, including the left portrait window, right CINCO ID window, and lower console.",
+        "The clone's title-bar text and console text appear slightly heavier/sharper than the softer source rendering.",
+        "The left portrait window's active blue title-bar span is slightly shorter in the clone, with the Close area beginning a bit farther left.",
+        "The bottom control strip of the console is simplified/different in small widget details compared with the source."
+      ]
+    },
+    {
+      "name": "oyster",
+      "layout": 97,
+      "chrome": 94,
+      "typography": 93,
+      "overall": 95,
+      "observed_differences": [
+        "The overlapping OYSTER window is placed and sized almost identically, with only a few-pixel vertical difference.",
+        "The clone's chrome lines and title text are crisper/heavier than the blurred source.",
+        "Small title-bar button proportions differ slightly, especially the Close/button group on the OYSTER window.",
+        "The gradient/content area in the front OYSTER window appears a little cleaner and more uniform in the clone."
+      ]
+    },
+    {
+      "name": "intro",
+      "layout": 98,
+      "chrome": 95,
+      "typography": 95,
+      "overall": 96,
+      "observed_differences": [
+        "The single Tayne window matches the original placement and size very closely.",
+        "The clone's interior image area is cleaner and more horizontally scanlined, while the source is softer/blurrier.",
+        "Title-bar text and buttons are very close, though the clone's text appears slightly darker and sharper."
+      ]
+    },
+    {
+      "name": "tayne",
+      "layout": 97,
+      "chrome": 94,
+      "typography": 93,
+      "overall": 95,
+      "observed_differences": [
+        "The two side Tayne windows and central OYSTER window match the original layout and z-order closely.",
+        "The center orange logo panel is slightly cleaner and more saturated in the clone.",
+        "The title-bar typography in the clone is a bit bolder/sharper than in the source.",
+        "Small button dividers and bevels in the title bars are not quite as soft as the source."
+      ]
+    },
+    {
+      "name": "squat",
+      "layout": 97,
+      "chrome": 95,
+      "typography": 94,
+      "overall": 96,
+      "observed_differences": [
+        "The cascade of Tayne windows and the larger front/right window align very closely with the source.",
+        "The clone's title bars and borders are slightly crisper, with darker text than the source.",
+        "The visible stacked-window spacing is very close, but some rear window edges differ by a few pixels."
+      ]
+    },
+    {
+      "name": "hat",
+      "layout": 97,
+      "chrome": 95,
+      "typography": 94,
+      "overall": 96,
+      "observed_differences": [
+        "The nested portrait-window stack in the upper right is positioned and cropped very close to the source.",
+        "The lower console window matches position and size closely.",
+        "The clone's console text is sharper and slightly cleaner than the analog-blurred source.",
+        "Nested title-bar button details and bevel softness differ slightly."
+      ]
+    },
+    {
+      "name": "flar",
+      "layout": 96,
+      "chrome": 87,
+      "typography": 93,
+      "overall": 91,
+      "observed_differences": [
+        "The three tall Tayne windows are placed and sized almost identically.",
+        "In the source, the left window shows a visible vertical scrollbar/thumb along its right edge; the clone does not reproduce that scrollbar detail.",
+        "The clone's title bars are sharper and the title text is heavier than the softened source.",
+        "Interior content begins at a very similar height, but the clone's panel rendering is cleaner and more uniform."
+      ]
+    },
+    {
+      "name": "nsfw",
+      "layout": 98,
+      "chrome": 96,
+      "typography": 96,
+      "overall": 97,
+      "observed_differences": [
+        "The rear Tayne window and front NSFW dialog match the source placement, size, and overlap very closely.",
+        "The large NSFW text is very close in scale and position.",
+        "The clone is slightly sharper overall, with more distinct scanlines and darker chrome text.",
+        "Small title-bar button bevels are a little cleaner than in the source."
+      ]
+    },
+    {
+      "name": "call",
+      "layout": 97,
+      "chrome": 94,
+      "typography": 95,
+      "overall": 95,
+      "observed_differences": [
+        "The main Tayne window and centered incoming-call popup match the source layout closely.",
+        "The clone's main window interior is paler/yellower, while the source has a warmer peach/tan tint.",
+        "The popup shadow, red number display, and WIFE panel are very close, though the clone is sharper.",
+        "Title-bar and button details are close but slightly cleaner and less analog-soft in the clone."
+      ]
+    },
+    {
+      "name": "chaos",
+      "layout": 95,
+      "chrome": 92,
+      "typography": 92,
+      "overall": 94,
+      "observed_differences": [
+        "The dense stack of CINCO ID windows, the MOZARELL window, and the foreground error dialogs are reproduced with close overall placement and z-order.",
+        "The clone's foreground error dialog appears slightly cleaner and sharper, with heavier title-bar and message text.",
+        "Some stacked rear-window edges and offsets differ by a few pixels, especially in the lower cascaded area.",
+        "The source has softer analog-blurred chrome and text, while the clone uses crisper lines and more uniform scanlines."
+      ]
+    }
+  ],
+  "overall": 95
+}

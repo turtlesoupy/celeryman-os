@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "file": "analysis/audio-identical-control.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 100,
+      "pitch": 100,
+      "rhythm": 100,
+      "overall": 100,
+      "concrete_differences": "None. This is an identical copy of the target clip."
+    },
+    {
+      "file": "analysis/h3-voice-greeting.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 98,
+      "pitch": 96,
+      "rhythm": 97,
+      "overall": 97,
+      "concrete_differences": "Extremely close match; tiny acoustic phase differences and slightly different background resonance tail at the end, but practically indistinguishable."
+    },
+    {
+      "file": "analysis/minimax28.wav",
+      "transcript": "Good morning, Paul. What will your first sequence of the day be?",
+      "timbre": 78,
+      "pitch": 80,
+      "rhythm": 85,
+      "overall": 80,
+      "concrete_differences": "Noticeably lower/drier pitch, lacks the distinctive mid-range resonant synthetic timbre and slight robotic flanging of the target voice. Timing is slightly compressed."
+    }
+  ],
+  "best_file": "analysis/audio-identical-control.wav"
+}
