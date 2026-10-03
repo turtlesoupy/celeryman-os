@@ -1,0 +1,205 @@
+{
+  "created": "2026-10-03T16:52:12.737Z",
+  "checks": [
+    {
+      "name": "real-microphone-transcription-and-generation",
+      "pass": true
+    },
+    {
+      "name": "instant-recorded-acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "fresh-generated-dance-under-eight-seconds",
+      "pass": true
+    },
+    {
+      "name": "interrupted-speech-restores-music",
+      "pass": true
+    },
+    {
+      "name": "pause-resume-keeps-loop",
+      "pass": true
+    },
+    {
+      "name": "no-runtime-errors",
+      "pass": true
+    }
+  ],
+  "latency": [
+    {
+      "command": "Computer, show me a shoulder shimmy in a mustard yellow tracksuit.",
+      "acknowledgementMs": 3.5,
+      "firstPlaybackMs": 6396.400000095367
+    },
+    {
+      "command": "Now give him a tiny backwards shuffle while keeping the yellow tracksuit.",
+      "acknowledgementMs": 2.1999999284744263,
+      "firstPlaybackMs": 5317.699999928474
+    },
+    {
+      "command": "Could I see a hat wobble, but wearing a tall purple top hat and wobbling twice as slowly?",
+      "acknowledgementMs": 2.0999999046325684,
+      "firstPlaybackMs": 5223.699999928474
+    }
+  ],
+  "microphone": {
+    "acknowledgementMs": 1634.7000000476837,
+    "videoAvailableMs": 5365.200000047684
+  },
+  "coldCanonicalFirstPlaybackMs": 11344.200000047684,
+  "quality": [
+    {
+      "identity_consistency": 95,
+      "instruction_following": 94,
+      "coherent_body_and_motion": 97,
+      "retro_style": 94,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "deduction": 5,
+          "reason": "Performer broadly matches the reference with dark messy hair, round glasses, light skin, and facial hair, but facial details and hair shape are somewhat generalized."
+        },
+        {
+          "category": "instruction_following",
+          "deduction": 6,
+          "reason": "Mustard yellow tracksuit and white sneakers are correct, full body and feet are visible, and shoulders alternate with torso sway, but the shoulder shimmy is somewhat mild rather than strongly exaggerated."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "deduction": 3,
+          "reason": "Body remains coherent with no pasted-head effect, but the motion is a little stiff and repetitive."
+        },
+        {
+          "category": "retro_style",
+          "deduction": 6,
+          "reason": "Locked camera and flat studio background fit the desktop-dance-software idea, but the rendering is more polished/modern than distinctly late-1990s."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    },
+    {
+      "identity_consistency": 95,
+      "instruction_following": 94,
+      "coherent_body_and_motion": 96,
+      "retro_style": 92,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "deduction": 5,
+          "reason": "The performer retains the key visible traits from the reference—messy dark hair, glasses, light skin, facial hair—but the full-body video view is small and less detailed than the portrait."
+        },
+        {
+          "category": "instruction_following",
+          "deduction": 6,
+          "reason": "The yellow tracksuit is maintained and the feet alternate in a small shuffling pattern, but the actual backward displacement is subtle and somewhat hard to confirm across the sampled frames."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "deduction": 4,
+          "reason": "The body remains coherent with visible feet and plausible stepping, with only minor stiffness/slide-like qualities in the foot motion."
+        },
+        {
+          "category": "retro_style",
+          "deduction": 8,
+          "reason": "The locked camera and plain studio background fit the desktop dance-software requirement, though the rendering looks somewhat cleaner and more modern than strongly late-1990s."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    },
+    {
+      "identity_consistency": 94,
+      "instruction_following": 96,
+      "coherent_body_and_motion": 98,
+      "retro_style": 97,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "deduction": 6,
+          "reason": "The performer has similar glasses, facial hair, hair color, and general face shape, but the face is small in the full-body frames and the tall hat obscures much of the hair, limiting certainty."
+        },
+        {
+          "category": "instruction_following",
+          "deduction": 4,
+          "reason": "The tall purple top hat is present and visibly wobbles slowly, but the wobble amplitude is modest and partly appears coupled to slight head tilt rather than the hat moving independently."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "deduction": 2,
+          "reason": "Body remains mostly still and coherent with feet visible; only minor frame-to-frame posture/head shifts are visible."
+        },
+        {
+          "category": "retro_style",
+          "deduction": 3,
+          "reason": "Locked camera, flat studio background, and full-body desktop-dance presentation are present, though the rendering is somewhat more modern/photoreal than strongly late-1990s software."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    }
+  ],
+  "audio": [
+    {
+      "track": "celery",
+      "duration_seconds": 11.9,
+      "minimum_10ms_rms": 0.004748139996081591,
+      "longest_silent_ms": 0,
+      "pass_check": true
+    },
+    {
+      "track": "oyster",
+      "duration_seconds": 11.9,
+      "minimum_10ms_rms": 0.01736762933433056,
+      "longest_silent_ms": 0,
+      "pass_check": true
+    },
+    {
+      "track": "generated",
+      "duration_seconds": 16.88,
+      "minimum_10ms_rms": 0.012637068517506123,
+      "longest_silent_ms": 0,
+      "pass_check": true
+    }
+  ],
+  "controls": [
+    {
+      "name": "celery-continuous-playback",
+      "pass": true,
+      "duration": 3.095
+    },
+    {
+      "name": "oyster-continuous-playback",
+      "pass": true,
+      "duration": 2.545
+    },
+    {
+      "name": "failed-voice-restores-volume",
+      "pass": true
+    },
+    {
+      "name": "mute",
+      "pass": true
+    },
+    {
+      "name": "unmute",
+      "pass": true
+    }
+  ],
+  "playbackSpeed": {
+    "rate": 0.5,
+    "videoSecondsPerWallSecond": 0.461083,
+    "pass": true
+  },
+  "sketch": {
+    "passed": 41,
+    "total": 41,
+    "errors": []
+  },
+  "limitations": [
+    "External provider latency varies; fresh video is not instantaneous.",
+    "Cold reference-driven dances require an additional costume frame and motion reference.",
+    "Visual grades are estimates from sampled frames."
+  ]
+}

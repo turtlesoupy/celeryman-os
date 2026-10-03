@@ -1,0 +1,13 @@
+import 'dotenv/config';
+import {fal} from '@fal-ai/client';
+import fs from 'node:fs/promises';
+fal.config({credentials:process.env.FAL_KEY});
+const start=performance.now();
+const ref=await fal.storage.upload(new File([await fs.readFile('reference/thomas-dimson.jpg')],'identity.jpg',{type:'image/jpeg'}));
+const uploadMs=performance.now()-start;
+const prompt=`Image 1 is the identity reference of the adult performer. Generate the SAME recognizable person, preserving his dark hair, glasses and facial hair, as one coherent entire live-action person from head to shoes. Dress him in a mustard yellow tracksuit and white sneakers. Perform a goofy shoulder shimmy: alternate lifting and shaking each shoulder to a bouncy beat, knees softly bent, hands loosely at waist level, feet lightly shuffling. Full body always visible with generous margins above head and below shoes, body occupies 80% of frame height. Uniform very light gray studio backdrop, no scenery. Locked camera, frontal view. Flat 1990s low-budget desktop dance footage, soft analog video texture, deadpan expression. No cuts, no text, no collage, no pasted head. Movement starts immediately and repeats in a continuous dance cycle. Instrumental 1990s MIDI brass and synthetic bass dance loop at 122 BPM; no speech or singing. Five seconds.`;
+const result:any=await fal.run('minimax/h3-max/reference-to-video',{input:{reference_image_urls:[ref],prompt,duration:5,sync_mode:true,resolution:'480P',aspect_ratio:'9:16',prompt_expansion_mode:'disabled'}});
+const videoMs=performance.now()-start-uploadMs;
+await fs.writeFile('analysis/direct-sync.mp4',Buffer.from(await(await fetch(result.data.video.url)).arrayBuffer()));
+const report={uploadMs,videoMs,totalMs:performance.now()-start,model:'minimax/h3-max/reference-to-video',timings:result.data.timings,requestId:result.requestId};
+await fs.writeFile('benchmarks/direct-sync-probe.json',JSON.stringify(report,null,2));console.log(report);

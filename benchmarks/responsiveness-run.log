@@ -1,0 +1,32 @@
+{"text":"Computer, show me a shoulder shimmy in a mustard yellow tracksuit.","ms":5210,"ackMs":3.5,"generation":{"identityMs":0.0252080038189888,"videoMs":3709.551292002201}}
+{"text":"Now give him a tiny backwards shuffle while keeping the yellow tracksuit.","ms":4257.899999976158,"ackMs":2.1999999284744263,"generation":{"identityMs":0.010958001017570496,"videoMs":3097.530625000596}}
+{"text":"Could I see a hat wobble, but wearing a tall purple top hat and wobbling twice as slowly?","ms":4228.899999976158,"ackMs":2.0999999046325684,"generation":{"identityMs":0.02691599726676941,"videoMs":2984.3949170038104}}
+{
+  "checks": [
+    {
+      "name": "real-microphone-transcription-and-generation",
+      "pass": true
+    },
+    {
+      "name": "instant-recorded-acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "fresh-generated-dance-under-eight-seconds",
+      "pass": true
+    },
+    {
+      "name": "interrupted-speech-restores-music",
+      "pass": true
+    },
+    {
+      "name": "pause-resume-keeps-loop",
+      "pass": true
+    },
+    {
+      "name": "no-runtime-errors",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

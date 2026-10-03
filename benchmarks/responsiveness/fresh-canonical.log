@@ -1,0 +1,18 @@
+{
+  id: '088e5bbd240f7b4c8738',
+  status: 'complete',
+  stage: 'Ready',
+  started: 1791045350555,
+  timings: {
+    identityMs: 2558.544375002384,
+    frameMs: 6474.339874997735,
+    videoMs: 6213.575458005071,
+    downloadMs: 7133.525541998446,
+    totalMs: 22596.215125001967,
+    finishMs: 216.22987499833107
+  },
+  url: '/media/generated/088e5bbd240f7b4c8738.mp4',
+  image: '/media/generated/088e5bbd240f7b4c8738.png',
+  elapsed: 22596.215125001967,
+  wallMs: 22656.050459
+}

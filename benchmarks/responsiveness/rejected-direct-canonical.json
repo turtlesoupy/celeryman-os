@@ -1,0 +1,17 @@
+{
+  "id": "d9545e0ddc4053602b9e",
+  "status": "complete",
+  "stage": "Ready",
+  "started": 1791044845775,
+  "timings": {
+    "identityMs": 1297.4353329986334,
+    "videoMs": 5842.373332999647,
+    "downloadMs": 1577.6940420046449,
+    "totalMs": 11372.160540997982,
+    "finishMs": 2654.657832995057
+  },
+  "url": "/media/generated/d9545e0ddc4053602b9e.mp4",
+  "image": "/media/generated/d9545e0ddc4053602b9e.png",
+  "elapsed": 11372.160540997982,
+  "wallMs": 11438.504792
+}

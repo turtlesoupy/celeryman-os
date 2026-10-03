@@ -27,3 +27,54 @@ export async function stopOutputCapture(){
  const bytes=new Uint8Array(await new Blob(chunks,{type:current.mimeType}).arrayBuffer());
  let binary='';for(const b of bytes)binary+=String.fromCharCode(b);return btoa(binary);
 }
+
+const buffers=new Map<string,Promise<AudioBuffer>>();
+export function preloadAudio(url:string){
+ let pending=buffers.get(url);
+ if(!pending){pending=fetch(url).then(r=>{if(!r.ok)throw Error(`Audio unavailable: ${r.status}`);return r.arrayBuffer();}).then(bytes=>bus().context.decodeAudioData(bytes));buffers.set(url,pending);pending.catch(()=>buffers.delete(url));}
+ return pending;
+}
+
+// Decode once and loop on the audio clock, without an HTMLMediaElement seek.
+// Generated scores often contain an outro: discard near-silent padding and blend
+// the final 60 ms into the opening so the repeating bed has no fade-to-silence.
+export function loopBuffer(input:AudioBuffer,generated:boolean){
+ const ctx=bus().context,sr=input.sampleRate;let start=0,end=input.length;
+ if(generated){
+  const step=Math.round(sr*.02),data=input.getChannelData(0);
+  const rms=(a:number,b:number)=>{let sum=0;for(let i=a;i<b;i++)sum+=data[i]*data[i];return Math.sqrt(sum/(b-a));};
+  let peak=0;for(let i=0;i+step<end;i+=step)peak=Math.max(peak,rms(i,i+step));
+  while(start<input.length*.2&&rms(start,start+step)<peak*.2)start+=step;
+  while(end>input.length*.65&&rms(end-step,end)<peak*.2)end-=step;
+ }
+ const blend=Math.min(Math.round(sr*(generated?.06:.005)),Math.floor((end-start)/8));
+ const output=ctx.createBuffer(input.numberOfChannels,end-start-blend,sr);
+ for(let c=0;c<input.numberOfChannels;c++){
+  const src=input.getChannelData(c),dst=output.getChannelData(c);dst.set(src.subarray(start+blend,end));
+  for(let i=0;i<blend;i++){const t=(i+1)/blend;dst[dst.length-blend+i]=src[end-blend+i]*(1-t)+src[start+i]*t;}
+ }
+ return output;
+}
+export class MusicLoop {
+ private node?:AudioBufferSourceNode;
+ private gain=bus().context.createGain();
+ private buffer?:AudioBuffer;
+ private offset=0;
+ private began=0;
+ private active=false;
+ private disposed=false;
+ private level=.6;
+ readonly ready:Promise<void>;
+ constructor(readonly url:string,generated=false){
+  const b=bus();this.gain.connect(b.context.destination);this.gain.connect(b.capture);
+  this.ready=preloadAudio(url).then(buffer=>{if(!this.disposed)this.buffer=loopBuffer(buffer,generated);});
+ }
+ get volume(){return this.level;}
+ set volume(value:number){this.level=value;const ctx=bus().context;this.gain.gain.cancelScheduledValues(ctx.currentTime);this.gain.gain.setTargetAtTime(value,ctx.currentTime,.025);}
+ async play(){this.active=true;await this.ready;if(this.disposed||!this.active||this.node||!this.buffer)return;
+  const ctx=bus().context;this.node=ctx.createBufferSource();this.node.buffer=this.buffer;this.node.loop=true;this.node.connect(this.gain);this.began=ctx.currentTime;this.node.start(0,this.offset%this.buffer.duration);
+ }
+ pause(){this.active=false;if(!this.node)return;this.offset+=(bus().context.currentTime-this.began);this.node.stop();this.node.disconnect();this.node=undefined;}
+ stop(){this.pause();this.disposed=true;this.gain.disconnect();}
+ state(){return {url:this.url,playing:!!this.node,volume:this.level,duration:this.buffer?.duration,offset:this.offset};}
+}

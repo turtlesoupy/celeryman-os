@@ -1,0 +1,23 @@
+[
+  {
+    "track": "celery",
+    "duration_seconds": 11.9,
+    "minimum_10ms_rms": 0.004748139996081591,
+    "longest_silent_ms": 0,
+    "pass_check": true
+  },
+  {
+    "track": "oyster",
+    "duration_seconds": 11.9,
+    "minimum_10ms_rms": 0.01736762933433056,
+    "longest_silent_ms": 0,
+    "pass_check": true
+  },
+  {
+    "track": "generated",
+    "duration_seconds": 16.88,
+    "minimum_10ms_rms": 0.012637068517506123,
+    "longest_silent_ms": 0,
+    "pass_check": true
+  }
+]

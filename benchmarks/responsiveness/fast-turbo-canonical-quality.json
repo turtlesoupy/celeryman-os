@@ -1,0 +1,47 @@
+{
+  "scores": {
+    "choreography_timing": 18,
+    "wardrobe": 38,
+    "background": 45,
+    "camera_framing": 72,
+    "retro_low_budget_dance_video_look": 42,
+    "overall": 35
+  },
+  "pass_nearly_perfect": false,
+  "deductions": [
+    {
+      "category": "choreography_timing",
+      "points_off": 82,
+      "observed_difference": "A is almost entirely a hands-on-hips/hand-behind-back hip-sway sequence with small weight shifts. B performs a different routine: raises both arms, palms up, points toward camera, then returns hands to hips. Many sampled poses in B have no counterpart in A."
+    },
+    {
+      "category": "wardrobe",
+      "points_off": 62,
+      "observed_difference": "A wears a shiny black leather-like jacket and shiny black baggy pants with a white shirt and narrow tie/suspenders-like vertical details. B wears a gray suit jacket with darker matte trousers, open/light shirt styling, visible glasses, and a different overall silhouette. Only the broad idea of jacket + light shirt + dark pants is similar."
+    },
+    {
+      "category": "background",
+      "points_off": 55,
+      "observed_difference": "A has a plain white/very light background with minimal visible shadow. B has a pale green-gray studio background with strong repeated cast shadows to the left of the dancer."
+    },
+    {
+      "category": "camera_framing",
+      "points_off": 28,
+      "observed_difference": "Both are full-body centered contact-sheet views, but B appears more consistently full-length with feet visible and a somewhat different scale/spacing. A has slightly tighter/cropped lower framing in some cells."
+    },
+    {
+      "category": "retro_low_budget_dance_video_look",
+      "points_off": 58,
+      "observed_difference": "A has a flatter cutout-like, low-budget white-background look with shiny 1980s-style clothing. B looks more like a polished studio fashion/dance render with strong shadows, cleaner suit styling, and a different color grade."
+    },
+    {
+      "category": "person_appearance",
+      "points_off": "not separately scored, reflected in overall",
+      "observed_difference": "Differences are much larger than minor face personalization: A appears clean-shaven with short dark hair; B has curly hair, beard, and glasses, plus a different body silhouette."
+    }
+  ],
+  "uncertainty_due_to_sampled_frames": {
+    "level": "low",
+    "reason": "Although the videos are only sampled every 1/6 second, the visible frames show persistent large differences in choreography, wardrobe, background, and styling across the whole contact sheet."
+  }
+}

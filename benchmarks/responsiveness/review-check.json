@@ -1,0 +1,19 @@
+{
+  "title": "Cinco responsiveness checks",
+  "videos": [
+    {
+      "readyState": 4,
+      "rate": 1
+    },
+    {
+      "readyState": 4,
+      "rate": 1
+    },
+    {
+      "readyState": 4,
+      "rate": 0.5
+    }
+  ],
+  "errors": [],
+  "pass": true
+}

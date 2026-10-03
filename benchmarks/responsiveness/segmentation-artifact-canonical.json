@@ -1,0 +1,18 @@
+{
+  "id": "5759046e73652f4f7c91",
+  "status": "complete",
+  "stage": "Ready",
+  "started": 1791045282856,
+  "timings": {
+    "identityMs": 1646.7087910026312,
+    "frameMs": 3686.125834003091,
+    "videoMs": 5532.720207996666,
+    "downloadMs": 1462.78241699934,
+    "totalMs": 14982.40495800227,
+    "finishMs": 2654.0677080005407
+  },
+  "url": "/media/generated/5759046e73652f4f7c91.mp4",
+  "image": "/media/generated/5759046e73652f4f7c91.png",
+  "elapsed": 14982.40495800227,
+  "wallMs": 15015.11225
+}

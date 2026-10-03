@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import fs from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
+import {Readable} from 'node:stream';
+import {videoPreviews} from './video-preview.ts';
 import path from 'node:path';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -11,21 +13,26 @@ import {fal} from '@fal-ai/client';
 import type {Plugin} from 'vite';
 import {scripted,type Context} from '../src/protocol.ts';
 import {costumes,motions} from '../src/dances.ts';
+import {interactiveVideo} from './interactive-video.ts';
 import {personalizedVoice} from './personalized-voice.ts';
 import {canonicalName,generationKey,finishChoreography,motionPrompt} from './choreography.ts';
 const openai=new OpenAI();
 fal.config({credentials:process.env.FAL_KEY});
 const root=process.cwd(),media=path.join(root,'public/media');
-type Job={status:string;stage:string;url?:string;image?:string;music?:string;error?:string;started?:number;elapsed?:number;requestId?:string;providerStatus?:string};
+type Job={previewUrl?:string;status:string;stage:string;url?:string;image?:string;music?:string;error?:string;started?:number;elapsed?:number;requestId?:string;providerStatus?:string;timings?:Record<string,number>};
 const shared=globalThis as typeof globalThis & {cincoJobs?:Map<string,Job>};
 const jobs=shared.cincoJobs??=new Map<string,Job>();
 const frameLocks=new Map<string,Promise<string>>();
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex').slice(0,20);
 const exists=async(p:string)=>fs.access(p).then(()=>true,()=>false);
 async function saveRemote(url:string,file:string){const r=await fetch(url);if(!r.ok)throw Error('Media download failed');await fs.writeFile(file,Buffer.from(await r.arrayBuffer()));}
-async function reference(profile:string){
+const references=new Map<string,Promise<string>>();
+function reference(profile:string){
+ if(references.has(profile))return references.get(profile)!;
+ const pending=(async()=>{
  const p=profile==='paul'?path.join(root,'reference/paul-rudd.png'):profile==='thomas'?path.join(root,'reference/thomas-dimson.jpg'):path.join(media,'profiles',`${profile.replace(/[^a-z0-9-]/g,'')}.jpg`);
  return fal.storage.upload(new File([await fs.readFile(p)],'identity.jpg',{type:'image/jpeg'}));
+ })();references.set(profile,pending);pending.catch(()=>references.delete(profile));return pending;
 }
 async function costumeFrame(profile:string,costume:string,closeup=false,canonical=''){
  const key=hash(JSON.stringify({profile,costume,closeup,canonical,version:6,revision:canonical==='mozzarell-face'?4:canonical==='engaged'?1:canonical==='intro'?1:closeup?3:canonical==='oyster'?2:canonical==='flarhgunnstow'?2:0}));
@@ -63,6 +70,7 @@ async function costumeFrame(profile:string,costume:string,closeup=false,canonica
 async function generate(id:string,body:any){
  const job=jobs.get(id)!;job.started=Date.now();
  try{
+  if(body.profile!=='paul'||!body.canonical){await interactiveVideo(id,body,job,()=>reference(body.profile||'thomas'));return;}
   job.stage='Building identity';
   const character=String(body.character||'tayne');
   const costume=String(body.costume||costumes[character]||costumes.tayne).slice(0,700);
@@ -117,7 +125,12 @@ async function computerVoiceId(){
  const clone:any=await fal.subscribe('fal-ai/minimax/voice-clone',{input:{audio_url:audio,noise_reduction:true,need_volume_normalization:true,text:'Sequence engaged.',model:'speech-02-hd'}});
  await fs.writeFile(file,JSON.stringify({voiceId:clone.data.custom_voice_id}));return clone.data.custom_voice_id as string;
 }
-async function voice(text:string,style='computer'){
+const phraseLocks=new Map<string,Promise<string>>();
+function voice(text:string,style='computer'){
+ const key=style+':'+text;const old=phraseLocks.get(key);if(old)return old;
+ const pending=makeVoice(text,style);phraseLocks.set(key,pending);pending.catch(()=>phraseLocks.delete(key));return pending;
+}
+async function makeVoice(text:string,style='computer'){
  try{const personalized=await personalizedVoice(text,openai);if(personalized)return personalized;}catch(error){console.warn('Personalized name synthesis unavailable; using full-phrase voice model.',error instanceof Error?error.message:'Unknown error');}
  const id=hash('minimax28-v1:'+style+':'+text),file=path.join(media,'voice',id+'.wav');
  if(voiceLocks.has(id))return voiceLocks.get(id)!;
@@ -136,6 +149,16 @@ export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServe
   // Generated files must not depend on Vite's asynchronously updated public-file index.
   if(req.url?.startsWith('/media/')){
    try{
+    const preview=/^\/media\/generated\/([a-f0-9]{20})\.mp4\?live=1$/.exec(req.url);
+    const provider=preview&&videoPreviews.get(preview[1]);
+    if(provider){
+     const upstream=await fetch(provider,{method:req.method==='HEAD'?'HEAD':'GET',headers:req.headers.range?{Range:req.headers.range}:{}});
+     res.statusCode=upstream.status;
+     for(const header of ['content-type','content-length','content-range','accept-ranges']){const value=upstream.headers.get(header);if(value)res.setHeader(header,value);}
+     res.setHeader('Cache-Control','private, max-age=3600');
+     if(req.method==='HEAD'||!upstream.body){res.end();return;}
+     const stream=Readable.fromWeb(upstream.body as any);stream.on('error',()=>res.destroy());res.on('close',()=>stream.destroy());stream.pipe(res);return;
+    }
     const relative=decodeURIComponent(new URL(req.url,'http://localhost').pathname.slice(7));
     const file=path.resolve(media,relative);
     if(!file.startsWith(media+path.sep))throw Error('Invalid media path');
@@ -157,12 +180,38 @@ export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServe
    let raw=Buffer.alloc(0);for await(const chunk of req){raw=Buffer.concat([raw,chunk]);if(raw.length>16e6)throw Error('Request too large');}
    const b=raw.length?JSON.parse(raw.toString()):{};let result:any;
    if(req.url==='/api/health')result={ok:true,providers:{openai:!!process.env.OPENAI_API_KEY,fal:!!process.env.FAL_KEY}};
-   else if(req.url==='/api/command'){
+   else if(req.url==='/api/warm'){
+    void reference(String(b.profile||'paul')).catch(()=>{});
+    const name=String(b.name||'').slice(0,35);if(name&&name!=='Paul')void voice(`Good morning ${name}.\nWhat will your first sequence of the day be?`).catch(()=>{});
+    result={ok:true};
+   }else if(req.url==='/api/command'){
     const text=String(b.text||'').slice(0,2000),context=b.context as Context;
     result=scripted(text,context);
     if(!result){
-     const response=await openai.chat.completions.create({model:'gpt-4.1-mini',temperature:.7,response_format:{type:'json_object'},messages:[{role:'system',content:`You are the terse, literal, absurd Cinco computer from Celery Man. Interpret commands for a personalized desktop dancer. Output JSON {action,response,label,motion,costume}. action must be custom for ALL requested new or modified dance performances. Other allowed actions are engage, print, beta, pause, resume, chaos, reaction. Use reaction with empty response for commentary or acknowledgment that does not ask for a new performance. Never map a novel shuffle or new costume to an existing canonical dancer action. Known exact actions only when relevant; new requests use custom. For custom: response is a short deadpan computer acknowledgement of at most eight words, label is a bizarre uppercase dancer name under 18 characters, Generate a five-second looping performance, never specify a different duration. motion describes 60-100 words of concrete physical choreography, limb actions and timing that precisely follow every requested modifier; for a tiny backward shuffle orient the performer three-quarters toward screen left and alternate sliding the feet backward toward screen right, visibly moving the whole body a short distance across the studio floor, keep arms loosely bent; for a hat wobble the hat itself tilts on the head rather than only moving the torso, costume describes the COMPLETE fully clothed outfit, explicitly restating retained clothing from context, never saying unchanged or same outfit. Preserve current character outfit unless change requested. Never invent a request to remove eyeglasses or say no accessories; preserve the uploaded person's eyewear unless the user explicitly requests changing it. Never produce actual nudity; the NSFW gag uses a fully clothed dancer and error modal. No questions for ordinary commands. Context: ${JSON.stringify(context)}`},{role:'user',content:text}]});
-     result=JSON.parse(response.choices[0].message.content||'{}');
+     const playbackRate=/twice as slow|half[ -]?speed|50%.*speed/i.test(text)?.5:/twice as fast|double[ -]?speed/i.test(text)?2:1;
+     const keepEyewear=(costume:string)=>!/(sun[ -]?glasses|shades)/i.test(text+' '+(context.costume||''))?costume.replace(/(?:black |dark |tinted )?(?:sun[ -]?glasses|shades)/gi,'the same eyewear as the identity photo, if any'):costume;
+     const planningStarted=performance.now();let earlyJob:string|undefined;let plannedBody:any;let earlyStart:Promise<void>|undefined;
+     const response=await openai.chat.completions.create({stream:true,model:'gpt-4.1-mini',temperature:.7,response_format:{type:'json_object'},messages:[{role:'system',content:`You are the terse, literal, absurd Cinco computer from Celery Man. Interpret commands for a personalized desktop dancer. Output JSON in this exact field order: {action,costume,motion,label,response}. action must be custom for ALL requested new or modified dance performances. Other allowed actions are engage, print, beta, pause, resume, chaos, reaction. Use reaction with empty response for commentary or acknowledgment that does not ask for a new performance. Never map a novel shuffle or new costume to an existing canonical dancer action. Known exact actions only when relevant; new requests use custom. For custom: response is a short deadpan computer acknowledgement of at most eight words, label is a bizarre uppercase dancer name under 18 characters, Generate a five-second looping performance, never specify a different duration. For a slow hat wobble, require exactly ONE tilt and return during the entire five-second clip (two seconds out, two seconds back, one second hold); never fit extra cycles into five seconds. For a shoulder shimmy insist on visibly exaggerated alternating shoulder lifts and drops with torso rocking, not a barely visible standing pose. Never add sunglasses unless the user explicitly requests them or they are already in the current outfit. motion describes 35-55 words of concrete physical choreography, limb actions and timing that precisely follow every requested modifier; for a tiny backward shuffle orient the performer three-quarters toward screen left and alternate sliding the feet backward toward screen right, visibly moving the whole body a short distance across the studio floor, keep arms loosely bent; for a hat wobble the hat itself tilts on the head rather than only moving the torso, costume describes the COMPLETE fully clothed outfit, explicitly restating retained clothing from context, never saying unchanged or same outfit. Preserve current character outfit unless change requested. Never invent a request to remove eyeglasses or say no accessories; preserve the uploaded person's eyewear unless the user explicitly requests changing it. Never produce actual nudity; the NSFW gag uses a fully clothed dancer and error modal. No questions for ordinary commands. Context: ${JSON.stringify(context)}`},{role:'user',content:text}]});
+     let json='';
+     for await(const chunk of response){
+      json+=chunk.choices[0]?.delta?.content||'';
+      // Start when the two visual fields are complete; labels/response finish
+      // in parallel. Do not render from contradictory old/new outfit text.
+      const field=(name:string)=>{const match=new RegExp('"'+name+'"\\s*:\\s*("(?:[^"\\\\]|\\\\.)*")').exec(json);return match?JSON.parse(match[1]):undefined;};
+      const outfit=field('costume'),motion=field('motion');
+      if(!earlyStart&&/"action"\s*:\s*"custom"/.test(json)&&outfit&&motion&&typeof b.profile==='string'){
+       plannedBody={profile:b.profile,canonical:false,character:'custom',variant:'base',costume:keepEyewear(outfit),motion,playbackRate};
+       earlyJob=generationKey(plannedBody);
+       const id=earlyJob;
+       earlyStart=(async()=>{await fs.mkdir(path.join(media,'generated'),{recursive:true});
+        if(await exists(path.join(media,'generated',`${id}.mp4`)))jobs.set(id,{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,image:`/media/generated/${id}.png`});
+        else if(!jobs.has(id)||jobs.get(id)?.status==='error'){jobs.set(id,{status:'working',stage:'Rendering dance'});void generate(id,plannedBody);}
+       })();
+      }
+     }
+     result=JSON.parse(json||'{}');if(typeof result.costume==='string')result.costume=keepEyewear(result.costume);
+     if(earlyStart){await earlyStart;result.generationId=earlyJob;plannedBody.character=result.label||'custom';}
+     result.playbackRate=playbackRate;result.planningMs=performance.now()-planningStarted;
      const allowed=['reaction','custom','hat','flarhgunnstow','engage','print','beta','pause','resume','chaos','celery','oyster','tayne'];
      if(!allowed.includes(result.action)||typeof result.response!=='string')throw Error('Invalid command response');
      if(result.motion&&result.costume&&['hat','flarhgunnstow','celery','oyster','tayne'].includes(result.action))result.action='custom';
@@ -184,7 +233,7 @@ export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServe
     result={id,...jobs.get(id)};
    }else if(req.url.startsWith('/api/job/')){const id=req.url.split('/').pop()!;const saved=/^[a-f0-9]{20}$/.test(id)&&await exists(path.join(media,'generated',`${id}.mp4`));result={id,...(jobs.get(id)||(saved?{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,image:await exists(path.join(media,'generated',`${id}-print.png`))?`/media/generated/${id}-print.png`:`/media/generated/${id}.png`}:{status:'error',error:'Unknown job'}))};}
    else if(req.url==='/api/profile'){
-    const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),Buffer.from(b.image,'base64'));result={id};
+    const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),Buffer.from(b.image,'base64'));void reference(id).catch(()=>{});result={id};
    }else {res.statusCode=404;result={error:'Unknown endpoint'};}
    res.end(JSON.stringify(result));
   }catch(e){res.statusCode=500;res.end(JSON.stringify({error:e instanceof Error?e.message:'Request failed'}));}

@@ -1,0 +1,10 @@
+
+> celeryman@1.0.0 benchmark:live
+> tsx scripts/benchmark.ts --live
+
+{
+  "mode": "live-generation",
+  "checks": 41,
+  "failures": [],
+  "errors": []
+}

@@ -1,0 +1,18 @@
+{
+  "id": "de1d55d429830fbd32b5",
+  "status": "complete",
+  "stage": "Ready",
+  "started": 1791045231358,
+  "timings": {
+    "identityMs": 1762.6892910003662,
+    "frameMs": 2873.996375001967,
+    "videoMs": 5453.003875002265,
+    "downloadMs": 1155.3077920004725,
+    "totalMs": 13870.816041000187,
+    "finishMs": 2625.8187079951167
+  },
+  "url": "/media/generated/de1d55d429830fbd32b5.mp4",
+  "image": "/media/generated/de1d55d429830fbd32b5.png",
+  "elapsed": 13870.816041000187,
+  "wallMs": 13962.518375
+}

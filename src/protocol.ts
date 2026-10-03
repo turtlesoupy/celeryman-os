@@ -1,5 +1,5 @@
 export type Action='greeting'|'celery'|'engage'|'oyster'|'print'|'attention'|'beta'|'tayne'|'hat'|'flarhgunnstow'|'repeat'|'nsfw'|'confirm'|'call'|'chaos'|'pause'|'resume'|'reset'|'custom'|'reaction';
-export interface Command {action:Action;response:string;audio?:string;label?:string;motion?:string;costume?:string;target?:string}
+export interface Command {action:Action;response:string;audio?:string;label?:string;motion?:string;costume?:string;target?:string;generationId?:string;playbackRate?:number}
 export interface Context {identity:string;character:string;pending:string;history:string[];costume?:string}
 export function scripted(text:string,c:Context):Command|null {
  const t=text.toLowerCase().replace(/[’']/g,'').replace(/^[.\s]+/,'').trim();

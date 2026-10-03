@@ -1,0 +1,10 @@
+{
+  "uploadMs": 2186.44,
+  "videoMs": 2675.49275,
+  "totalMs": 5712.912666,
+  "model": "minimax/h3-max/reference-to-video",
+  "timings": {
+    "inference": 0.6927173780022713
+  },
+  "requestId": "01a10294-fa01-72b3-a82e-61fb1d4517ba"
+}

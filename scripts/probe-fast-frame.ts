@@ -1,0 +1,7 @@
+import 'dotenv/config';import {fal} from '@fal-ai/client';import fs from 'node:fs/promises';import {costumes} from '../src/dances.ts';
+fal.config({credentials:process.env.FAL_KEY});const start=performance.now();
+const ref=await fal.storage.upload(new File([await fs.readFile('reference/thomas-dimson.jpg')],'identity.jpg',{type:'image/jpeg'}));
+const uploadMs=performance.now()-start;
+const image:any=await fal.run('fal-ai/flux-2/klein/9b/edit',{input:{image_urls:[ref],prompt:`New full-body studio photograph of the SAME person from the photo, preserving the same face, messy dark hair, glasses, beard and body build. Dress in ${costumes.celery}. Entire coherent person from hair to soles, centered, occupying 80% of vertical image. Hands on hips. Uniform pale gray background, flat low-budget 1990s studio lighting, natural live-action person, no collage or pasted head, no text.`,image_size:{width:480,height:848},output_format:'png',num_inference_steps:4}});
+const frameMs=performance.now()-start-uploadMs;await fs.writeFile('analysis/fast-celery-frame.png',Buffer.from(await(await fetch(image.data.images[0].url)).arrayBuffer()));
+const report={uploadMs,frameMs,totalMs:performance.now()-start,url:image.data.images[0].url,requestId:image.requestId};await fs.writeFile('benchmarks/responsiveness/fast-frame-probe.json',JSON.stringify(report,null,2));console.log({...report,url:'saved in report'});

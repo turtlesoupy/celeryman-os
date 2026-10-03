@@ -1,0 +1,151 @@
+[
+  {
+    "file": "public/media/generated/d3128c037db8f7e84c4a.mp4",
+    "meta": {
+      "profile": "1fd5ddd0-a4f5-4818-8132-d45bfd891dbf",
+      "character": "SHIMSHAMMER",
+      "variant": "base",
+      "costume": "mustard yellow tracksuit with matching pants and jacket, white sneakers, preserved eyewear",
+      "motion": "The dancer stands facing forward, lifts the right shoulder high while dropping the left shoulder low, torso rocks to the right; then lifts the left shoulder high while dropping the right shoulder low, torso rocks to the left. This exaggerated alternating shoulder lift and drop cycle repeats continuously for five seconds.",
+      "prompt": "Image 1 is the identity reference for the adult performer. Generate the SAME recognizable person, preserving facial features, hair, facial hair, visible eyeglasses and body build. Render the ENTIRE person naturally as one coherent live-action performance. No pasted head, collage or cutout. Dress the person in this complete outfit: mustard yellow tracksuit with matching pants and jacket, white sneakers, preserved eyewear. Full body always visible including shoes, generous margins above head and below feet, performer occupies 80% of frame height. Seamless uniform very light gray studio backdrop, no floor line, no scenery. Locked static camera. Flat late-1990s low-budget desktop dance footage with soft analog texture, deadpan expression. No cuts, text, UI, or other people. Choreography: The dancer stands facing forward, lifts the right shoulder high while dropping the left shoulder low, torso rocks to the right; then lifts the left shoulder high while dropping the right shoulder low, torso rocks to the left. This exaggerated alternating shoulder lift and drop cycle repeats continuously for five seconds..    Start moving immediately. Repeat a rhythmic five-second cycle, end in the starting pose without stopping or fading. Audio: continuous instrumental 1990s quirky MIDI dance groove, synthetic bass, cheap brass and drum machine at 122 BPM. No speech, no singing, no fade-out, no outro.",
+      "model": "minimax/h3-max/reference-to-video",
+      "videoRequest": "01a102a4-48e3-78a0-9304-51ba95268f39",
+      "providerTimings": {
+        "inference": 1.019297209000797
+      },
+      "timings": {
+        "identityMs": 0.0635410025715828,
+        "videoMs": 2845.224791996181,
+        "downloadMs": 962.520667001605,
+        "totalMs": 3890.632832996547,
+        "finishMs": 82.8238329961896
+      },
+      "elapsedMs": 3890.632832996547,
+      "pipeline": "direct-whole-person-reference-v1"
+    },
+    "grade": {
+      "identity_consistency": 94,
+      "instruction_following": 93,
+      "coherent_body_and_motion": 96,
+      "retro_style": 97,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "deduction": 6,
+          "reason": "The performer preserves key visual traits from the reference such as dark messy hair, round dark glasses, light skin tone, and short facial hair, though the generated face/hair are not perfectly identical."
+        },
+        {
+          "category": "instruction_following",
+          "deduction": 7,
+          "reason": "The mustard yellow tracksuit, matching pants and jacket, white sneakers, and eyewear are present. The shoulders do alternate with visible torso rocking, but the shoulder shimmy is somewhat mild and partly expressed as side-to-side leaning rather than a strongly isolated shoulder movement."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "deduction": 4,
+          "reason": "Body remains coherent and full-body framing is maintained with feet visible. Motion is stable, though arms and torso appear a little stiff."
+        },
+        {
+          "category": "retro_style",
+          "deduction": 3,
+          "reason": "Flat studio background and locked-camera presentation fit the requested late-1990s desktop dance software style, though the rendering is somewhat modern/clean."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    }
+  },
+  {
+    "file": "public/media/generated/1a114875cfbe1979655f.mp4",
+    "meta": {
+      "profile": "1fd5ddd0-a4f5-4818-8132-d45bfd891dbf",
+      "character": "BACKWARDSHIMSHUFFLE",
+      "variant": "base",
+      "costume": "mustard yellow tracksuit with matching pants and jacket, white sneakers, preserved eyewear",
+      "motion": "The dancer stands three-quarters toward screen left and alternates sliding the feet backward toward screen right in small steps, visibly moving the whole body a short distance across the studio floor over five seconds, with arms loosely bent at the elbows, gently swinging in rhythm with the foot movements.",
+      "prompt": "Image 1 is the identity reference for the adult performer. Generate the SAME recognizable person, preserving facial features, hair, facial hair, visible eyeglasses and body build. Render the ENTIRE person naturally as one coherent live-action performance. No pasted head, collage or cutout. Dress the person in this complete outfit: mustard yellow tracksuit with matching pants and jacket, white sneakers, preserved eyewear. Full body always visible including shoes, generous margins above head and below feet, performer occupies 80% of frame height. Seamless uniform very light gray studio backdrop, no floor line, no scenery. Locked static camera. Flat late-1990s low-budget desktop dance footage with soft analog texture, deadpan expression. No cuts, text, UI, or other people. Choreography: The dancer stands three-quarters toward screen left and alternates sliding the feet backward toward screen right in small steps, visibly moving the whole body a short distance across the studio floor over five seconds, with arms loosely bent at the elbows, gently swinging in rhythm with the foot movements.. Begin facing three-quarters toward screen left and take visibly backward sliding steps toward screen right with actual whole-body travel, not stepping in place.   Start moving immediately. Repeat a rhythmic five-second cycle, end in the starting pose without stopping or fading. Audio: continuous instrumental 1990s quirky MIDI dance groove, synthetic bass, cheap brass and drum machine at 122 BPM. No speech, no singing, no fade-out, no outro.",
+      "model": "minimax/h3-max/reference-to-video",
+      "videoRequest": "01a102a4-5ee7-7bd1-98ca-f683cba83950",
+      "providerTimings": {
+        "inference": 1.010711965005612
+      },
+      "timings": {
+        "identityMs": 0.015124998986721039,
+        "videoMs": 2673.0953330025077,
+        "downloadMs": 1473.2591670006514,
+        "totalMs": 4214.221749998629,
+        "finishMs": 67.85212499648333
+      },
+      "elapsedMs": 4214.221749998629,
+      "pipeline": "direct-whole-person-reference-v1"
+    },
+    "grade": {
+      "identity_consistency": 94,
+      "instruction_following": 95,
+      "coherent_body_and_motion": 97,
+      "retro_style": 98,
+      "observed_deductions": [
+        {
+          "category": "identity_consistency",
+          "deduction": 6,
+          "reason": "The performer preserves the key visible traits from the reference—shaggy dark hair, round dark eyewear, light skin, and short beard/stubble—but facial details are somewhat generalized at full-body distance."
+        },
+        {
+          "category": "instruction_following",
+          "deduction": 5,
+          "reason": "The yellow tracksuit and white sneakers are maintained, and the feet visibly alternate in a small shuffle. Backward travel is present but subtle, reading partly as an in-place shuffle across the sampled frames."
+        },
+        {
+          "category": "coherent_body_and_motion",
+          "deduction": 3,
+          "reason": "The body remains coherent with visible feet and plausible weight shifts; only minor stiffness/loop-like repetition is noticeable."
+        },
+        {
+          "category": "retro_style",
+          "deduction": 2,
+          "reason": "Flat studio background and locked-camera full-body framing fit the late-1990s desktop dance software style, with only slightly more polished rendering than expected."
+        }
+      ],
+      "static_video": false,
+      "pass": true
+    }
+  },
+  {
+    "file": "public/media/generated/aa4b2c3429fcfe744290.mp4",
+    "meta": {
+      "profile": "1fd5ddd0-a4f5-4818-8132-d45bfd891dbf",
+      "character": "HATWOBBLESLOWLY",
+      "variant": "base",
+      "costume": "mustard yellow tracksuit with matching pants and jacket, white sneakers, preserved eyewear, tall purple top hat",
+      "motion": "Performer stands facing forward. The purple top hat tilts slowly once over four seconds to the performer's right side, then returns over the next four seconds to center, holding the centered position for one second. Arms remain relaxed at sides throughout the five-second loop.",
+      "prompt": "Image 1 is the identity reference for the adult performer. Generate the SAME recognizable person, preserving facial features, hair, facial hair, visible eyeglasses and body build. Render the ENTIRE person naturally as one coherent live-action performance. No pasted head, collage or cutout. Dress the person in this complete outfit: mustard yellow tracksuit with matching pants and jacket, white sneakers, preserved eyewear, tall purple top hat. Full body always visible including shoes, generous margins above head and below feet, performer occupies 80% of frame height. Seamless uniform very light gray studio backdrop, no floor line, no scenery. Locked static camera. Flat late-1990s low-budget desktop dance footage with soft analog texture, deadpan expression. No cuts, text, UI, or other people. Choreography: Performer stands facing forward. The purple top hat tilts slowly once over four seconds to the performer's right side, then returns over the next four seconds to center, holding the centered position for one second. Arms remain relaxed at sides throughout the five-second loop..    Start moving immediately. Repeat a rhythmic five-second cycle, end in the starting pose without stopping or fading. Audio: continuous instrumental 1990s quirky MIDI dance groove, synthetic bass, cheap brass and drum machine at 122 BPM. No speech, no singing, no fade-out, no outro.",
+      "model": "minimax/h3-max/reference-to-video",
+      "videoRequest": "01a102a4-7740-71a3-b3d9-8de95da3db99",
+      "providerTimings": {
+        "inference": 1.023524518997874
+      },
+      "timings": {
+        "identityMs": 0.043084003031253815,
+        "videoMs": 2737.9109999984503,
+        "downloadMs": 1056.9981660023332,
+        "totalMs": 3863.9790000021458,
+        "finishMs": 69.02674999833107
+      },
+      "elapsedMs": 3863.9790000021458,
+      "pipeline": "direct-whole-person-reference-v1"
+    },
+    "grade": {
+      "identity_consistency": 93,
+      "instruction_following": 85,
+      "coherent_body_and_motion": 94,
+      "retro_style": 96,
+      "observed_deductions": [
+        "identity_consistency: -7 because the performer broadly preserves the reference traits such as round glasses, facial hair, and general face shape, but the tall hat obscures hair and the likeness is only approximate.",
+        "instruction_following: -15 because the tall purple top hat is present and does wobble, but the wobble appears relatively quick/jerky with direction changes across adjacent sampled frames, so it does not clearly read as 'twice as slowly.'",
+        "coherent_body_and_motion: -6 because the body remains mostly coherent and full-body with feet visible, but the hat/head tilt changes can look slightly abrupt rather than smoothly animated.",
+        "retro_style: -4 because the locked studio framing and simple full-body presentation fit the retro desktop-dance style well, though it is somewhat clean/modern rather than strongly late-1990s software-like."
+      ],
+      "static_video": false,
+      "pass": false
+    }
+  }
+]

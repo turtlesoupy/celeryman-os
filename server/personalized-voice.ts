@@ -30,12 +30,12 @@ export async function personalizedVoice(text:string,openai:OpenAI):Promise<strin
  try{await fs.access(output);return '/media/voice/'+id+'.wav';}catch{}
  await fs.mkdir('cache/voice-units',{recursive:true});
  const reference='public/media/original/greeting.wav';
- const ref=await fal.storage.upload(new File([await fs.readFile(reference)],'computer.wav',{type:'audio/wav'}));
  const line=`Good morning ${name}. What will your first sequence of the day be?`;
  const nameKey=createHash('sha256').update('computer-name:'+name.toLowerCase()).digest('hex').slice(0,20);
  const sample=`cache/voice-units/name-${nameKey}.wav`;
  let generated:any;
  try{await fs.access(sample);}catch{
+ const ref=await fal.storage.upload(new File([await fs.readFile(reference)],'computer.wav',{type:'audio/wav'}));
   generated=await fal.subscribe('fal-ai/f5-tts',{input:{gen_text:line,ref_audio_url:ref,ref_text:'Good morning Paul. What will your first sequence of the day be?',model_type:'F5-TTS',remove_silence:true}}) as any;
   const response=await fetch(generated.data.audio_url.url);if(!response.ok)throw Error('Voice download failed');await fs.writeFile(sample,Buffer.from(await response.arrayBuffer()));
  }

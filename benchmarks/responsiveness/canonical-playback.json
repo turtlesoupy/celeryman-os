@@ -1,0 +1,142 @@
+{
+  "errors": [],
+  "firstFrameMs": 11344.200000047684,
+  "events": [
+    {
+      "kind": "input",
+      "text": "Good morning",
+      "source": "boot",
+      "time": 269.7999999523163
+    },
+    {
+      "kind": "action",
+      "action": "greeting",
+      "response": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "time": 270.10000002384186
+    },
+    {
+      "kind": "audio",
+      "src": "/media/voice/bfc96cd43d6a3aacdb9a.wav",
+      "text": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "spokenText": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "time": 305.2999999523163
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/voice/bfc96cd43d6a3aacdb9a.wav",
+      "text": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "spokenText": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "time": 308.5
+    },
+    {
+      "kind": "command-complete",
+      "text": "Good morning",
+      "action": "greeting",
+      "time": 315.39999997615814
+    },
+    {
+      "kind": "terminal",
+      "text": "Good morning Thomas.\nWhat will your first sequence of the day be?",
+      "time": 1928.5
+    },
+    {
+      "kind": "input",
+      "text": "Computer, load up Celery Man, please.",
+      "source": "keyboard",
+      "time": 5276.399999976158
+    },
+    {
+      "kind": "action",
+      "action": "celery",
+      "response": "Yes, Thomas!",
+      "time": 5277
+    },
+    {
+      "kind": "generation",
+      "id": "9da5354c9f9ad0e73943",
+      "request": {
+        "profile": "d5c23d4d-4e35-4bbb-a09f-021672612a46",
+        "character": "celery",
+        "variant": "base",
+        "canonical": true,
+        "motion": "Jaunty awkward side to side stepping dance. Hands on hips, then elbows out and bent, palms up, shrugging shoulders, bend knees and swing hips, extend one arm to point toward viewer, turn head with a deadpan face. Stay full body and centered.",
+        "costume": "shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp, high-waisted matching baggy charcoal trousers, black belt, black dress shoes"
+      },
+      "time": 5280.200000047684
+    },
+    {
+      "kind": "generation",
+      "id": "76370a5ce823d080934a",
+      "request": {
+        "profile": "d5c23d4d-4e35-4bbb-a09f-021672612a46",
+        "character": "celery",
+        "variant": "face",
+        "canonical": true,
+        "motion": "Close up portrait on solid hot pink background. Small rhythmic head bobs and glances, slight awkward smile, keep shoulders in frame. No speech, no cuts, no camera movement.",
+        "costume": "shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp, high-waisted matching baggy charcoal trousers, black belt, black dress shoes"
+      },
+      "time": 5280.299999952316
+    },
+    {
+      "kind": "audio",
+      "src": "/media/voice/b0a6ce8034c1a157999a.wav",
+      "text": "Yes, Thomas!",
+      "spokenText": "Yes, Thomas!",
+      "time": 5285.600000023842
+    },
+    {
+      "kind": "audio-playing",
+      "src": "/media/voice/b0a6ce8034c1a157999a.wav",
+      "text": "Yes, Thomas!",
+      "spokenText": "Yes, Thomas!",
+      "time": 5291.100000023842
+    },
+    {
+      "kind": "generated-ready",
+      "url": "/media/generated/76370a5ce823d080934a.mp4",
+      "previewUrl": "/media/generated/76370a5ce823d080934a.mp4?live=1",
+      "id": "76370a5ce823d080934a",
+      "timings": {
+        "identityMs": 0.6589590013027191,
+        "videoMs": 3661.7264579981565
+      },
+      "time": 9053.399999976158,
+      "elapsedMs": 3775.1999999284744,
+      "character": "celery",
+      "variant": "face"
+    },
+    {
+      "kind": "generated-ready",
+      "url": "/media/generated/9da5354c9f9ad0e73943.mp4",
+      "previewUrl": "/media/generated/9da5354c9f9ad0e73943.mp4?live=1",
+      "id": "9da5354c9f9ad0e73943",
+      "timings": {
+        "identityMs": 1333.6565419957042,
+        "frameMs": 3837.5572919994593,
+        "videoMs": 5222.347915999591
+      },
+      "time": 15751.600000023842,
+      "elapsedMs": 10473.800000071526,
+      "character": "celery",
+      "variant": "base"
+    },
+    {
+      "kind": "command-complete",
+      "text": "Computer, load up Celery Man, please.",
+      "action": "celery",
+      "time": 15753.600000023842
+    },
+    {
+      "kind": "music-playing",
+      "url": "/media/original/music-celery.wav",
+      "time": 15783.100000023842
+    },
+    {
+      "kind": "terminal",
+      "text": "Yes, Thomas!",
+      "time": 16068.899999976158
+    }
+  ],
+  "profile": "d5c23d4d-4e35-4bbb-a09f-021672612a46",
+  "pass": true
+}

@@ -1,0 +1,27 @@
+{
+  "checks": [
+    {
+      "name": "celery-continuous-playback",
+      "pass": true,
+      "duration": 3.095
+    },
+    {
+      "name": "oyster-continuous-playback",
+      "pass": true,
+      "duration": 2.545
+    },
+    {
+      "name": "failed-voice-restores-volume",
+      "pass": true
+    },
+    {
+      "name": "mute",
+      "pass": true
+    },
+    {
+      "name": "unmute",
+      "pass": true
+    }
+  ],
+  "errors": []
+}
