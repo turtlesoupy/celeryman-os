@@ -5,7 +5,7 @@
 - Region: `us-central1`; Cloud Run service: `celeryman`.
 - Artifact Registry: `us-central1-docker.pkg.dev/celeryman-os/celeryman/app`.
 - Runtime identity: `celeryman-runtime@celeryman-os.iam.gserviceaccount.com`.
-- Build identity: `celeryman-builder@celeryman-os.iam.gserviceaccount.com`, with source-bucket read, Artifact Registry write and log-write access; no provider secrets.
+- Build identity: `celeryman-builder@celeryman-os.iam.gserviceaccount.com`, with source/build-log bucket access, Artifact Registry write and log-write access; no provider secrets.
 - Storage: `gs://celeryman-os-media`, public access prevented, uniform IAM, default seven-day soft deletion.
 - Cloudflare Worker: `celeryman-os`; custom domains `celeryman.fun` and `www.celeryman.fun` (redirects to apex).
 

@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+const site='https://celeryman.fun';
+const checks={site,checkedAt:new Date().toISOString()};
+const request=(p,init={})=>fetch(site+p,{...init,signal:AbortSignal.timeout(60000)});
+const home=await request('/');assert.equal(home.status,200);assert.match(await home.text(),/Cinco/);
+checks.https=true;
+const redirect=await fetch('https://www.celeryman.fun/',{redirect:'manual'});assert.equal(redirect.status,308);assert.equal(redirect.headers.get('location'),site+'/');checks.wwwRedirect=true;
+const health=await request('/api/health');assert.equal(health.status,200);checks.providers=await health.json();assert.equal(checks.providers.providers.openai,true);assert.equal(checks.providers.providers.fal,true);
+assert.equal((await request('/.env')).status,404);assert.equal((await request('/server/api.ts')).status,404);checks.sourceNotExposed=true;
+assert.equal((await request('/api/health',{headers:{Origin:'https://unrelated.example'}})).status,403);checks.originRestriction=true;
+const font=await request('/fonts/VT323-Regular.ttf');assert.equal(font.status,200);assert.equal(font.headers.get('content-type'),'font/ttf');checks.font=true;
+const range=await request('/media/original/okay.wav',{headers:{Range:'bytes=0-43'}});assert.equal(range.status,206);assert.equal((await range.arrayBuffer()).byteLength,44);checks.mediaRanges=true;
+const post=(p,body)=>request(p,{method:'POST',headers:{Origin:site,'Content-Type':'application/json'},body:JSON.stringify(body)});
+const transcription=await post('/api/transcribe',{audio:(await fs.readFile('benchmarks/voice-inputs/01.wav')).toString('base64'),mime:'audio/wav',requestId:'deployment-check'});
+assert.equal(transcription.status,200);const transcript=await transcription.json();assert.equal(transcript.requestId,'deployment-check');assert.match(transcript.text,/celery/i);checks.transcription={text:transcript.text,ms:transcript.transcriptionMs};
+const started=performance.now();const response=await post('/api/voice/stream',{text:'Celeryman deployment verification. Your computer is now online.'});assert.equal(response.status,200);
+let pending='',chunks=0,firstMs,pcmBytes=0,done;
+for await(const data of response.body){pending+=new TextDecoder().decode(data);let newline;while((newline=pending.indexOf('\n'))>=0){const line=pending.slice(0,newline);pending=pending.slice(newline+1);if(!line)continue;const event=JSON.parse(line);if(event.type==='error')throw Error(event.error);if(event.type==='pcm'){chunks++;firstMs??=performance.now()-started;pcmBytes+=Buffer.from(event.data,'base64').length;}if(event.type==='done')done=event;}}
+assert.ok(chunks>0&&pcmBytes>48000&&done?.url);const audio=await request(done.url);assert.equal(audio.status,200);assert.equal((await audio.arrayBuffer()).byteLength,pcmBytes+44);
+checks.voice={chunks,pcmBytes,firstMs:Math.round(firstMs),completeMs:Math.round(performance.now()-started),cached:done.cached,url:done.url};
+await fs.mkdir('benchmarks/deployment',{recursive:true});await fs.writeFile('benchmarks/deployment/verification.json',JSON.stringify(checks,null,2)+'\n');
+console.log(JSON.stringify(checks,null,2));

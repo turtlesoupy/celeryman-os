@@ -3,6 +3,7 @@ steps:
     args: ['build', '-t', '${_IMAGE}', '.']
 images: ['${_IMAGE}']
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: LEGACY
+logsBucket: gs://celeryman-os_cloudbuild/logs
 serviceAccount: projects/celeryman-os/serviceAccounts/celeryman-builder@celeryman-os.iam.gserviceaccount.com
 timeout: 1200s
