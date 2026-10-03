@@ -1,6 +1,6 @@
 # Cinco Identity Generator 2.5
 
-Private Celery Man software recreation. Vite + TypeScript, a local API, microphone input, generated computer speech and personalized whole-person video. No public deployment is configured.
+Celery Man software recreation. Vite + TypeScript, microphone input, generated computer speech and personalized whole-person video. Deployed at https://celeryman.fun on GCP under fun.inc, with creator permission for public deployment. The GitHub repository remains private.
 
 ## Run
 
@@ -13,7 +13,7 @@ npm run dev
 
 Open http://127.0.0.1:5173. Use the development server: `vite preview` serves static files and does not supply the generation API. `npm run build` checks TypeScript and builds the client.
 
-Choose Paul, Thomas, or upload a photograph and enter a name. **Live generation** is the default. Hold **Space** to speak, or use **F1** for the command field and controls. Click the black terminal to type directly. Windows can be dragged, resized, minimized, maximized, restored and closed. **Printout** opens the latest virtual printer page. **Reset** cancels pending display/voice work.
+Choose Paul, Thomas, or upload a photograph and enter a name. **Live generation** is the default. Hold **Space** to speak, or use **F1** for the command field and controls. Click the black terminal to type directly. Windows can be dragged, resized, minimized, maximized, restored and closed. **Printout** reopens the latest smiling portrait, with a real Print dialog and Save as PDF support. **Reset** cancels pending display/voice work.
 
 Try the sketch, or novel commands such as “a shoulder shimmy in a mustard yellow tracksuit,” “a tiny backwards shuffle, keeping the tracksuit,” and “a tall purple top hat wobbling twice as slowly.” The NSFW joke uses the warning, fully clothed dancer and malfunction sequence.
 
@@ -27,7 +27,7 @@ Every uploaded profile gets its own identity and cache namespace. New commands c
 
 The original scripted computer replies and canonical music use excerpts from the supplied reference. Novel dance commands retain the source computer’s “Okay” acknowledgment. Personalized greetings, attention replies, phone alerts and other unseen speech now use the full cloned MiniMax Speech 2.8 HD voice, streaming 24 kHz PCM into the shared Web Audio bus as it arrives. The user selected HD in all five blind listening comparisons; name splicing and classic TTS remain comparison candidates in the lab only. New full phrases are cached after generation. Generated speech remains an approximation; the experiments and audio grades are retained rather than treating the voice as proven identical. The optional **Reference comparison** mode explicitly plays cropped source dancer clips and is excluded from live-generation evaluations.
 
-API keys stay in the server. Uploaded photos, generated files and voice caches remain on this machine, while generation requests send the necessary references to the configured providers. `public/media/generated/*.json` records model/request provenance. This workspace remains for personal use under the permission supplied with the task.
+API keys stay in the server. Local development stores uploaded photos, generated files and voice caches on this machine. Production persists them in a private Cloud Storage bucket. Generation sends the necessary references to the configured providers. `public/media/generated/*.json` records model/request provenance. Public deployment was explicitly authorized by the user after confirming creator permission.
 
 ## Benchmarks
 
@@ -75,4 +75,8 @@ Run `npx tsx scripts/check-desktop-voice.ts` to verify the selected voice in the
 
 Phone layouts keep the overlapping window manager at readable size. Windows are recomposed for portrait or landscape, with touch dragging, resizing, minimize/maximize, and a Windows switcher for bringing covered windows forward. The bottom bar provides Talk (tap again to send), Type, Windows, and More. Sign-in and command controls use touch-sized targets; desktop geometry remains based on the reference sketch.
 
-`npx tsx scripts/check-window-layout.ts` checks window bounds across small phones, landscape, tablets, and reduced keyboard viewports. Browser checks and screenshots are saved under `benchmarks/mobile/`. These are viewport tests, not a claim of physical iPhone/Android microphone or Bluetooth verification. The local development server still binds to loopback; phone access requires a separately configured private HTTPS connection.
+`npx tsx scripts/check-window-layout.ts` checks window bounds across small phones, landscape, tablets, and reduced keyboard viewports. Browser checks and screenshots are saved under `benchmarks/mobile/`. These are viewport tests, not a claim of physical iPhone/Android microphone or Bluetooth verification. The local development server still binds to loopback. The deployed HTTPS site supports phone access and browser microphone permission.
+
+## Production deployment
+
+See [deployment operations](deploy/README.md) for infrastructure, secrets, persistence, verification and redeploy instructions. `npm start` serves the built desktop and API without Vite; `node --import tsx scripts/check-production.ts` verifies origin protection, static files, media range requests and request limits after `npm run build`.

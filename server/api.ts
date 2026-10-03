@@ -11,6 +11,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import OpenAI,{toFile} from 'openai';
 import {fal} from '@fal-ai/client';
 import type {Plugin} from 'vite';
+import type {IncomingMessage,ServerResponse} from 'node:http';
 import {scripted,type Context} from '../src/protocol.ts';
 import {costumes,motions} from '../src/dances.ts';
 import {interactiveVideo} from './interactive-video.ts';
@@ -69,6 +70,7 @@ async function costumeFrame(profile:string,costume:string,closeup=false,canonica
 }
 async function generate(id:string,body:any){
  const job=jobs.get(id)!;job.started=Date.now();
+ if([...jobs.values()].filter(j=>j.status==='working'&&j.started).length>4){Object.assign(job,{status:'error',stage:'Busy',error:'The computer is busy with other sequences. Please try again shortly.'});return;}
  try{
   if(body.profile!=='paul'||!body.canonical){await interactiveVideo(id,body,job,()=>reference(body.profile||'thomas'));return;}
   job.stage='Building identity';
@@ -118,8 +120,7 @@ async function qwenVoice(text:string){
  })();voiceLocks.set(id,promise);promise.catch(()=>voiceLocks.delete(id));return promise;
 }
 async function voice(text:string,_style='computer'){return (await streamComputerVoice(text,()=>{})).url;}
-export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServer(server){
- server.middlewares.use(async(req,res,next)=>{
+export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:()=>void){
   // Generated files must not depend on Vite's asynchronously updated public-file index.
   if(req.url?.startsWith('/media/')){
    try{
@@ -150,9 +151,12 @@ export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServe
   if(!req.url?.startsWith('/api/'))return next();
   res.setHeader('Content-Type','application/json');
   try{
-   if(req.headers.origin&&!/^http:\/\/(localhost|127\.0\.0\.1):5173$/.test(req.headers.origin))throw Error('Local requests only');
+   const allowedOrigins=(process.env.APP_ORIGINS||'http://localhost:5173,http://127.0.0.1:5173').split(',');
+   if(req.headers.origin&&!allowedOrigins.includes(req.headers.origin)){res.statusCode=403;res.end(JSON.stringify({error:'Origin not allowed'}));return;}
    let raw=Buffer.alloc(0);for await(const chunk of req){raw=Buffer.concat([raw,chunk]);if(raw.length>16e6)throw Error('Request too large');}
    const b=raw.length?JSON.parse(raw.toString()):{};let result:any;
+   if(b.profile!==undefined&&(typeof b.profile!=='string'||!/^(paul|thomas|[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/.test(b.profile)))throw Error('Invalid profile');
+   if(req.url==='/api/generate'&&(typeof b.character!=='string'||!/^[-\w .]{1,80}$/.test(b.character)||!['base','face','engaged','hat','flarhgunnstow','intro','sway','smile'].includes(b.variant)))throw Error('Invalid sequence');
    if(req.url==='/api/health')result={ok:true,providers:{openai:!!process.env.OPENAI_API_KEY,fal:!!process.env.FAL_KEY}};
    else if(req.url==='/api/warm'){
     void reference(String(b.profile||'paul')).catch(()=>{});
@@ -218,5 +222,5 @@ export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServe
    }else {res.statusCode=404;result={error:'Unknown endpoint'};}
    res.end(JSON.stringify(result));
   }catch(e){const rawError=e instanceof Error?e.message:'Request failed';const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){res.end(JSON.stringify({type:'error',error})+'\n');}else{res.statusCode=500;res.end(JSON.stringify({error}));}}
- });
-}};}
+}
+export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServer(server){server.middlewares.use(apiMiddleware);}};}

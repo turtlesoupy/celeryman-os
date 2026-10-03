@@ -4,6 +4,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {fal} from '@fal-ai/client';
 let enrollment:Promise<string>|undefined;
 export function computerVoiceId(){
+ if(process.env.COMPUTER_VOICE_ID)return Promise.resolve(process.env.COMPUTER_VOICE_ID);
  enrollment??=(async()=>{
   fal.config({credentials:process.env.FAL_KEY});
   const file='cache/minimax-computer-voice.json';

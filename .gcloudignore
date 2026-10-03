@@ -1,0 +1,14 @@
+.git
+.env*
+node_modules
+dist
+cache
+analysis
+benchmarks
+output
+reference/*.mp4
+public/media/generated
+public/media/profiles
+public/media/voice
+public/voice-lab
+.DS_Store
