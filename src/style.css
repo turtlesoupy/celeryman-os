@@ -88,3 +88,5 @@
 @media(max-height:500px){.mobile .debug-bar{width:65%}.mobile .command-status-detail{display:none}.mobile .touch-bar{left:auto;width:390px}.mobile .launch p{margin:3px 0}.mobile .launch .content{overflow:auto}}
 
 .print-preview .content{gap:8px}.print-preview img{flex:1;min-height:0;width:100%;height:0;object-fit:contain}.print-preview small{flex:none;font-size:11px;text-align:center}.print-actions{display:flex;flex:none;gap:8px;justify-content:center}.print-actions button{font-size:12px;padding:5px 10px}
+
+.photo-picker{display:flex;gap:12px;align-items:center;border:2px inset #ddd;background:#d8dfdc;padding:10px;margin:8px 0}.identity-preview{width:68px;height:76px;object-fit:cover;border:1px solid #7b8580;flex:none}.photo-picker>div{min-width:0}.launch .photo-status{font-size:11px;line-height:1.35;margin:7px 0 0}.classic-button:disabled{color:#777;cursor:default}.mobile .photo-picker .classic-button{min-height:44px}.mobile .launch .photo-status{font-size:12px}
