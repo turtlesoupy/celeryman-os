@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-04",
+  "input": "User-supplied outdoor portrait; source image is not checked into the repository.",
+  "reproduction": {
+    "scenario": "Celery base",
+    "job": "3fa5a06d4ddc9a1d1bfd",
+    "finding": "Costume intermediate and final video replaced the uploaded person with a male-looking performer wearing invented glasses and facial hair."
+  },
+  "rejectedFix": "Removing the actor-bearing wardrobe reference while keeping Klein stopped that specific actor substitution, but the face and portrait framing still changed substantially.",
+  "selectedFix": {
+    "imageModel": "fal-ai/nano-banana-2/edit",
+    "imageReferences": "Only uploaded identity; costume described in text.",
+    "videoReferences": "Generated costume frame plus original uploaded photo; motion actor explicitly excluded as identity reference.",
+    "cacheInvalidation": "Personalized generation identityRevision 3; costume frame version 5.",
+    "intro": "Removed forced male voice language from personalized intro prompts."
+  },
+  "visualReview": {
+    "method": "Manual comparison against supplied image, generated posters, and a frame three seconds into Celery. Not a biometric identity score or guarantee.",
+    "passed": [
+      "Celery base: recognizable appearance retained; no invented glasses or facial hair; consistent at 3 seconds",
+      "Celery portrait: recognizable face retained, correct tight portrait on pink",
+      "Oyster base: recognizable appearance retained in red costume",
+      "Tayne intro: recognizable appearance retained with requested hat and sunglasses"
+    ],
+    "limitations": [
+      "Generative facial detail and outfits remain approximate.",
+      "New costume image took 9.8\u201311.8s locally; repeat use is cached.",
+      "No exhaustive population-wide identity evaluation."
+    ]
+  },
+  "results": [
+    {
+      "character": "celery",
+      "variant": "base",
+      "job": "93bdd409dbe4fa3479d2",
+      "timings": {
+        "identityMs": 1550.9935829937458,
+        "frameMs": 9783.670667007565,
+        "videoMs": 6011.607290998101,
+        "previewMs": 17346.274582996964,
+        "downloadMs": 1408.8552500009537,
+        "ffmpegMs": 190.24850000441074,
+        "persistMs": 0.5629170089960098,
+        "frameRequestMs": 9781.496041998267,
+        "frameDownloadMs": 758.0140829980373,
+        "frameSaveMs": 1.2997919917106628,
+        "totalMs": 18945.950082987547,
+        "finishMs": 190.8232919871807
+      }
+    },
+    {
+      "character": "celery",
+      "variant": "face",
+      "job": "840f3b2fcd8bb5a80a34",
+      "timings": {
+        "identityMs": 650.6252920031548,
+        "frameMs": 11810.42266599834,
+        "videoMs": 2458.203959003091,
+        "previewMs": 14919.254374995828,
+        "downloadMs": 1063.164625003934,
+        "ffmpegMs": 101.66904199123383,
+        "persistMs": 2.4305830001831055,
+        "frameRequestMs": 11808.070999994874,
+        "frameDownloadMs": 805.3612920045853,
+        "frameSaveMs": 1.6862089931964874,
+        "totalMs": 16086.527042001486,
+        "finishMs": 104.11049999296665
+      }
+    },
+    {
+      "character": "oyster",
+      "variant": "base",
+      "job": "9c9edf19368c8ce1aad8",
+      "timings": {
+        "identityMs": 1703.3787090033293,
+        "frameMs": 10177.27116599679,
+        "videoMs": 9667.780209004879,
+        "previewMs": 21548.435166999698,
+        "downloadMs": 763.4620829969645,
+        "ffmpegMs": 234.10583299398422,
+        "persistMs": 0.6320419907569885,
+        "frameRequestMs": 10174.82337500155,
+        "frameDownloadMs": 1083.6153340041637,
+        "frameSaveMs": 0.48570799827575684,
+        "totalMs": 22546.641124993563,
+        "finishMs": 234.74895799160004
+      }
+    },
+    {
+      "character": "tayne",
+      "variant": "intro",
+      "job": "6530eba3d1b662cfa672",
+      "timings": {
+        "identityMs": 0.0663750022649765,
+        "videoMs": 2340.14420799911,
+        "previewMs": 2340.2261250019073,
+        "downloadMs": 1512.893666997552,
+        "ffmpegMs": 74.61662501096725,
+        "persistMs": 3.2372090071439743,
+        "totalMs": 3930.9689999967813,
+        "finishMs": 77.86474999785423
+      }
+    }
+  ]
+}
