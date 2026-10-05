@@ -1,0 +1,261 @@
+{
+  "version": 1,
+  "exportedAt": "2026-10-05T22:32:49.713Z",
+  "rated": 9,
+  "total": 9,
+  "complete": true,
+  "pairs": [
+    {
+      "id": "portrait-fair-thomas-15b2715af027",
+      "title": "Portrait image · Thomas",
+      "description": "Same source photo, portrait prompt, aspect ratio and seed. Compare likeness, costume and framing.",
+      "sketchImage": "sketch-celery-face.png",
+      "sketchVideo": null,
+      "reference": "identity-thomas.jpg",
+      "candidates": [
+        {
+          "file": "audit-image-thomas-lite.png",
+          "kind": "image",
+          "label": "google/nano-banana-lite/edit · PNG",
+          "requestMs": 4743.060207999995
+        },
+        {
+          "file": "audit-image-thomas-baseline.png",
+          "kind": "image",
+          "label": "fal-ai/nano-banana-2/edit · PNG",
+          "requestMs": 35801.911374999996
+        }
+      ],
+      "rating": {
+        "choice": "A",
+        "notes": "",
+        "updatedAt": "2026-10-05T22:31:30.275Z",
+        "modelsRevealed": false
+      }
+    },
+    {
+      "id": "portrait-format-thomas-77ac460904a7",
+      "title": "Portrait format · Thomas",
+      "description": "Independent generations with the same model, photo, prompt and seed; PNG versus JPEG output. Compare overall quality, not pixel-identical compression.",
+      "sketchImage": "sketch-celery-face.png",
+      "sketchVideo": null,
+      "reference": "identity-thomas.jpg",
+      "candidates": [
+        {
+          "file": "audit-image-thomas-lite.png",
+          "kind": "image",
+          "label": "google/nano-banana-lite/edit · PNG",
+          "requestMs": 4743.060207999995
+        },
+        {
+          "file": "audit-image-thomas-lite-jpeg.jpg",
+          "kind": "image",
+          "label": "google/nano-banana-lite/edit · JPEG",
+          "requestMs": 4593.075874999995
+        }
+      ],
+      "rating": {
+        "choice": "equivalent",
+        "notes": "",
+        "updatedAt": "2026-10-05T22:31:42.332Z",
+        "modelsRevealed": false
+      }
+    },
+    {
+      "id": "portrait-fair-upload-240a3a69ecea",
+      "title": "Portrait image · Uploaded photo",
+      "description": "Same source photo, portrait prompt, aspect ratio and seed. Compare likeness, costume and framing.",
+      "sketchImage": "sketch-celery-face.png",
+      "sketchVideo": null,
+      "reference": "identity-upload.jpg",
+      "candidates": [
+        {
+          "file": "audit-image-upload-lite.png",
+          "kind": "image",
+          "label": "google/nano-banana-lite/edit · PNG",
+          "requestMs": 4419.888250000004
+        },
+        {
+          "file": "audit-image-upload-baseline.png",
+          "kind": "image",
+          "label": "fal-ai/nano-banana-2/edit · PNG",
+          "requestMs": 9781.190583000003
+        }
+      ],
+      "rating": {
+        "choice": "B",
+        "notes": "",
+        "updatedAt": "2026-10-05T22:31:47.332Z",
+        "modelsRevealed": false
+      }
+    },
+    {
+      "id": "portrait-format-upload-07249b2f3e59",
+      "title": "Portrait format · Uploaded photo",
+      "description": "Independent generations with the same model, photo, prompt and seed; PNG versus JPEG output. Compare overall quality, not pixel-identical compression.",
+      "sketchImage": "sketch-celery-face.png",
+      "sketchVideo": null,
+      "reference": "identity-upload.jpg",
+      "candidates": [
+        {
+          "file": "audit-image-upload-lite-jpeg.jpg",
+          "kind": "image",
+          "label": "google/nano-banana-lite/edit · JPEG",
+          "requestMs": 3577.284958000004
+        },
+        {
+          "file": "audit-image-upload-lite.png",
+          "kind": "image",
+          "label": "google/nano-banana-lite/edit · PNG",
+          "requestMs": 4419.888250000004
+        }
+      ],
+      "rating": {
+        "choice": "B",
+        "notes": "",
+        "updatedAt": "2026-10-05T22:31:51.766Z",
+        "modelsRevealed": false
+      }
+    },
+    {
+      "id": "video-model-audit-0-54ad31b7edf5",
+      "title": "Portrait animation · model comparison",
+      "description": "Same starting image, prompt, seed and output resolution. Repeat 1 of 2.",
+      "sketchImage": "sketch-celery-face.png",
+      "sketchVideo": "sketch-celery-face.mp4",
+      "reference": "identity-thomas.jpg",
+      "candidates": [
+        {
+          "file": "audit-video-0-turbo.mp4",
+          "kind": "video",
+          "label": "minimax/h3-max-turbo/image-to-video",
+          "requestMs": 2223.580375
+        },
+        {
+          "file": "audit-video-1-max.mp4",
+          "kind": "video",
+          "label": "minimax/h3-max/image-to-video",
+          "requestMs": 2607.1171660000005
+        }
+      ],
+      "rating": {
+        "choice": "equivalent",
+        "notes": "",
+        "updatedAt": "2026-10-05T22:32:06.132Z",
+        "modelsRevealed": false
+      }
+    },
+    {
+      "id": "video-model-audit-1-48f482ea5a33",
+      "title": "Portrait animation · model comparison",
+      "description": "Same starting image, prompt, seed and output resolution. Repeat 2 of 2.",
+      "sketchImage": "sketch-celery-face.png",
+      "sketchVideo": "sketch-celery-face.mp4",
+      "reference": "identity-thomas.jpg",
+      "candidates": [
+        {
+          "file": "audit-video-2-max.mp4",
+          "kind": "video",
+          "label": "minimax/h3-max/image-to-video",
+          "requestMs": 2340.7403750000003
+        },
+        {
+          "file": "audit-video-3-turbo.mp4",
+          "kind": "video",
+          "label": "minimax/h3-max-turbo/image-to-video",
+          "requestMs": 2718.8864159999994
+        }
+      ],
+      "rating": {
+        "choice": "equivalent",
+        "notes": "",
+        "updatedAt": "2026-10-05T22:32:19.715Z",
+        "modelsRevealed": false
+      }
+    },
+    {
+      "id": "portrait-pipeline-thomas-a0ae7823b843",
+      "title": "Complete portrait pipeline · Thomas",
+      "description": "Different image models/prompts, same video model. Judge the complete result, including accessory changes during animation.",
+      "sketchImage": "sketch-celery-face.png",
+      "sketchVideo": "sketch-celery-face.mp4",
+      "reference": "identity-thomas.jpg",
+      "candidates": [
+        {
+          "file": "thomas-portrait-baseline.mp4",
+          "kind": "video",
+          "label": "Nano Banana 2 + H3 Max Turbo",
+          "requestMs": 22007.730042
+        },
+        {
+          "file": "thomas-portrait-lite-refined.mp4",
+          "kind": "video",
+          "label": "Nano Banana Lite + H3 Max Turbo (refined portrait prompt)",
+          "requestMs": 27905.903792
+        }
+      ],
+      "rating": {
+        "choice": "B",
+        "notes": "",
+        "updatedAt": "2026-10-05T22:32:32.961Z",
+        "modelsRevealed": false
+      }
+    },
+    {
+      "id": "portrait-pipeline-upload-86ca1eaa7940",
+      "title": "Complete portrait pipeline · Uploaded photo",
+      "description": "Different image models/prompts, same video model. Judge the complete result, including accessory changes during animation.",
+      "sketchImage": "sketch-celery-face.png",
+      "sketchVideo": "sketch-celery-face.mp4",
+      "reference": "identity-upload.jpg",
+      "candidates": [
+        {
+          "file": "upload-portrait-baseline.mp4",
+          "kind": "video",
+          "label": "Nano Banana 2 + H3 Max Turbo",
+          "requestMs": 52768.153209
+        },
+        {
+          "file": "upload-portrait-lite-refined.mp4",
+          "kind": "video",
+          "label": "Nano Banana Lite + H3 Max Turbo (refined portrait prompt)",
+          "requestMs": 18329.095707999993
+        }
+      ],
+      "rating": {
+        "choice": "A",
+        "notes": "",
+        "updatedAt": "2026-10-05T22:32:39.178Z",
+        "modelsRevealed": false
+      }
+    },
+    {
+      "id": "celery-choreography-e89766f4a5f5",
+      "title": "Celery Man choreography",
+      "description": "Compare hands-on-hips movement and consistency. One method receives the original motion reference; one receives only a text description.",
+      "sketchImage": "sketch-celery.png",
+      "sketchVideo": "sketch-celery.mp4",
+      "reference": "identity-upload.jpg",
+      "candidates": [
+        {
+          "file": "celery-original.mp4",
+          "kind": "video",
+          "label": "minimax/h3-max/reference-to-video",
+          "requestMs": 7467.386875
+        },
+        {
+          "file": "celery-turbo.mp4",
+          "kind": "video",
+          "label": "minimax/h3-max-turbo/image-to-video",
+          "requestMs": 34225.065416000005
+        }
+      ],
+      "rating": {
+        "choice": "A",
+        "notes": "",
+        "updatedAt": "2026-10-05T22:32:46.253Z",
+        "modelsRevealed": false
+      }
+    }
+  ]
+}

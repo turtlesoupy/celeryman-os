@@ -1,0 +1,159 @@
+{
+  "source_file": "celeryman-generation-ab-1791239569714.json",
+  "source_sha256": "c521bf41c9455bca03275b9c66cdcdc88f9b15f222e6647964942dfb2fca437b",
+  "exportedAt": "2026-10-05T22:32:49.713Z",
+  "complete": true,
+  "rated": 9,
+  "models_hidden_for_all_ratings": true,
+  "results": [
+    {
+      "id": "portrait-fair-thomas-15b2715af027",
+      "comparison": "Portrait image \u00b7 Thomas",
+      "choice": "A",
+      "winner": "google/nano-banana-lite/edit \u00b7 PNG",
+      "candidates": [
+        "google/nano-banana-lite/edit \u00b7 PNG",
+        "fal-ai/nano-banana-2/edit \u00b7 PNG"
+      ],
+      "notes": "",
+      "modelsRevealed": false
+    },
+    {
+      "id": "portrait-format-thomas-77ac460904a7",
+      "comparison": "Portrait format \u00b7 Thomas",
+      "choice": "equivalent",
+      "winner": "equivalent",
+      "candidates": [
+        "google/nano-banana-lite/edit \u00b7 PNG",
+        "google/nano-banana-lite/edit \u00b7 JPEG"
+      ],
+      "notes": "",
+      "modelsRevealed": false
+    },
+    {
+      "id": "portrait-fair-upload-240a3a69ecea",
+      "comparison": "Portrait image \u00b7 Uploaded photo",
+      "choice": "B",
+      "winner": "fal-ai/nano-banana-2/edit \u00b7 PNG",
+      "candidates": [
+        "google/nano-banana-lite/edit \u00b7 PNG",
+        "fal-ai/nano-banana-2/edit \u00b7 PNG"
+      ],
+      "notes": "",
+      "modelsRevealed": false
+    },
+    {
+      "id": "portrait-format-upload-07249b2f3e59",
+      "comparison": "Portrait format \u00b7 Uploaded photo",
+      "choice": "B",
+      "winner": "google/nano-banana-lite/edit \u00b7 PNG",
+      "candidates": [
+        "google/nano-banana-lite/edit \u00b7 JPEG",
+        "google/nano-banana-lite/edit \u00b7 PNG"
+      ],
+      "notes": "",
+      "modelsRevealed": false
+    },
+    {
+      "id": "video-model-audit-0-54ad31b7edf5",
+      "comparison": "Portrait animation \u00b7 model comparison",
+      "choice": "equivalent",
+      "winner": "equivalent",
+      "candidates": [
+        "minimax/h3-max-turbo/image-to-video",
+        "minimax/h3-max/image-to-video"
+      ],
+      "notes": "",
+      "modelsRevealed": false
+    },
+    {
+      "id": "video-model-audit-1-48f482ea5a33",
+      "comparison": "Portrait animation \u00b7 model comparison",
+      "choice": "equivalent",
+      "winner": "equivalent",
+      "candidates": [
+        "minimax/h3-max/image-to-video",
+        "minimax/h3-max-turbo/image-to-video"
+      ],
+      "notes": "",
+      "modelsRevealed": false
+    },
+    {
+      "id": "portrait-pipeline-thomas-a0ae7823b843",
+      "comparison": "Complete portrait pipeline \u00b7 Thomas",
+      "choice": "B",
+      "winner": "Nano Banana Lite + H3 Max Turbo (refined portrait prompt)",
+      "candidates": [
+        "Nano Banana 2 + H3 Max Turbo",
+        "Nano Banana Lite + H3 Max Turbo (refined portrait prompt)"
+      ],
+      "notes": "",
+      "modelsRevealed": false
+    },
+    {
+      "id": "portrait-pipeline-upload-86ca1eaa7940",
+      "comparison": "Complete portrait pipeline \u00b7 Uploaded photo",
+      "choice": "A",
+      "winner": "Nano Banana 2 + H3 Max Turbo",
+      "candidates": [
+        "Nano Banana 2 + H3 Max Turbo",
+        "Nano Banana Lite + H3 Max Turbo (refined portrait prompt)"
+      ],
+      "notes": "",
+      "modelsRevealed": false
+    },
+    {
+      "id": "celery-choreography-e89766f4a5f5",
+      "comparison": "Celery Man choreography",
+      "choice": "A",
+      "winner": "minimax/h3-max/reference-to-video",
+      "candidates": [
+        "minimax/h3-max/reference-to-video",
+        "minimax/h3-max-turbo/image-to-video"
+      ],
+      "notes": "",
+      "modelsRevealed": false
+    }
+  ],
+  "aggregate": {
+    "portrait_stills": {
+      "nano_banana_lite_wins": 1,
+      "nano_banana_2_wins": 1,
+      "ties": 0
+    },
+    "portrait_pipeline": {
+      "lite_refined_plus_turbo_wins": 1,
+      "nano_banana_2_plus_turbo_wins": 1,
+      "ties": 0
+    },
+    "lite_output_format": {
+      "png_wins": 1,
+      "jpeg_wins": 0,
+      "ties": 1
+    },
+    "portrait_video_model": {
+      "max_wins": 0,
+      "turbo_wins": 0,
+      "ties": 2
+    },
+    "canonical_choreography": {
+      "reference_max_wins": 1,
+      "text_guided_turbo_wins": 0
+    }
+  },
+  "interpretation": [
+    "Lite was preferred for Thomas in both still and complete pipeline comparisons; Nano Banana 2 was preferred for the uploaded photo in both. There is no uniform image-quality winner in these two identities.",
+    "PNG won one comparison and tied one. JPEG did not establish quality equivalence; independent generations prevent attributing differences solely to compression.",
+    "Both Max versus Turbo portrait comparisons were ties. Keep the current Turbo portrait route given recovered 2\u20133 second request times; these ratings provide no reason to switch to Max.",
+    "Reference-driven Max won the choreography comparison; keep canonical dance motion references.",
+    "Complete-pipeline pairs also changed the image prompt, so those preferences cannot isolate the image model alone.",
+    "Do not overfit routing to Thomas versus another person from this small sample. Human preferences take priority over automated scores."
+  ],
+  "runtime_decision": {
+    "changed": false,
+    "portraits": "Keep Nano Banana 2 PNG as default; Lite remains a candidate, not an across-the-board quality-preserving replacement.",
+    "portrait_video": "Keep H3 Max Turbo.",
+    "canonical_dances": "Keep H3 Max reference-to-video.",
+    "next_experiment": "If continuing image optimization, compare more identities/seeds with identical prompts and grade stills separately from animations, using reference-guided A/B pairs."
+  }
+}

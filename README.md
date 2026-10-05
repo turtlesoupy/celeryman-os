@@ -70,7 +70,9 @@ npx tsx scripts/audit-fal-latency.ts /path/to/regression-photo.jpg
 node scripts/build-generation-ab.mjs /path/to/regression-photo.jpg
 ```
 
-Run the initial image/portrait/motion benchmarks first; then open http://127.0.0.1:5174/ab.html using the local server above. The audit compares raw HTTP, the SDK queue and the production `fal.run` path with matched video inputs, plus Nano Banana 2/Lite portraits with identical prompts. It makes paid requests. The follow-up in `benchmarks/fal-latency-audit-20261005.json` recovered **2–3s** video calls with unchanged settings, so the earlier slow sample does not establish Turbo as slower. Lite portraits still took approximately 3.6–4.7s. Production defaults remain unchanged pending the paired quality review.
+Run the initial image/portrait/motion benchmarks first; then open http://127.0.0.1:5174/ab.html using the local server above. The audit compares raw HTTP, the SDK queue and the production `fal.run` path with matched video inputs, plus Nano Banana 2/Lite portraits with identical prompts. It makes paid requests. The follow-up in `benchmarks/fal-latency-audit-20261005.json` recovered **2–3s** video calls with unchanged settings, so the earlier slow sample does not establish Turbo as slower. Lite portraits still took approximately 3.6–4.7s.
+
+The complete nine-pair human export and model mapping are saved in `benchmarks/generation-ab/human-ratings.json` and `human-summary.json`. All choices were made with model labels hidden. Lite won for Thomas and Nano Banana 2 won for the uploaded photo, in both still and complete-pipeline comparisons. Both Max/Turbo portrait-video comparisons tied; reference-driven Max won for dance choreography. PNG won one format comparison and tied the other. Keep current runtime defaults: the results do not establish Lite as a uniformly quality-preserving replacement. Pipeline comparisons also changed the image prompt; format comparisons used independently generated outputs. Do not infer a universal preference or compression defect from these few samples.
 
 ## Responsiveness and audio regression checks
 
