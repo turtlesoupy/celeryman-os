@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {describeServiceError,primaryFailure} from '../src/service-errors.ts';
+const portrait=describeServiceError('Portrait generation failed: Costume provider timed out');
+const dance=describeServiceError('Dance generation failed: HTTP 503');
+assert.equal(portrait.blocking,false);assert.equal(dance.blocking,true);
+assert.equal(primaryFailure([portrait,dance]),dance);
+assert.equal(primaryFailure([dance,portrait]),dance);
+assert.match(portrait.recovery,/dancer can still play/);
+assert.equal(describeServiceError('Voice unavailable: timeout').blocking,false);
+assert.equal(describeServiceError('Music could not load. Try the command again.').blocking,false);
+assert.equal(describeServiceError('{"detail":[{"msg":"insufficient balance"}]}').title,'AI service out of credits');
+assert.equal(describeServiceError('Server request failed (HTTP 504)').title,'Connection interrupted');
+assert.equal(describeServiceError('401 unauthorized').title,'AI service unavailable');
+assert.equal(describeServiceError('Microphone recording failed').title,'Microphone input failed');
+assert.equal(describeServiceError('Dance generation failed: {"detail":"provider rejected request"}').details,'Dance generation failed: {"detail":"provider rejected request"}');
+console.log('Service-error checks passed: partial failures, blocking priority, actionable explanations and preserved details.');

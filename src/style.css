@@ -90,3 +90,12 @@
 .print-preview .content{gap:8px}.print-preview img{flex:1;min-height:0;width:100%;height:0;object-fit:contain}.print-preview small{flex:none;font-size:11px;text-align:center}.print-actions{display:flex;flex:none;gap:8px;justify-content:center}.print-actions button{font-size:12px;padding:5px 10px}
 
 .photo-picker{display:flex;gap:12px;align-items:center;border:2px inset #ddd;background:#d8dfdc;padding:10px;margin:8px 0}.identity-preview{width:68px;height:76px;object-fit:cover;border:1px solid #7b8580;flex:none}.photo-picker>div{min-width:0}.launch .photo-status{font-size:11px;line-height:1.35;margin:7px 0 0}.classic-button:disabled{color:#777;cursor:default}.mobile .photo-picker .classic-button{min-height:44px}.mobile .launch .photo-status{font-size:12px}
+
+/* Persistent, actionable errors share the compact retro diagnostics bar. */
+.command-error{pointer-events:auto;max-height:220px;overflow:auto;padding:7px 8px;font-size:10px}
+.command-error-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.command-error-actions{display:flex;gap:5px;flex:none}.command-error-actions button{padding:3px 7px;font-size:10px;min-height:23px}
+.command-error-list{list-style:none;margin:3px 0 0;padding:0;display:grid;gap:7px}.command-error-list li{display:grid;gap:4px}.command-error-list li+li{border-top:1px solid #a97c6b;padding-top:6px}
+.command-error details{color:#66534a}.command-error summary{cursor:pointer;font-size:9px}.command-error pre{white-space:pre-wrap;overflow-wrap:anywhere;font:9px monospace;margin:4px 0;max-height:80px;overflow:auto;user-select:text}
+.debug-bar.has-warning .command-error{background:#f1e6bb;border-top-color:#9c7b3b;color:#594821}.debug-bar.has-warning .debug-bar-badge{background:#b89850;color:#211b0d}
+.mobile .command-error{max-height:32vh;font-size:12px}.mobile .command-error-actions button{font-size:12px;min-height:32px}.mobile .command-error summary{font-size:11px}

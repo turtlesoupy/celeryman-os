@@ -300,7 +300,7 @@ async function prepareDance(character:string,variant:string,epoch:number,cmd?:Co
   if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');l.win.remove();return false;}if(job.status==='error')throw Error(job.error||'Generation failed. Please retry the command.');l.win.remove();liveAssets[key]={url:job.status==='complete'?job.url:job.previewUrl||job.url,image:job.image,playbackRate:cmd?.playbackRate};
   if(variant==='hat')liveAssets[`${profile}:tayne:hat`]=liveAssets[key];
   report('generation-ready');events.push({kind:'generated-ready',url:job.url,previewUrl:job.previewUrl,id:job.id,playbackRate:cmd?.playbackRate||1,timings:job.timings,time:performance.now(),elapsedMs:performance.now()-startedAt,character,variant});return true;
- }catch(e){const message=variant==='face'?`Portrait generation failed: ${(e as Error).message}`:(e as Error).message;report('generation-error',message);l.win.remove();if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,message);notify(message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{commandStatus.jobDone(feedback,jobKey);}
+ }catch(e){const message=variant==='face'?`Portrait generation failed: ${(e as Error).message}`:`Dance generation failed: ${(e as Error).message}`;report('generation-error',message);l.win.remove();if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{commandStatus.jobDone(feedback,jobKey);}
 }
 async function customDance(cmd:Command){
  const term=terminal();term.classList.add('custom-terminal');const character=cmd.label||'custom';
@@ -311,7 +311,7 @@ async function customDance(cmd:Command){
 }
 async function dispatch(text:string,source='keyboard',feedback?:number){
  if(!text.trim())return;const token=run,order=++commandEpoch;void unlockAudio();
- const status=feedback??commandStatus.begin('Interpreting…',text,source==='microphone'?'Heard':'Command');feedbackToken=status;
+ const status=feedback??commandStatus.begin('Interpreting…',text,source==='microphone'?'Heard':'Command');feedbackToken=status;commandStatus.retry(status,()=>dispatch(text,'retry'));
  events.push({kind:'input',text,source,time:performance.now()});
  try{
   const known=scripted(text,context);let acknowledged=false;
