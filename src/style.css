@@ -89,7 +89,19 @@
 
 .print-preview .content{gap:8px}.print-preview img{flex:1;min-height:0;width:100%;height:0;object-fit:contain}.print-preview small{flex:none;font-size:11px;text-align:center}.print-actions{display:flex;flex:none;gap:8px;justify-content:center}.print-actions button{font-size:12px;padding:5px 10px}
 
-.photo-picker{display:flex;gap:12px;align-items:center;border:2px inset #ddd;background:#d8dfdc;padding:10px;margin:8px 0}.identity-preview{width:68px;height:76px;object-fit:cover;border:1px solid #7b8580;flex:none}.photo-picker>div{min-width:0}.launch .photo-status{font-size:11px;line-height:1.35;margin:7px 0 0}.classic-button:disabled{color:#777;cursor:default}.mobile .photo-picker .classic-button{min-height:44px}.mobile .launch .photo-status{font-size:12px}
+.classic-button:disabled{color:#777;cursor:default}
+
+/* Program Manager-style identities: an icon and a selected caption. */
+.launch .content{padding:20px 24px}.launch h1{font-size:22px;margin:0 0 8px;font-weight:normal}.launch p{font-size:12px;margin:0 0 16px;line-height:1.4}
+.identity-group{border:1px solid #888;padding:12px 8px 10px;margin:0;box-shadow:1px 1px 0 #fff,inset 1px 1px 0 #fff;background:#fffef7}.identity-group legend{padding:0 6px;font-size:12px}
+.identity-icons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;align-items:start}
+.identity-icon{border:0;background:none;padding:4px 0 6px;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;color:#000;font-size:11px;line-height:1.2}
+.identity-icon svg{width:40px;height:40px;flex:none;image-rendering:pixelated}.identity-icon span{padding:2px 3px;max-width:100%;overflow-wrap:anywhere}
+.identity-icon[aria-pressed=true] span{background:#000080;color:white}.identity-icon:focus-visible{outline:none}.identity-icon:focus-visible span{outline:1px dotted;outline-offset:2px}.identity-icon:disabled{opacity:.6;cursor:default}
+.launch .buttons{justify-content:center;margin-top:18px}.launch .start{min-width:112px;padding:6px 22px}.launch .note{text-align:center;line-height:1.5;margin-top:12px;font-size:10px;color:#666}.launch .launch-status{font-size:11px;text-align:center;margin:6px 0 0}.launch-status:empty{display:none}
+.identity-upload .content{padding:16px 20px;overflow:auto;font-size:13px}.identity-upload p{margin:0 0 10px}.photo-stage{height:164px;background:#fffef7;border:2px inset #ddd;display:grid;place-items:center;overflow:hidden}.photo-placeholder svg{width:64px;height:64px;image-rendering:pixelated}.photo-stage .identity-preview,.photo-stage .camera-preview{display:block;width:100%;height:100%;max-height:160px;object-fit:contain;filter:none}.camera-preview{transform:scaleX(-1)}
+.photo-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.photo-actions button{padding:5px 9px;font-size:12px}.identity-name{display:flex;align-items:center;gap:16px;margin:12px 0}.identity-name input{min-width:0;flex:1;width:100%;border:2px inset #ddd;background:#fff;padding:5px}.identity-upload .photo-status{font-size:11px;line-height:1.4;min-height:30px}.identity-upload .buttons{display:flex;justify-content:flex-end;gap:8px}.identity-upload .buttons button{min-width:76px}
+.mobile .launch .content{padding:18px 16px}.mobile .launch .buttons{display:flex}.mobile .identity-icon{font-size:12px;min-height:82px}.mobile .identity-group{padding:10px 4px}.mobile .identity-icons{gap:2px}.mobile .launch h1{font-size:21px}.mobile .launch .note{font-size:11px}.mobile .launch .start{min-width:130px}.mobile .identity-upload .content{padding:14px}.mobile .identity-name input{font-size:16px;min-height:44px}.mobile .identity-upload .photo-status{font-size:12px}.mobile .identity-upload .photo-actions{gap:6px}.mobile .identity-upload .photo-actions button{font-size:12px;padding:6px 8px}
 
 /* Persistent, actionable errors share the compact retro diagnostics bar. */
 .command-error{pointer-events:auto;max-height:220px;overflow:auto;padding:7px 8px;font-size:10px}

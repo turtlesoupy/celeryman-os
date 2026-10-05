@@ -3,7 +3,7 @@ const dir='benchmarks/responsiveness';await fs.mkdir(dir,{recursive:true});
 const browser=await chromium.launch({headless:true,args:['--autoplay-policy=user-gesture-required']});const page=await browser.newPage();
 const results:any={checks:[],errors:[]};page.on('pageerror',e=>results.errors.push(e.message));
 try{
- await page.goto('http://127.0.0.1:5173');await page.getByText('Start computer',{exact:true}).click();
+ await page.goto('http://127.0.0.1:5173');await page.getByRole('button',{name:'Start',exact:true}).click();
  await page.evaluate(async()=>{const c=(window as any).cinco;c.setMode('reference');await c.apply({action:'celery',response:''});});
  await page.waitForFunction(()=>(window as any).cinco.state().music?.playing);await page.waitForTimeout(4500);
  for(const character of ['celery','oyster']){

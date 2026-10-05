@@ -2,6 +2,7 @@ import {requestJson} from './api-client';
 import {preparePrintout,type Printout} from './printout';
 import {mobileFrame,clampFrame,type Frame,type Workspace} from './window-layout';
 import {MicrophoneDevices} from './microphone-device';
+import {launchIdentity} from './identity-launcher';
 import './style.css';
 import {createCommandStatus} from './command-status';
 import {createScriptGuide} from './script-guide';
@@ -82,7 +83,7 @@ function windowBox(o:W){
 }
 function removeWindow(win:Element){
  // Detached media can retain decoders and pending playback jobs until explicitly unloaded.
- win.remove();win.querySelectorAll('video').forEach(v=>{
+ win.dispatchEvent(new Event('windowclose'));win.remove();win.querySelectorAll('video').forEach(v=>{
   mediaStatusCleanup.get(v)?.();mediaStatusCleanup.delete(v);v.pause();v.removeAttribute('src');v.load();
  });
 }
@@ -342,43 +343,24 @@ async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,rec
 
 function reset(){commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','paused','flash');clearWindows();started=false;replaying=false;paused=false;setMicState('idle');fit();launch();}
 async function begin(){scriptGuide.reset();void unlockAudio();void api('warm',{profile,name:identity}).catch(()=>{});clearWindows();started=true;fit();dock.classList.add('hidden');await dispatch('Good morning','boot');}
-function launch(){const t=windowBox({title:'Cinco Identity Generator 2.5',x:250,y:50,w:460,h:480,className:'launch'});t.content.innerHTML=`<h1>Your first sequence of the day.</h1><p>Choose an identity. Speak to your computer,<br>or type a command. It has important work to do.</p><label>Identity <select aria-label="Identity"><option value="paul">Paul Rudd</option><option value="thomas">Thomas Dimson</option><option value="upload">Use my photograph…</option></select></label><div class="photo-picker hidden"><img class="identity-preview hidden" alt="Your selected identity photo"><div><button type="button" class="classic-button choose-photo">Upload photo…</button><input class="photo-file hidden" type="file" accept="image/*" aria-label="Upload identity photo"><p class="photo-status" role="status">Choose a clear photo of yourself for your dancers.</p></div></div><label>Your name <input aria-label="Your name" maxlength="35"></label><label>Experience <select aria-label="Experience"><option value="live">Live generation</option><option value="reference">Reference comparison</option></select></label><div class="buttons"><button class="classic-button start">Start computer</button><button class="classic-button replay">Play sketch</button></div><div class="note">${compact?'Tap Talk to speak · Type for commands':'F1 for controls · Space to talk'} · ${['localhost','127.0.0.1'].includes(location.hostname)?'Private local session':'Photos are processed by AI providers'}</div>`;
- const micMount=document.createElement('div');t.content.querySelector('.buttons')!.before(micMount);microphone.mount(micMount);
- const select=t.content.querySelector<HTMLSelectElement>('[aria-label="Identity"]')!,name=t.content.querySelector<HTMLInputElement>('[aria-label="Your name"]')!;select.value=['paul','thomas'].includes(profile)?profile:'upload';name.value=identity;
- let warmTimer:number;const warm=()=>{clearTimeout(warmTimer);warmTimer=window.setTimeout(()=>void api('warm',{profile,name:name.value.trim()}).catch(()=>{}),500);};name.addEventListener('input',warm);warm();
- const photo=t.content.querySelector<HTMLElement>('.photo-picker')!,fileInput=t.content.querySelector<HTMLInputElement>('.photo-file')!,preview=t.content.querySelector<HTMLImageElement>('.identity-preview')!,photoStatus=t.content.querySelector<HTMLElement>('.photo-status')!;
- const launchButtons=[...t.content.querySelectorAll<HTMLButtonElement>('.buttons button')];
- let uploadedProfile=select.value==='upload'?profile:'',uploading=false,uploadEpoch=0;
- const syncPhoto=()=>{
-  const custom=select.value==='upload';photo.classList.toggle('hidden',!custom);
-  launchButtons.forEach(button=>button.disabled=custom&&(uploading||!uploadedProfile));
-  preview.classList.toggle('hidden',!uploadedProfile);
-  if(uploadedProfile)preview.src='/media/profiles/'+uploadedProfile+'.jpg';
- };
- if(uploadedProfile)photoStatus.textContent='Saved photo ready. You can replace it below.';
- syncPhoto();
- t.content.querySelector('.choose-photo')!.addEventListener('click',()=>fileInput.click());
- fileInput.onchange=async()=>{
-  const file=fileInput.files?.[0];fileInput.value='';if(!file)return;
-  const epoch=++uploadEpoch;uploading=true;photoStatus.textContent='Uploading photo…';syncPhoto();
-  try{
-   if(!file.type.startsWith('image/'))throw Error('Choose an image file.');
-   const r=await api('profile',{image:await fileBase64(file)});
-   if(epoch!==uploadEpoch||!t.content.isConnected)return;
-   uploadedProfile=r.id;if(select.value==='upload'){profile=r.id;warm();}
-   photoStatus.textContent='Photo ready. Enter your name, then start.';
-  }catch(e){if(epoch===uploadEpoch)photoStatus.textContent='Upload failed: '+(e as Error).message;}
-  finally{if(epoch===uploadEpoch){uploading=false;syncPhoto();}}
- };
- select.onchange=()=>{
-  if(select.value==='upload'){
-   if(uploadedProfile)profile=uploadedProfile;
-   else{name.value='';photoStatus.textContent='Choose a clear photo of yourself for your dancers.';}
-  }else{profile=select.value;name.value=profile==='paul'?'Paul':'Thomas';warm();}
-  syncPhoto();
- };
- const save=()=>{mode=(t.content.querySelector('[aria-label="Experience"]') as HTMLSelectElement).value as 'live'|'reference';identity=name.value.trim()||'User';context.identity=identity;localStorage.setItem('cinco-profile',profile);localStorage.setItem('cinco-name',identity);};
- t.content.querySelector('.start')!.addEventListener('click',()=>{save();void begin();});t.content.querySelector('.replay')!.addEventListener('click',()=>{save();void replay();});}
+function launch(){
+ const existing=desktop.querySelector<HTMLElement>('.launch');if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);return;}
+ let warmTimer:number;
+ const t=launchIdentity({profile,name:identity,compact,windowBox,removeWindow,upload:image=>api('profile',{image}),
+  select:person=>{clearTimeout(warmTimer);warmTimer=window.setTimeout(()=>void api('warm',{profile:person.id,name:person.name}).catch(()=>{}),500);},
+  start:async(person,win)=>{
+   // Unlock playback while Start still has the browser's user activation.
+   void unlockAudio();const token=run;let microphoneError='';
+   try{const checked=await microphone.open();checked.getTracks().forEach(track=>track.stop());}
+   catch{microphoneError=compact?'Microphone unavailable. Tap Type to enter commands, or choose an input in More → Input device.':'Microphone unavailable. Click the terminal to type, or choose an input in F1 → Input device.';}
+   if(token!==run||!win.isConnected)return;
+   mode='live';profile=person.id;identity=person.name;context.identity=identity;
+   localStorage.setItem('cinco-profile',profile);localStorage.setItem('cinco-name',identity);
+   if(microphoneError)notify(microphoneError);await begin();
+  }
+ });
+ t.win.addEventListener('windowclose',()=>clearTimeout(warmTimer));
+}
 async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};started=true;fit();replaying=true;dock.classList.add('hidden');let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){const a=new Audio('/media/original/keyboard.wav');routeAudio(a);if(sound)void a.play();}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
 async function fileBase64(blob:Blob){return new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(blob);});}
 async function startRecording(){
@@ -437,7 +419,7 @@ touchBar.querySelector('[data-touch="windows"]')!.addEventListener('click',()=>{
 dock.onsubmit=e=>{e.preventDefault();void unlockAudio();const text=input.value;input.value='';if(compact){input.blur();dock.classList.add('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded','false');}void dispatch(text).catch(e=>notify(e.message));};dock.querySelector('.mic')!.addEventListener('click',toggleRecording);
 document.querySelector('.hint')!.addEventListener('click',()=>{dock.classList.toggle('hidden');input.focus();});
 dock.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.onclick=()=>{if(compact&&b.dataset.tool!=='sound'){dock.classList.add('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded','false');}switch(b.dataset.tool){case'input':{const t=windowBox({title:'Microphone input',x:250,y:180,w:460,h:190,className:'input-settings'});microphone.mount(t.content);break;}case'identity':launch();break;case'printout':showPrintout();break;case'replay':void replay();break;case'reset':reset();break;case'hide':dock.classList.add('hidden');break;case'pause':void dispatch(paused?'resume':'pause');break;case'sound':sound=!sound;b.textContent=sound?'Sound on':'Sound off';if(!sound)stopSpeech();musicLevel();desktop.querySelectorAll<HTMLVideoElement>('video.intro-video').forEach(v=>v.muted=!sound);break;}});
-addEventListener('keydown',e=>{if(e.key==='F1'||e.key==='Escape'){e.preventDefault();dock.classList.toggle('hidden');if(!dock.classList.contains('hidden'))input.focus();}if(e.code==='Space'&&!(e.target instanceof HTMLInputElement)&&!(e.target instanceof HTMLSelectElement)&&!e.repeat&&started){e.preventDefault();pushToTalk=true;void startRecording();}if(e.key==='Enter'&&!(e.target instanceof HTMLInputElement)&&started){dock.classList.remove('hidden');input.focus();}});
+addEventListener('keydown',e=>{if(e.key==='F1'||e.key==='Escape'){e.preventDefault();dock.classList.toggle('hidden');if(!dock.classList.contains('hidden'))input.focus();}if(e.code==='Space'&&!(e.target instanceof HTMLButtonElement)&&!(e.target instanceof HTMLInputElement)&&!(e.target instanceof HTMLSelectElement)&&!e.repeat&&started){e.preventDefault();pushToTalk=true;void startRecording();}if(e.key==='Enter'&&!(e.target instanceof HTMLButtonElement)&&!(e.target instanceof HTMLInputElement)&&started){dock.classList.remove('hidden');input.focus();}});
 addEventListener('keyup',e=>{if(e.code==='Space'&&pushToTalk){pushToTalk=false;stopRecording();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&recordingRequested)stopRecording();});
 addEventListener('pagehide',()=>{stream?.getTracks().forEach(t=>t.stop());});

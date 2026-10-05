@@ -36,7 +36,7 @@ export class MicrophoneDevices{
   await this.refresh();
   let expected=resolveMicrophone(this.devices,this.selected);
   if(!expected?.deviceId&&this.selected==='default'){const permission=await this.media.getUserMedia({audio:true});permission.getTracks().forEach(t=>t.stop());await this.refresh();expected=resolveMicrophone(this.devices,this.selected);}
-  if(this.selected!=='default'&&!expected){existing?.getTracks().forEach(t=>t.stop());throw Error(`Selected microphone is disconnected: ${this.savedLabel||this.selected}. Choose a connected input in the sign-in menu or F1 → Input device.`);}
+  if(this.selected!=='default'&&!expected){existing?.getTracks().forEach(t=>t.stop());throw Error(`Selected microphone is disconnected: ${this.savedLabel||this.selected}. Choose a connected input in F1 → Input device (More → Input device on mobile).`);}
   const cached=existing?.getAudioTracks().find(t=>t.readyState==='live');
   if(cached&&expected&&microphoneMatches(cached,expected))return existing!;
   existing?.getTracks().forEach(t=>t.stop());

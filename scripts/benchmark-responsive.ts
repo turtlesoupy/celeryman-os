@@ -11,9 +11,9 @@ const report:any={date:new Date().toISOString(),checks:[],commands:[],errors:[]}
 page.on('pageerror',e=>report.errors.push(e.message));
 try{
  await page.goto('http://127.0.0.1:5173');
- const picker=page.waitForEvent('filechooser');await page.getByLabel('Identity',{exact:true}).selectOption('upload');await(await picker).setFiles('reference/thomas-dimson.jpg');
- await page.waitForFunction(()=>(window as any).cinco.state().profile.length>20);
- await page.getByLabel('Your name',{exact:true}).fill('Thomas');await page.getByText('Start computer',{exact:true}).click();
+ await page.getByRole('button',{name:'Upload',exact:true}).click();await page.getByLabel('Upload identity photo').setInputFiles('reference/thomas-dimson.jpg');
+ await page.getByText('Photo ready. Add your name, then save.',{exact:true}).waitFor();
+ await page.getByLabel('Your name',{exact:true}).fill('Thomas');await page.getByRole('button',{name:'Save',exact:true}).click();await page.getByRole('dialog',{name:'New identity'}).waitFor({state:'detached'});await page.getByRole('button',{name:'Start',exact:true}).click();
  await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='audio-playing'));
  await page.waitForTimeout(4500);
  report.profile=await page.evaluate(()=>(window as any).cinco.state().profile);
