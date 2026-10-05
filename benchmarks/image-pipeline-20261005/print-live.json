@@ -1,0 +1,36 @@
+{
+  "created": "2026-10-05T23:50:56.865Z",
+  "site": "http://127.0.0.1:5173",
+  "body": {
+    "profile": "b50a418a-f333-4306-afe9-b7b4bb02583b",
+    "character": "oyster",
+    "variant": "smile",
+    "canonical": false,
+    "costume": "loose red zip-up hoodie with a single thin white piping line down each sleeve, no logos or triple sports stripes over a black t-shirt, baggy black trousers with red side stripes, black shoes, black knit beanie with orange flame design, black studded choker",
+    "motion": "Head and shoulders close-up, look straight at viewer and hold an awkward broad closed-mouth smile. Head and upper chest only. Flat pale gray background."
+  },
+  "job": {
+    "id": "f55e52214d0a10bb882d",
+    "status": "complete",
+    "stage": "Ready",
+    "started": 1791244242678,
+    "timings": {
+      "motionReferenceMs": 0.060874998569488525,
+      "identityMs": 1361.9931249916553,
+      "frameMs": 11714.690917015076,
+      "frameCacheHit": 0,
+      "frameRequestMs": 11713.05450001359,
+      "frameDownloadMs": 939.4756669998169,
+      "frameSaveMs": 1.233707994222641,
+      "persistMs": 944.6134999990463,
+      "totalMs": 14021.306416988373
+    },
+    "url": "/media/generated/f55e52214d0a10bb882d-print.png",
+    "image": "/media/generated/f55e52214d0a10bb882d-print.png",
+    "elapsed": 14021.306416988373
+  },
+  "wallMs": 14190.796416,
+  "cachedRequestMs": 3.0045829999999114,
+  "bytes": 1605336,
+  "note": "Fresh identity and image; one live print request. No video inference. Compare to earlier observed slow request descriptively, not a paired latency trial."
+}

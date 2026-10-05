@@ -21,7 +21,7 @@ const png=Buffer.from(await image.arrayBuffer());assert.equal(png.subarray(1,4).
 const smile={id:job.id,profile,url:job.url,image:job.image,width:png.readUInt32BE(16),height:png.readUInt32BE(20),bytes:png.length,wallMs:performance.now()-started,timings:job.timings};
 console.log(JSON.stringify({smile}));
 const ranges=[];
-for(const sample of [...benchmark.results,smile]){
+for(const sample of benchmark.results){
  const r=await fetch(`${site}/media/generated/${sample.id}.mp4`,{headers:{Range:'bytes=0-1023'},signal:AbortSignal.timeout(15000)});
  assert.equal(r.status,206);assert.equal((await r.arrayBuffer()).byteLength,1024);
  ranges.push({id:sample.id,status:r.status,contentRange:r.headers.get('content-range')});

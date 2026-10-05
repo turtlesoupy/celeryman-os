@@ -1,0 +1,82 @@
+{
+  "changes": [
+    "Removed unused video synthesis from smiling print output; retained the generated portrait unchanged.",
+    "Costume synthesis now overlaps choreography upload.",
+    "Cached print jobs survive process restart; cached smiling frames do not need re-upload."
+  ],
+  "print": {
+    "wallMs": 14190.796416,
+    "cachedRequestMs": 3.0045829999999114,
+    "timings": {
+      "motionReferenceMs": 0.060874998569488525,
+      "identityMs": 1361.9931249916553,
+      "frameMs": 11714.690917015076,
+      "frameCacheHit": 0,
+      "frameRequestMs": 11713.05450001359,
+      "frameDownloadMs": 939.4756669998169,
+      "frameSaveMs": 1.233707994222641,
+      "persistMs": 944.6134999990463,
+      "totalMs": 14021.306416988373
+    },
+    "previousObservedWallMs": 36520,
+    "previousObservedVideoMs": 25303.4213,
+    "limitation": "One fresh live request versus an earlier observed request, not paired performance evidence."
+  },
+  "resolutionExperiment": {
+    "model": "fal-ai/nano-banana-2/edit",
+    "samePrompt": true,
+    "portrait": "Thomas / Celery",
+    "results": [
+      {
+        "seed": 78231,
+        "resolution": "1K",
+        "requestMs": 10395.313291999999,
+        "completeMs": 11169.896459,
+        "bytes": 1831855,
+        "file": "78231-1K.png",
+        "requestId": "01a10e79-4d07-7e42-a38a-309cf9363dbb"
+      },
+      {
+        "seed": 78231,
+        "resolution": "0.5K",
+        "requestMs": 6635.686333,
+        "completeMs": 7670.336375000001,
+        "bytes": 425088,
+        "file": "78231-0.5K.png",
+        "requestId": "01a10e79-7825-7a40-8d3b-c9d0685ce73b"
+      },
+      {
+        "seed": 78232,
+        "resolution": "0.5K",
+        "requestMs": 9530.729,
+        "completeMs": 10140.811333999998,
+        "bytes": 425287,
+        "file": "78232-0.5K.png",
+        "requestId": "01a10e79-961a-7881-852e-285e1d15a356"
+      },
+      {
+        "seed": 78232,
+        "resolution": "1K",
+        "requestMs": 9397.293375000001,
+        "completeMs": 10250.735208999999,
+        "bytes": 1620019,
+        "file": "78232-1K.png",
+        "requestId": "01a10e79-bdb7-7ac0-a96e-32bf28eb3e4e"
+      }
+    ],
+    "decision": "Keep 1K portraits. Inconsistent timing gain; inspected 0.5K sample 78231 widened composition and invented a hat. Tiny sample, not a general model comparison."
+  },
+  "remaining": [
+    "New costume images still take roughly 7–12 seconds in observed requests.",
+    "Separate video-provider tail latency remains.",
+    "Earlier Nano Banana Lite human evaluation split by identity; no model swap."
+  ],
+  "validation": [
+    "Image pipeline regression checks",
+    "Production build",
+    "Costume cache isolation checks",
+    "Fresh live print and repeat cache request",
+    "Browser decoded image and invoked print dialog"
+  ],
+  "deployment": "Local changes only"
+}

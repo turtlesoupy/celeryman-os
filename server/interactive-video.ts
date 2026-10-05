@@ -10,7 +10,7 @@ import {canonicalName,motionPrompt} from './choreography.ts';
 const exec=promisify(execFile);
 const motionReferences=new Map<string,Promise<string>>();
 function motionReference(file:string){let pending=motionReferences.get(file);if(!pending){pending=fs.readFile(file).then(bytes=>fal.storage.upload(new File([bytes],'motion.mp4',{type:'video/mp4'})));motionReferences.set(file,pending);pending.catch(()=>motionReferences.delete(file));}return pending;}
-type CostumeFrame={url:string;requestId?:string;saved?:Promise<void>;timings?:Record<string,number>};
+type CostumeFrame={url:string;file:string;requestId?:string;saved?:Promise<void>;timings?:Record<string,number>};
 const costumeFrames=new Map<string,Promise<CostumeFrame>>();
 // Actor-bearing wardrobe images overwhelmed some uploaded identities. Use only
 // the uploaded person here; the costume text describes clothing independently.
@@ -21,7 +21,7 @@ function identityCostumeFrame(profile:string,costume:string,closeup:boolean,ref:
  const old=costumeFrames.get(key);if(old)return old.then(frame=>({...frame,timings:{frameReused:1}}));
  const pending=(async()=>{
   const file=path.join(process.cwd(),'public/media/generated',`identity-frame-${key}.png`);
-  if(await fs.access(file).then(()=>true,()=>false))return {url:await fal.storage.upload(new File([await fs.readFile(file)],'costume.png',{type:'image/png'})),timings:{frameCacheHit:1}};
+  if(await fs.access(file).then(()=>true,()=>false))return {file,url:smiling?'':await fal.storage.upload(new File([await fs.readFile(file)],'costume.png',{type:'image/png'})),timings:{frameCacheHit:1}};
   const started=performance.now();
   const result:any=await fal.run('fal-ai/nano-banana-2/edit',{input:costumeFrameInput(ref,costume,closeup,canonical,smiling,closeup?'1K':'0.5K')});
   const timings:Record<string,number>={frameCacheHit:0,frameRequestMs:performance.now()-started};
@@ -30,7 +30,7 @@ function identityCostumeFrame(profile:string,costume:string,closeup:boolean,ref:
   // copy must not hold up inference (especially on the production GCS mount).
   const saved=(async()=>{const began=performance.now();const response=await fetch(result.data.images[0].url);if(!response.ok)throw Error('Costume frame download failed');const bytes=Buffer.from(await response.arrayBuffer());timings.frameDownloadMs=performance.now()-began;const saveAt=performance.now();await fs.writeFile(file+'.partial',bytes);await fs.rename(file+'.partial',file);timings.frameSaveMs=performance.now()-saveAt;})();
   void saved.catch(()=>costumeFrames.delete(key));
-  return {url:result.data.images[0].url,requestId:result.requestId,saved,timings};
+  return {file,url:result.data.images[0].url,requestId:result.requestId,saved,timings};
  })();costumeFrames.set(key,pending);pending.catch(()=>costumeFrames.delete(key));return pending;
 }
 export async function interactiveVideo(id:string,body:any,job:any,identity:()=>Promise<string>){
@@ -39,7 +39,10 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  const canonical=canonicalName(body),motionFile=path.join(process.cwd(),'public/media/motion',canonical+'-5s.mp4');
  const transfer=!!canonical&&await fs.access(motionFile).then(()=>true,()=>false);
  const needsFrame=body.variant==='smile'||transfer||(body.canonical&&body.variant==='face'&&['celery','oyster'].includes(body.character));
- const [ref,motionRef]=await Promise.all([identity(),transfer?motionReference(motionFile):Promise.resolve(undefined)]);timings.identityMs=performance.now()-start;
+ // Motion upload is independent of costume synthesis. Handle rejection now so
+ // it cannot become unhandled while the identity/image request is in flight.
+ const motionPending=(transfer?motionReference(motionFile):Promise.resolve(undefined)).then(url=>{timings.motionReferenceMs=performance.now()-start;return {url};},error=>({error}));
+ const ref=await identity();timings.identityMs=performance.now()-start;
  const hatWobble=/hat.*wobble|wobble.*hat/i.test(body.motion);
  const effectiveMotion=hatWobble&&body.playbackRate!==undefined&&body.playbackRate!==1?'Hat wobble: keep torso and head mostly upright and still while the hat itself rocks smoothly side to side on the head, then returns to level. Arms relaxed at sides. A regular rhythm with a clearly visible tilt of the actual hat.':body.motion;
  const closeup=['face','smile','hat','intro'].includes(body.variant);
@@ -49,20 +52,35 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  if(body.variant==='intro')prompt=`Image 1 is the recognizable adult performer. Dress in ${body.costume}. Tight head-and-shoulders portrait, flat gray studio, locked camera, 1990s analog video. ${body.motion} Speak exactly the requested sentence in a natural warm American voice. No other words, no music, no singing.`;
  let costumeFrame:CostumeFrame|undefined;
  if(needsFrame){job.stage='Preparing costume';costumeFrame=await identityCostumeFrame(body.profile,body.costume,closeup,ref,body.variant==='smile'?body.character:canonical,body.variant==='smile');timings.frameMs=performance.now()-start-timings.identityMs;job.stage='Rendering dance';}
+ if(body.variant==='smile'&&costumeFrame){
+  // Printing consumes only a still. The image model already made the smiling
+  // portrait; animating it and extracting a frame wastes a full video request.
+  job.stage='Preparing printout';
+  const saveAt=performance.now();await costumeFrame.saved;
+  const dir=path.join(process.cwd(),'public/media/generated'),image=path.join(dir,id+'-print.png');
+  await fs.copyFile(costumeFrame.file,image+'.partial');await fs.rename(image+'.partial',image);
+  Object.assign(timings,costumeFrame.timings);timings.persistMs=performance.now()-saveAt;timings.totalMs=performance.now()-start;
+  await fs.writeFile(path.join(dir,id+'.json'),JSON.stringify({profile:body.profile,character:body.character,variant:body.variant,costume:body.costume,model:'fal-ai/nano-banana-2/edit',imageRequest:costumeFrame.requestId,timings,elapsedMs:timings.totalMs,pipeline:'smiling-portrait-still-v1',outputKind:'image'},null,2));
+  const url=`/media/generated/${id}-print.png`;
+  Object.assign(job,{status:'complete',stage:'Ready',url,image:url,elapsed:timings.totalMs});return;
+ }
  if(costumeFrame&&!['face','smile'].includes(body.variant))prompt+=' Image 2 is the original photo of the same person in Image 1. Preserve their recognizable appearance from both images. Only Image 1 supplies the costume; do not copy the original photo clothing or scenery.';
  if(body.variant==='face')prompt+=' Preserve the tight head-and-shoulders composition of Image 1 throughout. Hat at the top edge, upper chest at bottom edge. Never zoom out or show legs or feet. Solid hot pink backdrop.';
  const anchoredPortrait=['face','smile'].includes(body.variant)&&!!costumeFrame;
  const model=anchoredPortrait?'minimax/h3-max-turbo/image-to-video':'minimax/h3-max/reference-to-video';
  if(anchoredPortrait)prompt='Animate this exact head-and-shoulders portrait. Keep the camera fixed at this exact close-up scale, with the same face, clothing and accessories. Preserve the presence or absence of eyeglasses and headwear exactly. Tiny rhythmic head bobs and glances, subtle awkward smile. Solid hot pink background. No zoom, no cuts, no speech. Keep the upper chest at the bottom edge; do not show the waist, legs or feet. End in the initial pose for a seamless loop.';
- if(body.variant==='smile')prompt='Animate this exact smiling head-and-shoulders portrait for a photo print. Keep the same hat, face, eyewear and costume. Preserve the framing and pale gray background. Hold a clear warm closed-mouth smile from the first frame through the entire clip, with only natural tiny breathing and eye movement. No zoom, no full body, no speech, no text, no cuts. Upper chest at bottom edge.';
+ const motionWaitAt=performance.now(),motionResult=await motionPending;
+ if('error' in motionResult)throw motionResult.error;
+ const motionRef=motionResult.url;timings.motionWaitMs=performance.now()-motionWaitAt;
  // Synchronous inference avoids the hosted queue's poll/delivery round trips.
+ const videoStarted=performance.now();
  const video:any=await fal.run(model,{input:{...(anchoredPortrait?{image_url:costumeFrame!.url}:{reference_image_urls:costumeFrame?[costumeFrame.url,ref]:[ref],...(canonical==='oyster'&&costumeFrame?{image_url:costumeFrame.url}:{})}),...(motionRef?{reference_video_urls:[motionRef]}:{}),prompt,duration:5,resolution:'480P',aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='oyster'?'4:3':body.variant==='intro'?'9:16':closeup?'4:3':'9:16',prompt_expansion_mode:'disabled'}});
- timings.videoMs=performance.now()-start-timings.identityMs-(timings.frameMs||0);
+ timings.videoMs=performance.now()-videoStarted;
  timings.previewMs=performance.now()-start;
  videoPreviews.set(id,video.data.video.url);
  // The browser can stream the genuine completed model output immediately,
  // while the local cache and poster are written independently below.
- if(body.variant!=='smile')Object.assign(job,{previewUrl:`/media/generated/${id}.mp4?live=1`,url:`/media/generated/${id}.mp4`});
+ Object.assign(job,{previewUrl:`/media/generated/${id}.mp4?live=1`,url:`/media/generated/${id}.mp4`});
  job.stage='Loading sequence';
  const dir=path.join(process.cwd(),'public/media/generated'),output=path.join(dir,id+'.mp4');
  // FFmpeg seeks and rewrites headers. Do that on local scratch, not a cloud
@@ -70,22 +88,23 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  const scratch=await fs.mkdtemp(path.join(os.tmpdir(),'cinco-video-'));
  try{
  const temp=path.join(scratch,'video.mp4');
+ const downloadStarted=performance.now();
  const response=await fetch(video.data.video.url);if(!response.ok)throw Error('Video download failed');await fs.writeFile(temp,Buffer.from(await response.arrayBuffer()));
- timings.downloadMs=performance.now()-start-timings.identityMs-timings.videoMs-(timings.frameMs||0);
+ timings.downloadMs=performance.now()-downloadStarted;
  // Extract a real generated frame, never a composited photo, for the poster/print queue.
  let processing:any;
  const finishStarted=performance.now();
  if(transfer){job.stage='Finishing sequence';const finished=path.join(scratch,'finished.mp4');await exec('ffmpeg',['-y','-i',temp,'-t','5','-vf','scale=-2:360,gblur=sigma=0.3,fps=30000/1001','-an','-c:v','libx264','-preset','veryfast','-crf','18','-movflags','+faststart',finished,'-loglevel','error']);await fs.rename(finished,temp);processing={pipeline:'whole-frame-soft-video',note:'No segmentation, recoloring or body-dependent crop.'};}
- const image=path.join(dir,id+(body.variant==='smile'?'-print':'')+'.png');
+ const image=path.join(dir,id+'.png');
  const poster=path.join(scratch,'poster.png');
- await exec('ffmpeg',['-y','-ss',body.variant==='smile'?'2':'0','-i',temp,'-frames:v','1',poster,'-loglevel','error']);
+ await exec('ffmpeg',['-y','-ss','0','-i',temp,'-frames:v','1',poster,'-loglevel','error']);
  timings.ffmpegMs=performance.now()-finishStarted;
  const saveStarted=performance.now();
  await Promise.all([fs.copyFile(temp,output+'.partial'),fs.copyFile(poster,image+'.partial'),costumeFrame?.saved]);
  await Promise.all([fs.rename(output+'.partial',output),fs.rename(image+'.partial',image)]);
  timings.persistMs=performance.now()-saveStarted;
  Object.assign(timings,costumeFrame?.timings);
- timings.totalMs=performance.now()-start;timings.finishMs=timings.totalMs-timings.identityMs-timings.videoMs-timings.downloadMs-(timings.frameMs||0);
+ timings.totalMs=performance.now()-start;timings.finishMs=timings.totalMs-timings.previewMs-timings.downloadMs;
  const metadata={profile:body.profile,character:body.character,variant:body.variant,costume:body.costume,motion:body.motion,playbackRate:body.playbackRate,prompt,model,videoRequest:video.requestId,providerTimings:video.data.timings,timings,elapsedMs:timings.totalMs,processing,costumeFrame:costumeFrame?{model:'fal-ai/nano-banana-2/edit',requestId:costumeFrame.requestId}:undefined,pipeline:'identity-only-costume-v2'};
  await fs.writeFile(path.join(dir,id+'.json'),JSON.stringify(metadata,null,2));
  Object.assign(job,{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,image:`/media/generated/${path.basename(image)}`,elapsed:timings.totalMs});

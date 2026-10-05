@@ -18,6 +18,7 @@ import type {IncomingMessage,ServerResponse} from 'node:http';
 import {scripted,type Context} from '../src/protocol.ts';
 import {costumes,motions} from '../src/dances.ts';
 import {interactiveVideo} from './interactive-video.ts';
+import {savedGeneration} from './saved-generation.ts';
 import {computerVoiceId,streamComputerVoice} from './computer-voice.ts';
 import {canonicalName,generationKey,finishChoreography,motionPrompt} from './choreography.ts';
 const openai=new OpenAI({maxRetries:0,timeout:20000});
@@ -222,7 +223,8 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
    else if(req.url==='/api/generate'){
     const id=generationKey(b);
     await fs.mkdir(path.join(media,'generated'),{recursive:true});
-    if(await exists(path.join(media,'generated',`${id}.mp4`)))jobs.set(id,{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,image:await exists(path.join(media,'generated',`${id}-print.png`))?`/media/generated/${id}-print.png`:`/media/generated/${id}.png`});
+    const saved=await savedGeneration(media,id);
+    if(saved)jobs.set(id,saved);
     else if(!jobs.has(id)||jobs.get(id)?.status==='error'){jobs.set(id,{status:'working',stage:'Queued'});void generate(id,b);}
     result={id,...jobs.get(id)};
    }else if(req.url.startsWith('/api/job/')){
@@ -230,7 +232,7 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     // Active jobs already have authoritative state. A cloud-storage stat on
     // every 120ms poll adds latency precisely while generation is in progress.
     if(active)result={id,...active};
-    else {const saved=/^[a-f0-9]{20}$/.test(id)&&await exists(path.join(media,'generated',`${id}.mp4`));result={id,...(saved?{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,image:await exists(path.join(media,'generated',`${id}-print.png`))?`/media/generated/${id}-print.png`:`/media/generated/${id}.png`}:{status:'error',error:'Unknown job'})};}
+    else {const saved=await savedGeneration(media,id);result={id,...(saved||{status:'error',error:'Unknown job'})};}
    }
    else if(req.url==='/api/profile'){
     const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),Buffer.from(b.image,'base64'));void reference(id).catch(()=>{});result={id};

@@ -1,0 +1,10 @@
+{
+  "image": "/media/generated/f55e52214d0a10bb882d-print.png",
+  "checks": {
+    "decodedStill": true,
+    "printDialogInvoked": true,
+    "printPreview": true,
+    "noBrowserErrors": true
+  },
+  "notes": "Fresh browser; actual generated PNG. Completed generation response supplied from the recorded live request; native print replaced with a counter."
+}
