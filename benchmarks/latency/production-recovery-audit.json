@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-05",
+  "productionRevision": "celeryman-00004-7m6",
+  "incident": {
+    "requestTimeUTC": "2026-10-05T17:03:45.680Z",
+    "dancerJob": "b1b21a2229d3c7f56222",
+    "portraitJob": "ad435a159f093a09a290",
+    "dancerPreviewMs": 18789,
+    "dancerCompleteMs": 20571,
+    "portraitCostumeImageMs": 42461,
+    "portraitPreviewMs": 44907,
+    "portraitCompleteMs": 46422,
+    "lastPortraitPollUTC": "2026-10-05T17:04:24.991Z",
+    "videoRequestsBeforeInvestigation": 0,
+    "finalJobStates": [
+      "complete",
+      "complete"
+    ]
+  },
+  "findings": [
+    "Promise.all required both the dancer and portrait before opening either window.",
+    "No application API 5xx or slow HTTP requests appear in the collected production request logs; both jobs succeeded.",
+    "Opening microphone incremented generationEpoch, silently discarding pending results even if the recording failed or was empty. This is a possible cancellation mechanism, not proven to be the incident cause.",
+    "One failed job-poll fetch aborted the wait without reconnecting.",
+    "Generation exceptions were stored in memory but not emitted to Cloud Logging; no client cancellation/error telemetry existed."
+  ],
+  "uncertainty": "The original reason the browser stopped polling at ~39 seconds is not recoverable from existing server logs. It could be cancellation, navigation or a client-side network failure. Do not claim a confirmed infrastructure timeout.",
+  "fixes": [
+    "Render Celery/Oyster primary dancer as soon as ready; add portrait independently when ready and only if its original dancer still exists.",
+    "Keep portrait errors visible without withholding the dancer.",
+    "Retry only read-only job polling for transient network errors/timeouts and HTTP 502/503/504, bounded to three attempts.",
+    "Surface non-JSON gateway errors as readable HTTP failures; never automatically repeat generation POST.",
+    "Do not cancel generation merely on microphone opening.",
+    "Emit generation start/settled/error and request failure logs to Cloud Logging and local JSONL; record browser generation ready/error/cancelled events."
+  ],
+  "validation": {
+    "build": "passed",
+    "productionServerChecks": "passed",
+    "apiRecoveryChecks": "passed",
+    "browserFaultInjection": [
+      "Injected a 504 on the second portrait poll; primary video remained playing and polling recovered.",
+      "Held portrait working; primary video paused=false, readyState=4.",
+      "Released portrait complete; both videos paused=false, readyState=4.",
+      "Forced portrait timeout; persistent Portrait unavailable message and primary video paused=false, readyState=4."
+    ],
+    "note": "Browser fault injection used original local video fixtures, no new model generation. Production deployment was not changed."
+  }
+}

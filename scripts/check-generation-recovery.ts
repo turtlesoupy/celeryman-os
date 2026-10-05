@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {requestJson} from '../src/api-client.ts';
+let calls=0;
+const transient=(async()=>{calls++;return calls===1?new Response('<html>Gateway timeout</html>',{status:504}):Response.json({status:'complete',url:'/dance.mp4'});}) as typeof fetch;
+assert.equal((await requestJson('job/test',undefined,transient)).status,'complete');assert.equal(calls,2);
+calls=0;
+const dropped=(async()=>{calls++;if(calls<3)throw new TypeError('Failed to fetch');return Response.json({status:'working'});}) as typeof fetch;
+assert.equal((await requestJson('job/test',undefined,dropped)).status,'working');assert.equal(calls,3);
+calls=0;
+const timeout=(async()=>{calls++;throw new DOMException('Timed out','TimeoutError');}) as typeof fetch;
+await assert.rejects(()=>requestJson('job/test',undefined,timeout),/may still be rendering/);assert.equal(calls,3);
+calls=0;
+await assert.rejects(()=>requestJson('generate',{character:'celery'},timeout),/timed out/);assert.equal(calls,1,'Never retry generation POST');
+await assert.rejects(()=>requestJson('job/test',undefined,(async()=>new Response('<html>Bad gateway</html>',{status:502})) as typeof fetch),/HTTP 502/);
+await assert.rejects(()=>requestJson('job/test',undefined,(async()=>Response.json({error:'Account unavailable'},{status:401})) as typeof fetch),/Account unavailable/);
+console.log('Recovery checks passed: transient polling, bounded timeouts, HTML gateway errors, no duplicate generation POST.');

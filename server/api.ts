@@ -73,7 +73,8 @@ async function costumeFrame(profile:string,costume:string,closeup=false,canonica
 }
 async function generate(id:string,body:any){
  const job=jobs.get(id)!;job.started=Date.now();
- if([...jobs.values()].filter(j=>j.status==='working'&&j.started).length>4){Object.assign(job,{status:'error',stage:'Busy',error:'The computer is busy with other sequences. Please try again shortly.'});return;}
+ void logDiagnostic({event:'generation-start',jobId:id,character:body.character,variant:body.variant});
+ if([...jobs.values()].filter(j=>j.status==='working'&&j.started).length>4){Object.assign(job,{status:'error',stage:'Busy',error:'The computer is busy with other sequences. Please try again shortly.'});void logDiagnostic({event:'generation-error',jobId:id,stage:'Busy',message:job.error});return;}
  try{
   if(body.profile!=='paul'||!body.canonical){await interactiveVideo(id,body,job,()=>reference(body.profile||'thomas'));return;}
   job.stage='Building identity';
@@ -99,7 +100,8 @@ async function generate(id:string,body:any){
   await fs.writeFile(path.join(media,'generated',`${id}.json`),JSON.stringify({profile:body.profile,character,variant:body.variant,costume,prompt,motion,model,processing,videoRequest:video.requestId,elapsedMs:Date.now()-job.started},null,2));
   if(body.variant==='smile'){await exec('ffmpeg',['-y','-i',path.join(media,'generated',`${id}.mp4`),'-ss','2','-frames:v','1',path.join(media,'generated',`${id}-print.png`),'-loglevel','error']);job.image=`/media/generated/${id}-print.png`;}
   Object.assign(job,{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,elapsed:Date.now()-job.started});
- }catch(e){Object.assign(job,{status:'error',stage:'Generation failed',error:(e as any)?.body?JSON.stringify((e as any).body):e instanceof Error?(e.message||e.name):'Generation failed'});}
+ }catch(e){const failedStage=job.stage;void logDiagnostic({event:'generation-error',jobId:id,stage:failedStage,message:e instanceof Error?e.message:'Generation failed',elapsedMs:Date.now()-job.started!});Object.assign(job,{status:'error',stage:'Generation failed',error:(e as any)?.body?JSON.stringify((e as any).body):e instanceof Error?(e.message||e.name):'Generation failed'});}
+ finally{void logDiagnostic({event:'generation-settled',jobId:id,status:job.status,stage:job.stage,elapsedMs:Date.now()-job.started!,timings:job.timings});}
 }
 let voiceEmbedding:Promise<string>|undefined;
 const voiceLocks=new Map<string,Promise<string>>();
@@ -161,6 +163,10 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
    if(b.profile!==undefined&&(typeof b.profile!=='string'||!/^(paul|thomas|[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/.test(b.profile)))throw Error('Invalid profile');
    if(req.url==='/api/generate'&&(typeof b.character!=='string'||!/^[-\w .]{1,80}$/.test(b.character)||!['base','face','engaged','hat','flarhgunnstow','intro','sway','smile'].includes(b.variant)))throw Error('Invalid sequence');
    if(req.url==='/api/health')result={ok:true,providers:{openai:!!process.env.OPENAI_API_KEY,fal:!!process.env.FAL_KEY}};
+   else if(req.url==='/api/client-event'){
+    if(!['generation-ready','generation-error','generation-cancelled'].includes(b.event))throw Error('Invalid diagnostic event');
+    await logDiagnostic({event:'client-'+b.event,jobId:/^[a-f0-9]{20}$/.test(b.jobId)?b.jobId:undefined,character:String(b.character||'').slice(0,80),variant:String(b.variant||'').slice(0,30),message:String(b.message||'').slice(0,500),elapsedMs:Number(b.elapsedMs)||0});result={ok:true};
+   }
    else if(req.url==='/api/warm'){
     void reference(String(b.profile||'paul')).catch(()=>{});
     void computerVoiceId().catch(()=>{});
@@ -230,6 +236,6 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),Buffer.from(b.image,'base64'));void reference(id).catch(()=>{});result={id};
    }else {res.statusCode=404;result={error:'Unknown endpoint'};}
    res.end(JSON.stringify(result));
-  }catch(e){const rawError=e instanceof Error?e.message:'Request failed';const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){res.end(JSON.stringify({type:'error',error})+'\n');}else{res.statusCode=500;res.end(JSON.stringify({error}));}}
+  }catch(e){const rawError=e instanceof Error?e.message:'Request failed';void logDiagnostic({event:'request-error',route:req.url?.split('?')[0],message:rawError});const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){res.end(JSON.stringify({type:'error',error})+'\n');}else{res.statusCode=500;res.end(JSON.stringify({error}));}}
 }
 export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServer(server){server.middlewares.use(apiMiddleware);}};}

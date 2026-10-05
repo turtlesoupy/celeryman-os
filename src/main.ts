@@ -1,3 +1,4 @@
+import {requestJson} from './api-client';
 import {preparePrintout,type Printout} from './printout';
 import {mobileFrame,clampFrame,type Frame,type Workspace} from './window-layout';
 import {MicrophoneDevices} from './microphone-device';
@@ -46,7 +47,7 @@ const events:any[]=[];
 const spokenLines:Record<string,string>={'okay':'Okay.','print':'Okay.','confirm':'Okay.','yes':'Yes.','hat':'Yes.','flower':'Yes.','yes-paul':'Yes, Paul!','greeting':'Good morning Paul. What will your first sequence of the day be?','beta':"I have a beta sequence I've been working on. Would you like to see it?",'repeat':'Not computing. Please repeat.','nsfw':'This is not suitable for work. Are you sure?','call':"Excuse me Paul. Your wife is on the phone. It's an emergency."};
 const delay=(ms:number)=>new Promise(r=>setTimeout(r,ms));
 const schedule=(fn:()=>void,ms:number)=>{const id=window.setTimeout(fn,ms);timers.push(id);return id;};
-const api=async(url:string,body?:unknown)=>{const r=await fetch('/api/'+url,{method:body?'POST':'GET',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(45000)});const b=await r.json();if(!r.ok)throw Error(b.error||'Computer is not responding.');return b;};
+const api=requestJson;
 const originalFrames=new WeakMap<HTMLElement,Frame>();
 let compact=false;
 function workspace():Workspace{return {width:desktop.clientWidth,height:desktop.clientHeight,top:compact?(started?(desktop.clientHeight<500?84:112):12):8,bottom:desktop.clientHeight-(compact&&started?Math.max(84,touchBar.offsetHeight+8):8)};}
@@ -240,6 +241,19 @@ async function apply(cmd:Command,acknowledged=false){
   if(!await prepareDance('tayne','intro',epoch))return false;
   context.character='tayne';context.costume=costumes.tayne;showTayne(followup);return true;
  }
+ // The portrait is supplementary: a slow or failed image must not withhold
+ // the finished dancer. Keep its job visible while it finishes independently.
+ if(mode==='live'&&['celery','oyster'].includes(cmd.action)){
+  const character=cmd.action,epoch=++generationEpoch,token=run;
+  const face=prepareDance(character,'face',epoch,undefined,true);
+  if(!await prepareDance(character,'base',epoch))return false;
+  context.character=character;context.costume=costumes[character];
+  if(character==='celery'){clearWindows();terminal();}
+  const main=dancer(character,character==='oyster'?{x:421,y:47,w:487,h:424}:{});
+  musicFor(character);void type(cmd.response);
+  void face.then(ready=>{if(ready&&token===run&&epoch===generationEpoch&&main.win.isConnected)portrait(character);});
+  return true;
+ }
  const generating=(['celery','oyster','tayne','hat','flarhgunnstow','print'].includes(cmd.action)||(cmd.action==='engage'&&context.character==='celery'));
  if(mode==='live'&&generating){const epoch=++generationEpoch;const character=cmd.action==='engage'?'celery':['hat','flarhgunnstow'].includes(cmd.action)?'tayne':cmd.action==='print'?(cmd.target||context.character):cmd.action;const variant=cmd.action==='engage'?'engaged':cmd.action==='hat'?'hat':cmd.action==='flarhgunnstow'?'flarhgunnstow':cmd.action==='print'?'smile':'base';
   const work=[prepareDance(character,variant,epoch,cmd.action==='print'?cmd:undefined)];
@@ -276,16 +290,17 @@ async function apply(cmd:Command,acknowledged=false){
 }
 async function prepareDance(character:string,variant:string,epoch:number,cmd?:Command,quiet=false){
  const l=loading('Compiling personalized sequence, please wait...');if(quiet)l.win.style.display='none';const token=run;const key=`${profile}:${character}:${variant}`;
- const startedAt=performance.now(),feedback=feedbackToken,jobKey=`${epoch}:${key}`;
+ const startedAt=performance.now(),feedback=feedbackToken,jobKey=`${epoch}:${key}`;let generationId:string|undefined;
+ const report=(event:string,message?:string)=>void api('client-event',{event,jobId:generationId,character,variant,elapsedMs:Math.round(performance.now()-startedAt),message}).catch(()=>{});
  const describe=(stage:string)=>`${stage} (${variant==='face'?'portrait':variant==='base'?'dancer':variant})`;
  commandStatus.job(feedback,jobKey,describe('Loading'));
  try{const req={profile,character,variant,...(cmd?.playbackRate?{playbackRate:cmd.playbackRate}:{}),canonical:!cmd&&['celery','oyster','tayne','mozzarell'].includes(character),motion:variant==='intro'?`Tight head-and-shoulders close up. Face fills most of the vertical frame, head and upper chest only. Light gray background. Look at camera and say in a warm natural American voice: Hey ${identity}. I'm Tayne, your latest dancer. I can't wait to entertain you. Keep the same clothing, face, and fixed camera.`:cmd?.motion||motions[variant]||motions[character],costume:cmd?.costume||costumes[character]||costumes.tayne};
-  let job=cmd?.generationId?await api('job/'+cmd.generationId):await api('generate',req);events.push({kind:'generation',id:job.id,request:req,time:performance.now()});
-  while(job.status==='working'&&(!job.previewUrl||variant==='smile')){if(token!==run||epoch!==generationEpoch){l.win.remove();return false;}const elapsed=Math.floor((performance.now()-startedAt)/1000);if(elapsed>180)throw Error('Sequence is taking too long. Please try again.');commandStatus.job(feedback,jobKey,describe(job.providerStatus==='IN_QUEUE'?'Queued for video':job.stage||'Rendering'));l.content.querySelector('.loading-label')!.textContent=job.stage+' · '+elapsed+' sec';if(job.image&&!l.content.querySelector('img')){const img=document.createElement('img');img.src=job.image;img.style.cssText='position:absolute;right:12px;top:5px;width:45px;height:70px;object-fit:contain';l.content.append(img);}await delay(120);job=await api('job/'+job.id);}
-  if(token!==run||epoch!==generationEpoch){l.win.remove();return false;}if(job.status==='error')throw Error(job.error);l.win.remove();liveAssets[key]={url:job.status==='complete'?job.url:job.previewUrl||job.url,image:job.image,playbackRate:cmd?.playbackRate};
+  let job=cmd?.generationId?await api('job/'+cmd.generationId):await api('generate',req);generationId=job.id;events.push({kind:'generation',id:job.id,request:req,time:performance.now()});
+  while(job.status==='working'&&(!job.previewUrl||variant==='smile')){if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');l.win.remove();return false;}const elapsed=Math.floor((performance.now()-startedAt)/1000);if(elapsed>180)throw Error('Sequence is taking too long. Please try again.');commandStatus.job(feedback,jobKey,describe(job.providerStatus==='IN_QUEUE'?'Queued for video':job.stage||'Rendering'));l.content.querySelector('.loading-label')!.textContent=job.stage+' · '+elapsed+' sec';if(job.image&&!l.content.querySelector('img')){const img=document.createElement('img');img.src=job.image;img.style.cssText='position:absolute;right:12px;top:5px;width:45px;height:70px;object-fit:contain';l.content.append(img);}await delay(120);job=await api('job/'+job.id);}
+  if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');l.win.remove();return false;}if(job.status==='error')throw Error(job.error||'Generation failed. Please retry the command.');l.win.remove();liveAssets[key]={url:job.status==='complete'?job.url:job.previewUrl||job.url,image:job.image,playbackRate:cmd?.playbackRate};
   if(variant==='hat')liveAssets[`${profile}:tayne:hat`]=liveAssets[key];
-  events.push({kind:'generated-ready',url:job.url,previewUrl:job.previewUrl,id:job.id,playbackRate:cmd?.playbackRate||1,timings:job.timings,time:performance.now(),elapsedMs:performance.now()-startedAt,character,variant});return true;
- }catch(e){l.win.remove();if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,(e as Error).message);notify((e as Error).message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{commandStatus.jobDone(feedback,jobKey);}
+  report('generation-ready');events.push({kind:'generated-ready',url:job.url,previewUrl:job.previewUrl,id:job.id,playbackRate:cmd?.playbackRate||1,timings:job.timings,time:performance.now(),elapsedMs:performance.now()-startedAt,character,variant});return true;
+ }catch(e){const message=variant==='face'?`Portrait generation failed: ${(e as Error).message}`:(e as Error).message;report('generation-error',message);l.win.remove();if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,message);notify(message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{commandStatus.jobDone(feedback,jobKey);}
 }
 async function customDance(cmd:Command){
  const term=terminal();term.classList.add('custom-terminal');const character=cmd.label||'custom';
@@ -370,8 +385,9 @@ async function startRecording(){
  recordingRequested=true;clearTimeout(stopRecordingTimer);
  if(recordingStarting||recorder?.state==='recording')return;
  recordingStarting=true;void unlockAudio();setMicState('opening');
- // A new utterance supersedes pending interpretation, generation, and delayed windows.
- commandEpoch++;generationEpoch++;typing++;stopSpeech();lastMicPlayback?.pause();duckForMicrophone(true);
+ // Opening the microphone is not a replacement dance command. Keep pending
+ // generation alive, including when this recording is empty or fails.
+ commandEpoch++;typing++;stopSpeech();lastMicPlayback?.pause();duckForMicrophone(true);
  const recordingRun=run,status=commandStatus.begin('Opening microphone · wait to speak');feedbackToken=status;
  const number=++recordingNumber,requestId=`${crypto.randomUUID()}-${number}`;
  try{

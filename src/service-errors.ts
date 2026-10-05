@@ -1,4 +1,5 @@
 export function describeServiceError(message:string){
+ if(/^Portrait generation failed:/.test(message))return {title:'Portrait unavailable',message,recovery:'The dancer can still play. Repeat the command to retry the portrait.',activity:'Portrait unavailable · dancer can still play'};
  if(/credits exhausted|no credits|insufficient_quota|exceeded your current quota/i.test(message))return {title:'API credits exhausted',message,recovery:'Top up the API account, then repeat the command. No restart needed.'};
  if(/401|invalid.*api.?key|authentication|unauthorized/i.test(message))return {title:'Service authentication failed',message,recovery:'Check the service API key on the local server, then try again.'};
  if(/429|rate.?limit|too many requests/i.test(message))return {title:'Service rate limit',message,recovery:'Wait a moment, then repeat the command.'};
