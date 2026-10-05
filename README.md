@@ -19,7 +19,7 @@ Try the sketch, or novel commands such as “a shoulder shimmy in a mustard yell
 
 ## Generation
 
-New commands receive the original recorded “Okay” immediately. A streaming LLM plans the complete outfit and choreography; once those fields arrive, MiniMax H3 Max reference-to-video generates the whole performer directly from the uploaded identity photo. This removes serial image generation and identity-review calls from interactive commands. Fresh friends’ canonical moves use a fast FLUX.2 klein 9B costume frame guided by the supplied wardrobe image, then H3 with the original motion reference. A light whole-frame filter supplies the soft video texture without segmentation artifacts. Completed provider video streams immediately while local caching runs in the background. Paul’s existing reviewed sketch assets and original generation pipeline remain available for fidelity replay. New videos contain generated music. No heads are pasted onto bodies.
+New commands receive the original recorded “Okay” immediately. A streaming LLM plans the complete outfit and choreography; once those fields arrive, MiniMax H3 Max reference-to-video generates the whole performer directly from the uploaded identity photo. This removes serial image generation and identity-review calls from novel interactive commands. Fresh friends’ canonical moves use an identity-only Nano Banana 2 costume frame (0.5K for bodies, 1K for portraits), then H3 Max with the original motion reference. Actor-bearing wardrobe references and FLUX Klein were rejected after identity regressions. Moves sharing an outfit reuse the costume frame. Anchored portraits use H3 Max Turbo image-to-video. A light whole-frame filter supplies the soft video texture without segmentation artifacts. Completed provider video streams immediately while local caching runs in the background. Paul’s existing reviewed sketch assets and original generation pipeline remain available for fidelity replay. New videos contain generated music. No heads are pasted onto bodies.
 
 There is no face overlay or head replacement pipeline. Framing, display texture and selected canonical timing corrections operate on complete generated frames. The brief dancer-on-desktop effect removes the studio background from that complete video.
 
@@ -43,6 +43,25 @@ The timed benchmark first transcribes the original user utterances through the r
 Reports, screenshots and recorded output audio are in `benchmarks/`. Visual comparisons use dense chronological contact sheets and an identical-input control. Automated perceptual scores are estimates, not a guarantee of perceptual identity. Generation experiments that failed word accuracy, choreography, or wardrobe checks are not promoted to the runtime.
 
 The local [evaluation page](http://127.0.0.1:5173/benchmarks/review.html) collects the captured sketch playback, fresh-upload videos, checks and limitations. Vite ignores generated media and benchmark outputs so writing new assets does not reload a running session.
+
+### Image and video speed experiments (October 2026)
+
+`benchmarks/quality-speed-20261005.json` records the current comparison and quality decisions. Nano Banana Lite reduced image request latency, but the unchanged prompt framed portraits too widely. A portrait-specific prompt improved framing; one resulting animation invented glasses absent from its starting frame. Turbo without a motion reference also invented different choreography. Neither experiment has replaced production defaults. Smaller motion-reference videos did not reduce total generation latency in this sample.
+
+These scripts make paid provider requests. Supply a local regression photo; it and generated media stay in ignored `analysis/optimization-20261005/`, excluded from deployment. The image comparison also uses the existing Thomas reference. Run in order:
+
+```sh
+npx tsx scripts/benchmark-quality-speed.ts /path/to/regression-photo.jpg
+npx tsx scripts/benchmark-lite-portraits.ts /path/to/regression-photo.jpg
+npx tsx scripts/benchmark-motion-speed.ts /path/to/regression-photo.jpg
+npx tsx scripts/benchmark-portrait-animation.ts
+npx tsx scripts/benchmark-portrait-models.ts
+node scripts/grade-motion-speed.mjs /path/to/regression-photo.jpg
+node scripts/build-optimization-gallery.mjs
+python3 -m http.server 5174 --bind 127.0.0.1 --directory analysis/optimization-20261005
+```
+
+Open http://127.0.0.1:5174 for side-by-side images and playable videos. Timings measure provider request wall time, excluding reference upload and output download. The portrait-model control records HTTP attempts separately to distinguish SDK retries from a single slow provider response. Provider `inference` measures denoising only, not the complete request. Two identities and a few trials cannot establish production percentiles or quality equivalence; automated grades are supporting observations, not release gates by themselves.
 
 ## Responsiveness and audio regression checks
 

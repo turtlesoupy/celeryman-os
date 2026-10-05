@@ -1,0 +1,19 @@
+import 'dotenv/config';import fs from 'node:fs/promises';import path from 'node:path';import {fal} from '@fal-ai/client';import {execFile} from 'node:child_process';import {promisify} from 'node:util';import {motionPrompt} from '../server/choreography.ts';import {costumes,motions} from '../src/dances.ts';
+const exec=promisify(execFile),out=path.resolve('analysis/optimization-20261005');fal.config({credentials:process.env.FAL_KEY});
+const photo=process.argv[2];if(!photo)throw Error('Usage: tsx scripts/benchmark-motion-speed.ts /path/to/regression-photo.jpg');
+const identity=await fal.storage.upload(new File([await fs.readFile(photo)],'identity.jpg',{type:'image/jpeg'}));
+const rows=JSON.parse(await fs.readFile(path.join(out,'images.json'),'utf8'));
+const results:any[]=[];
+for(const character of ['celery','oyster']){
+ const frame=rows.find((r:any)=>r.person==='upload'&&r.character===character&&!r.closeup&&r.model==='fal-ai/nano-banana-2/edit');if(!frame?.url)throw Error('Run image benchmark first');
+ const original=path.resolve('public/media/motion',character+'-5s.mp4'),compact=path.join(out,character+'-motion-360.mp4');
+ await exec('ffmpeg',['-y','-i',original,'-vf','scale=-2:360','-an','-c:v','libx264','-crf','18','-preset','veryfast','-movflags','+faststart',compact,'-loglevel','error']);
+ const refs:Record<string,string>={};for(const [label,file]of Object.entries({original,compact})){const start=performance.now();refs[label]=await fal.storage.upload(new File([await fs.readFile(file)],label+'.mp4',{type:'video/mp4'}));console.log(JSON.stringify({character,reference:label,uploadMs:performance.now()-start,bytes:(await fs.stat(file)).size}));}
+ for(const variant of character==='celery'?['original','compact','turbo']:['turbo','compact','original']){
+  const model=variant==='turbo'?'minimax/h3-max-turbo/image-to-video':'minimax/h3-max/reference-to-video';
+  const prompt=variant==='turbo'?`Animate the exact person and costume in this image. ${motions[character]} Repeat the original pose after five seconds for a loop. Fixed camera, full body visible, no speech, pale gray background, low-budget 1990s desktop dance footage.`:motionPrompt(character)+` The same person from Image 1 wears this complete outfit: ${costumes[character]}. Video 1 supplies ONLY choreography, timing and camera framing, never the identity, face, hair or body build of its actor. Image 1 supplies the complete performer and costume. Preserve that person throughout; do not turn them into the actor in the motion reference. Exactly one dancer, entirely in frame. Image 2 is the original photo of the same person in Image 1. Preserve their recognizable appearance from both images. Only Image 1 supplies the costume; do not copy the original photo clothing or scenery.`;
+  const input={...(variant==='turbo'?{image_url:frame.url}:{reference_image_urls:[frame.url,identity],reference_video_urls:[refs[variant]],...(character==='oyster'?{image_url:frame.url}:{})}),prompt,duration:5,resolution:'480P',aspect_ratio:character==='oyster'?'4:3':'9:16',prompt_expansion_mode:'disabled',seed:54321};
+  const start=performance.now();try{const result:any=await fal.run(model,{input,abortSignal:AbortSignal.timeout(90000)});const requestMs=performance.now()-start,file=path.join(out,`${character}-${variant}.mp4`);const download=await fetch(result.data.video.url);if(!download.ok)throw Error(`Video download: ${download.status}`);await fs.writeFile(file,Buffer.from(await download.arrayBuffer()));results.push({character,variant,model,requestMs,providerTimings:result.data.timings,requestId:result.requestId,file});}catch(e){results.push({character,variant,model,error:String(e),status:(e as any)?.status,details:(e as any)?.body,requestMs:performance.now()-start});}
+  console.log(JSON.stringify(results.at(-1)));await fs.writeFile(path.join(out,'videos.json'),JSON.stringify(results,null,2));
+ }
+}

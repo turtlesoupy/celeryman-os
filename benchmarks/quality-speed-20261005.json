@@ -1,0 +1,509 @@
+{
+  "date": "2026-10-05",
+  "production_changed": false,
+  "production_commit": "953b2aa",
+  "scope": "Personalized identity-only image frames and H3 video paths; no voice/transcription changes.",
+  "method": {
+    "identities": 2,
+    "image_requests": 16,
+    "video_requests": 14,
+    "timing": "Provider request wall time; excludes initial reference upload, output download, application and browser overhead. Comparisons run on local macOS, not Cloud Run.",
+    "controls": "Same source photos and prompts for initial image pairs. Body baseline 0.5K, portrait baseline 1K, Lite fixed 1K. Motion candidates share baseline frame and seed. Compact references preserve frame rate and timing at 360p. Portrait model comparison uses identical frame/prompt/seed with Max, Turbo, Turbo, Max order.",
+    "limitations": "Small convenience sample, no population quality estimate or p95. Seed across different models is not an equivalence guarantee. Provider cold/warm state uncontrolled. Refined portrait prompt is Celery-specific. Automated motion grading is uncalibrated; some observations (e.g. Oyster hat toss) may be inaccurate and are not accepted as facts."
+  },
+  "summary": [
+    {
+      "candidate": "Nano Banana Lite image editing",
+      "baseline_median_seconds": 9.34,
+      "candidate_median_seconds": 4.79,
+      "n_per_model": 6,
+      "decision": "Promising, not promoted. Initial portraits too wide. Full-body images visually recognizable but downstream Lite-body animation has not been tested."
+    },
+    {
+      "candidate": "Lite portrait-specific prompt",
+      "baseline_portrait_seconds": [
+        11.108,
+        10.355
+      ],
+      "candidate_seconds": [
+        4.09,
+        6.133,
+        6.295,
+        3.711
+      ],
+      "decision": "Closer framing and recognizable appearance in stills. A Turbo animation of the uploaded person invented eyeglasses absent from the starting frame. End-to-end quality gate failed; do not claim preserved quality."
+    },
+    {
+      "candidate": "360p motion references",
+      "baseline_seconds": [
+        7.467,
+        11.202
+      ],
+      "compact_seconds": [
+        9.22,
+        11.769
+      ],
+      "decision": "No observed request latency improvement. Upload improved roughly 0.7\u20130.9s, but references are already cached within a process. Keep original."
+    },
+    {
+      "candidate": "Turbo I2V instead of reference-driven canonical dances",
+      "successful_request_seconds": 34.225,
+      "failures": 1,
+      "attempts": 2,
+      "decision": "Reject: Celery output invents palm-up arm gestures rather than hands-on-hips reference motion. Failure returned an empty error message; cause unknown."
+    },
+    {
+      "candidate": "Max vs Turbo for portraits, identical input",
+      "max_seconds": [
+        16.486,
+        5.174
+      ],
+      "turbo_seconds": [
+        19.288,
+        17.255
+      ],
+      "decision": "Max worth a broader benchmark; too few samples to change routing. All four were single HTTP 200 responses; SDK retries did not explain latency. Reported denoising 0.39\u20130.58s excludes most provider request time."
+    },
+    {
+      "candidate": "FFmpeg",
+      "recent_local_observed_ms": [
+        111.94,
+        100.32,
+        160.2,
+        230.97,
+        105.16,
+        166.36
+      ],
+      "decision": "Not the main bottleneck. Existing live provider preview is exposed before download/postprocessing. No quality-lowering encoder changes warranted."
+    }
+  ],
+  "recommendation": "Keep current production defaults. Advance Lite portraits only after resolving animated accessory/identity drift and testing more identities/outfits; repeat Max-vs-Turbo comparisons under matched conditions. Keep original motion references and 480P output, prompt expansion disabled. The next quality-neutral code candidate is overlapping costume generation with motion-reference upload, which currently waits for both identity and motion upload before starting the frame; not implemented or measured here.",
+  "observations": {
+    "assistant_visual_review": [
+      "Baseline and Lite body stills retained recognizable appearance, including the uploaded photo that previously regressed.",
+      "Lite with unchanged prompt showed excessive torso in portraits.",
+      "Refined Lite portraits restore tight framing but vary expression and hidden hair details.",
+      "Uploaded-person Lite portrait animation at 0s had no glasses; at 2s it had large black glasses. Baseline animation at 2s had no glasses.",
+      "Celery Turbo frame at 2s shows raised palms; reference-driven output has hands on hips."
+    ],
+    "production_settings": "Nano Banana 2: 0.5K bodies, 1K portraits; H3 Max reference-to-video for choreography and Turbo I2V for anchored portraits; 5s 480P, prompt expansion disabled; cached same-costume frames and motion uploads."
+  },
+  "results": {
+    "images": [
+      {
+        "label": "0-thomas-celery-body-baseline",
+        "person": "thomas",
+        "character": "celery",
+        "closeup": false,
+        "model": "fal-ai/nano-banana-2/edit",
+        "requestMs": 7157.873582999999,
+        "downloadMs": 921.0821670000005,
+        "file": "0-thomas-celery-body-baseline.png",
+        "resolution": "0.5K"
+      },
+      {
+        "label": "0-thomas-celery-body-lite",
+        "person": "thomas",
+        "character": "celery",
+        "closeup": false,
+        "model": "google/nano-banana-lite/edit",
+        "requestMs": 7273.486457999999,
+        "downloadMs": 1022.0749169999999,
+        "file": "0-thomas-celery-body-lite.png",
+        "resolution": "fixed 1K"
+      },
+      {
+        "label": "1-upload-celery-body-baseline",
+        "person": "upload",
+        "character": "celery",
+        "closeup": false,
+        "model": "fal-ai/nano-banana-2/edit",
+        "requestMs": 7031.8057499999995,
+        "downloadMs": 541.4577499999978,
+        "file": "1-upload-celery-body-baseline.png",
+        "resolution": "0.5K"
+      },
+      {
+        "label": "1-upload-celery-body-lite",
+        "person": "upload",
+        "character": "celery",
+        "closeup": false,
+        "model": "google/nano-banana-lite/edit",
+        "requestMs": 5434.160582999999,
+        "downloadMs": 1352.9320000000007,
+        "file": "1-upload-celery-body-lite.png",
+        "resolution": "fixed 1K"
+      },
+      {
+        "label": "2-thomas-celery-portrait-baseline",
+        "person": "thomas",
+        "character": "celery",
+        "closeup": true,
+        "model": "fal-ai/nano-banana-2/edit",
+        "requestMs": 11108.171999999999,
+        "downloadMs": 3007.224957999999,
+        "file": "2-thomas-celery-portrait-baseline.png",
+        "resolution": "1K"
+      },
+      {
+        "label": "2-thomas-celery-portrait-lite",
+        "person": "thomas",
+        "character": "celery",
+        "closeup": true,
+        "model": "google/nano-banana-lite/edit",
+        "requestMs": 4153.373875000001,
+        "downloadMs": 1204.3068749999984,
+        "file": "2-thomas-celery-portrait-lite.png",
+        "resolution": "fixed 1K"
+      },
+      {
+        "label": "3-upload-celery-portrait-baseline",
+        "person": "upload",
+        "character": "celery",
+        "closeup": true,
+        "model": "fal-ai/nano-banana-2/edit",
+        "requestMs": 10355.009999999998,
+        "downloadMs": 1452.036082999999,
+        "file": "3-upload-celery-portrait-baseline.png",
+        "resolution": "1K"
+      },
+      {
+        "label": "3-upload-celery-portrait-lite",
+        "person": "upload",
+        "character": "celery",
+        "closeup": true,
+        "model": "google/nano-banana-lite/edit",
+        "requestMs": 3678.76425,
+        "downloadMs": 1405.9579999999987,
+        "file": "3-upload-celery-portrait-lite.png",
+        "resolution": "fixed 1K"
+      },
+      {
+        "label": "4-upload-oyster-body-baseline",
+        "person": "upload",
+        "character": "oyster",
+        "closeup": false,
+        "model": "fal-ai/nano-banana-2/edit",
+        "requestMs": 8319.926874999997,
+        "downloadMs": 640.1758340000015,
+        "file": "4-upload-oyster-body-baseline.png",
+        "resolution": "0.5K"
+      },
+      {
+        "label": "4-upload-oyster-body-lite",
+        "person": "upload",
+        "character": "oyster",
+        "closeup": false,
+        "model": "google/nano-banana-lite/edit",
+        "requestMs": 4078.4956660000025,
+        "downloadMs": 2016.7410410000011,
+        "file": "4-upload-oyster-body-lite.png",
+        "resolution": "fixed 1K"
+      },
+      {
+        "label": "5-thomas-tayne-body-baseline",
+        "person": "thomas",
+        "character": "tayne",
+        "closeup": false,
+        "model": "fal-ai/nano-banana-2/edit",
+        "requestMs": 10786.151375000001,
+        "downloadMs": 665.8845000000001,
+        "file": "5-thomas-tayne-body-baseline.png",
+        "resolution": "0.5K"
+      },
+      {
+        "label": "5-thomas-tayne-body-lite",
+        "person": "thomas",
+        "character": "tayne",
+        "closeup": false,
+        "model": "google/nano-banana-lite/edit",
+        "requestMs": 6740.644417000003,
+        "downloadMs": 1943.25,
+        "file": "5-thomas-tayne-body-lite.png",
+        "resolution": "fixed 1K"
+      }
+    ],
+    "portraits": [
+      {
+        "label": "thomas-portrait-refined-12345",
+        "person": "thomas",
+        "seed": 12345,
+        "requestMs": 4089.628458,
+        "file": "thomas-portrait-refined-12345.png"
+      },
+      {
+        "label": "thomas-portrait-refined-54321",
+        "person": "thomas",
+        "seed": 54321,
+        "requestMs": 6132.920625,
+        "file": "thomas-portrait-refined-54321.png"
+      },
+      {
+        "label": "upload-portrait-refined-12345",
+        "person": "upload",
+        "seed": 12345,
+        "requestMs": 6294.603042000001,
+        "file": "upload-portrait-refined-12345.png"
+      },
+      {
+        "label": "upload-portrait-refined-54321",
+        "person": "upload",
+        "seed": 54321,
+        "requestMs": 3711.241291999999,
+        "file": "upload-portrait-refined-54321.png"
+      }
+    ],
+    "videos": [
+      {
+        "character": "celery",
+        "variant": "original",
+        "model": "minimax/h3-max/reference-to-video",
+        "requestMs": 7467.386875,
+        "providerTimings": {
+          "inference": 2.453257149994897
+        },
+        "file": "celery-original.mp4"
+      },
+      {
+        "character": "celery",
+        "variant": "compact",
+        "model": "minimax/h3-max/reference-to-video",
+        "requestMs": 9219.528708,
+        "providerTimings": {
+          "inference": 2.3812967769335955
+        },
+        "file": "celery-compact.mp4"
+      },
+      {
+        "character": "celery",
+        "variant": "turbo",
+        "model": "minimax/h3-max-turbo/image-to-video",
+        "requestMs": 34225.065416000005,
+        "providerTimings": {
+          "inference": 0.4427040210002815
+        },
+        "file": "celery-turbo.mp4"
+      },
+      {
+        "character": "oyster",
+        "variant": "turbo",
+        "model": "minimax/h3-max-turbo/image-to-video",
+        "error": "",
+        "requestMs": 3653.035124999995
+      },
+      {
+        "character": "oyster",
+        "variant": "compact",
+        "model": "minimax/h3-max/reference-to-video",
+        "requestMs": 11768.522166999988,
+        "providerTimings": {
+          "inference": 1.9699187809892464
+        },
+        "file": "oyster-compact.mp4"
+      },
+      {
+        "character": "oyster",
+        "variant": "original",
+        "model": "minimax/h3-max/reference-to-video",
+        "requestMs": 11201.561541999996,
+        "providerTimings": {
+          "inference": 2.6676086699881125
+        },
+        "file": "oyster-original.mp4"
+      }
+    ],
+    "portrait-videos": [
+      {
+        "person": "thomas",
+        "variant": "baseline",
+        "requestMs": 22007.730042,
+        "file": "thomas-portrait-baseline.mp4",
+        "frameRequestMs": 11108.171999999999
+      },
+      {
+        "person": "thomas",
+        "variant": "lite-refined",
+        "requestMs": 27905.903792,
+        "file": "thomas-portrait-lite-refined.mp4",
+        "frameRequestMs": 4089.628458
+      },
+      {
+        "person": "upload",
+        "variant": "baseline",
+        "requestMs": 52768.153209,
+        "file": "upload-portrait-baseline.mp4",
+        "frameRequestMs": 10355.009999999998
+      },
+      {
+        "person": "upload",
+        "variant": "lite-refined",
+        "requestMs": 18329.095707999993,
+        "file": "upload-portrait-lite-refined.mp4",
+        "frameRequestMs": 6294.603042000001
+      }
+    ],
+    "portrait-models": [
+      {
+        "variant": "max",
+        "model": "minimax/h3-max/image-to-video",
+        "requestMs": 16485.667791,
+        "providerTimings": {
+          "inference": 0.584313768951688
+        },
+        "attempts": [
+          {
+            "status": 200,
+            "headersMs": 16481.790375
+          }
+        ],
+        "file": "portrait-model-0-max.mp4"
+      },
+      {
+        "variant": "turbo",
+        "model": "minimax/h3-max-turbo/image-to-video",
+        "requestMs": 19287.507791,
+        "providerTimings": {
+          "inference": 0.39039634200162254
+        },
+        "attempts": [
+          {
+            "status": 200,
+            "headersMs": 19286.149290999998
+          }
+        ],
+        "file": "portrait-model-1-turbo.mp4"
+      },
+      {
+        "variant": "turbo",
+        "model": "minimax/h3-max-turbo/image-to-video",
+        "requestMs": 17255.161417000003,
+        "providerTimings": {
+          "inference": 0.4327014760001475
+        },
+        "attempts": [
+          {
+            "status": 200,
+            "headersMs": 17254.269542000002
+          }
+        ],
+        "file": "portrait-model-2-turbo.mp4"
+      },
+      {
+        "variant": "max",
+        "model": "minimax/h3-max/image-to-video",
+        "requestMs": 5173.594499999999,
+        "providerTimings": {
+          "inference": 0.5767320049926639
+        },
+        "attempts": [
+          {
+            "status": 200,
+            "headersMs": 5172.337416999995
+          }
+        ],
+        "file": "portrait-model-3-max.mp4"
+      }
+    ],
+    "motion-grades": [
+      {
+        "character": "celery",
+        "variant": "compact",
+        "labels": {
+          "A": "compact",
+          "B": "original"
+        },
+        "review": {
+          "A": {
+            "identity": 68,
+            "choreography": 65,
+            "costume": 72,
+            "framing": 68,
+            "temporal_consistency": 70,
+            "concrete_observations": "Good facial match with the identity photo. Dance movements follow the rhythmic hip-swaying from the reference, though upper body motion is slightly stiff. Costume details replicate the shiny blazer, bolo tie, and baggy pants closely."
+          },
+          "B": {
+            "identity": 68,
+            "choreography": 65,
+            "costume": 72,
+            "framing": 68,
+            "temporal_consistency": 70,
+            "concrete_observations": "Practically identical motion and appearance to Candidate A. The identity representation matches the source photo well, and the choreography mirrors the reference loop accurately with minor boundary shifts."
+          },
+          "preferred": "tie",
+          "meaningful_quality_difference": false,
+          "explanation": "Both generated candidates are nearly indistinguishable in terms of visual quality, choreography execution, costume replication, and identity preservation."
+        }
+      },
+      {
+        "character": "celery",
+        "variant": "turbo",
+        "labels": {
+          "A": "turbo",
+          "B": "original"
+        },
+        "review": {
+          "A": {
+            "identity": 65,
+            "choreography": 40,
+            "costume": 72,
+            "framing": 70,
+            "temporal_consistency": 68,
+            "concrete_observations": "Good facial likeness to the identity photo. However, the choreography deviates completely from the reference video, introducing arm gestures and different stance movements not present in the original dance."
+          },
+          "B": {
+            "identity": 68,
+            "choreography": 65,
+            "costume": 72,
+            "framing": 70,
+            "temporal_consistency": 70,
+            "concrete_observations": "Facial likeness matches the target identity well. Posing and hip shifts align much closer to the reference choreography, maintaining hands-on-hips body positioning throughout."
+          },
+          "preferred": "B",
+          "meaningful_quality_difference": true,
+          "explanation": "Candidate B adheres much more faithfully to the reference choreography's hip-swaying routine and hand placements, whereas Candidate A invents unrelated hand gestures and movements."
+        }
+      },
+      {
+        "character": "oyster",
+        "variant": "compact",
+        "labels": {
+          "A": "original",
+          "B": "compact"
+        },
+        "review": {
+          "A": {
+            "identity": 60,
+            "choreography": 65,
+            "costume": 68,
+            "framing": 65,
+            "temporal_consistency": 64,
+            "concrete_observations": "The subject maintains moderate resemblance to the photo when visible, though the face distorts during fast motion. The head-bob choreography timing aligns well with the reference, but misses the hat-throw mechanic."
+          },
+          "B": {
+            "identity": 60,
+            "choreography": 65,
+            "costume": 68,
+            "framing": 65,
+            "temporal_consistency": 64,
+            "concrete_observations": "The generation appears virtually identical to Candidate A, capturing the same timing, costume adaptation, and head movements without replicating the flying hat effect."
+          },
+          "preferred": "tie",
+          "meaningful_quality_difference": false,
+          "explanation": "Both videos are practically identical in movement, facial rendering, costume match, and temporal consistency. Neither model manages the hat toss from the reference, but both accurately replicate the main body movements."
+        }
+      }
+    ]
+  },
+  "local_review": "http://127.0.0.1:5174/",
+  "media": "Generated images, clips, source upload and raw provider URLs remain in ignored analysis/optimization-20261005 and are excluded from deployment.",
+  "sources": [
+    "https://fal.ai/models/google/nano-banana-lite/edit/api",
+    "https://fal.ai/models/minimax/h3-max/reference-to-video/api",
+    "https://fal.ai/models/minimax/h3-max-turbo/image-to-video/api"
+  ],
+  "validation": [
+    "All five TypeScript benchmark scripts pass standalone strict type checking.",
+    "All 16 image requests succeeded; 13 of 14 video requests succeeded.",
+    "Gallery generated and opened in the local browser."
+  ]
+}
