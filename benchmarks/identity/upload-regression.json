@@ -101,5 +101,114 @@
         "finishMs": 77.86474999785423
       }
     }
-  ]
+  ],
+  "production": {
+    "revision": "celeryman-00004-7m6",
+    "codeCommit": "7199234",
+    "site": "https://celeryman.fun",
+    "results": [
+      {
+        "character": "celery",
+        "variant": "base",
+        "id": "10342f2bee1bf1e519c5",
+        "video": "https://celeryman.fun/media/generated/10342f2bee1bf1e519c5.mp4",
+        "poster": "https://celeryman.fun/media/generated/10342f2bee1bf1e519c5.png",
+        "timings": {
+          "identityMs": 714.4611730000033,
+          "frameMs": 9184.666403999996,
+          "videoMs": 6891.079843000007,
+          "previewMs": 16790.213669999997,
+          "downloadMs": 1600.565367999996,
+          "ffmpegMs": 1109.7334569999948,
+          "persistMs": 406.86040399999183,
+          "frameRequestMs": 9153.204966000005,
+          "frameDownloadMs": 756.2118499999997,
+          "frameSaveMs": 308.954568000001,
+          "totalMs": 19907.433089,
+          "finishMs": 1516.6603009999963
+        },
+        "model": "minimax/h3-max/reference-to-video",
+        "costumeFrame": {
+          "model": "fal-ai/nano-banana-2/edit",
+          "requestId": "01a109af-766e-7220-8db9-ae851201cd6b"
+        }
+      },
+      {
+        "character": "celery",
+        "variant": "face",
+        "id": "07ff1adb46bc54eabec3",
+        "video": "https://celeryman.fun/media/generated/07ff1adb46bc54eabec3.mp4",
+        "poster": "https://celeryman.fun/media/generated/07ff1adb46bc54eabec3.png",
+        "timings": {
+          "identityMs": 0.5406499999953667,
+          "frameMs": 9978.325194000005,
+          "videoMs": 5505.103405999995,
+          "previewMs": 15483.97305,
+          "downloadMs": 721.7367629999935,
+          "ffmpegMs": 66.1755070000072,
+          "persistMs": 801.8617289999966,
+          "frameRequestMs": 9944.102585,
+          "frameDownloadMs": 1707.5788639999955,
+          "frameSaveMs": 306.2164279999997,
+          "totalMs": 17073.762778999997,
+          "finishMs": 868.0567660000088
+        },
+        "model": "minimax/h3-max/image-to-video",
+        "costumeFrame": {
+          "model": "fal-ai/nano-banana-2/edit",
+          "requestId": "01a109af-c3fe-7590-af72-1ffa4d47f6ac"
+        }
+      },
+      {
+        "character": "oyster",
+        "variant": "base",
+        "id": "758161ab0654ea134268",
+        "video": "https://celeryman.fun/media/generated/758161ab0654ea134268.mp4",
+        "poster": "https://celeryman.fun/media/generated/758161ab0654ea134268.png",
+        "timings": {
+          "identityMs": 1280.3855810000096,
+          "frameMs": 11938.097167,
+          "videoMs": 9560.366670000003,
+          "previewMs": 22778.85331800001,
+          "downloadMs": 532.3306689999881,
+          "ffmpegMs": 589.2158869999985,
+          "persistMs": 410.785584000012,
+          "frameRequestMs": 11906.675609000013,
+          "frameDownloadMs": 790.526199999993,
+          "frameSaveMs": 268.3649990000122,
+          "totalMs": 24311.20583800001,
+          "finishMs": 1000.0257510000083
+        },
+        "model": "minimax/h3-max/reference-to-video",
+        "costumeFrame": {
+          "model": "fal-ai/nano-banana-2/edit",
+          "requestId": "01a109b0-0e3d-7643-8206-ca25aa2b8b74"
+        }
+      },
+      {
+        "character": "tayne",
+        "variant": "intro",
+        "id": "5a024d528a067448423b",
+        "video": "https://celeryman.fun/media/generated/5a024d528a067448423b.mp4",
+        "poster": "https://celeryman.fun/media/generated/5a024d528a067448423b.png",
+        "timings": {
+          "identityMs": 0.39406000000599306,
+          "videoMs": 2315.7541099999944,
+          "previewMs": 2316.1538500000024,
+          "downloadMs": 626.5676359999925,
+          "ffmpegMs": 83.57484699999623,
+          "persistMs": 439.58570299998973,
+          "totalMs": 3465.925046000004,
+          "finishMs": 523.209240000011
+        },
+        "model": "minimax/h3-max/reference-to-video"
+      }
+    ],
+    "visualReview": "All four production posters inspected; uploaded appearance retained. Intro framing remains variable (production intro was full-body rather than a tight portrait)."
+  },
+  "control": {
+    "profile": "thomas",
+    "job": "b1b21a2229d3c7f56222",
+    "visualReview": "Original glasses, hair and facial hair retained in Celery costume."
+  }
 }
