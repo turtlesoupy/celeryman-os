@@ -1,0 +1,271 @@
+{
+  "date": "2026-10-05",
+  "production_changed": false,
+  "purpose": "Recheck surprising Turbo latency with matched inputs, raw HTTP and production SDK; pair image candidates for human A/B decisions.",
+  "settings": {
+    "video": {
+      "duration": 5,
+      "resolution": "480P",
+      "prompt_expansion_mode": "disabled",
+      "seed": 54321,
+      "same_starting_frame": true,
+      "safety_checker": "default enabled"
+    },
+    "images": {
+      "aspect_ratio": "4:3",
+      "num_images": 1,
+      "seed": 54321,
+      "thinking_level": "omitted, disabled per fal schema",
+      "baseline_resolution": "1K",
+      "lite_resolution": "fixed 1K; no resolution parameter",
+      "same_prompt": true,
+      "formats": [
+        "png",
+        "jpeg"
+      ]
+    }
+  },
+  "findings": [
+    "Fresh raw HTTP: Turbo 2.22/2.72s versus Max 2.61/2.34s. The earlier 17\u201353s portrait requests were not reproducible in this session. Do not conclude Turbo is inherently slower.",
+    "Production SDK fal.run: Turbo 2.57s; Max 2.03s. Raw HTTP offers no demonstrated advantage. Queued Turbo 3.21s; observed IN_PROGRESS at 0.263s. Keep synchronous runtime calls.",
+    "GPU denoising remained 0.42\u20130.86s. Fal marketing benchmark explicitly measures timings.inference, not complete user wait; preprocessing/encoding/network/queue time are not separately exposed here.",
+    "No misconfiguration found: 480P, five seconds, prompt expansion disabled. SDK has retries, but earlier instrumented calls had a single HTTP 200. Provider load/startup variation is plausible, not proven.",
+    "Lite PNG portraits 4.42\u20134.74s; JPEG 3.58\u20134.59s. PNG downloads 1.39\u20131.50s versus JPEG 0.63\u20130.71s; runtime forwards provider image URL immediately so local download is not the video critical path.",
+    "Nano Banana 2 controls 9.78/35.80s. Only two photo samples; no production percentiles.",
+    "The animated-glasses defect is a downstream video observation, not proof that Lite still images are unacceptable. Human A/B judgement takes precedence over automated quality scores."
+  ],
+  "decision": "Keep Turbo portrait routing and Nano Banana 2 runtime settings for now; present paired stills and animations for the user to judge. No automatic production swap based on this small latency sample.",
+  "ab_review": {
+    "url": "http://127.0.0.1:5174/ab.html",
+    "pairs": 9,
+    "features": [
+      "Model names and timings hidden until revealed",
+      "Deterministically counterbalanced A/B order",
+      "Same-prompt Nano Banana 2 versus Lite stills",
+      "PNG versus JPEG generated outputs (not a pixel-identical compression test)",
+      "Separate Max versus Turbo animation pairs",
+      "Complete pipeline comparisons for both identities",
+      "Content-hashed pair IDs prevent old ratings from attaching to newly generated media",
+      "Browser-local ratings, notes and JSON export with completeness flag",
+      "Original sketch frame beside identity photo, larger frame link, original clip for video comparisons"
+    ]
+  },
+  "validation": [
+    "Strict TypeScript check for audit script passed",
+    "Builder syntax check passed",
+    "Browser rating survived reload and was cleared after testing",
+    "Both video candidates played with no media errors; observed currentTime difference <0.001s",
+    "Original sketch frame and identity reference verified in browser"
+  ],
+  "limitations": "Small sequential local test; no load or cold-start control. Same seed across models does not guarantee identical randomness. Human ratings pending; no media or photos committed.",
+  "results": [
+    {
+      "label": "audit-video-0-turbo",
+      "kind": "video",
+      "model": "minimax/h3-max-turbo/image-to-video",
+      "variant": "turbo",
+      "transport": "raw-http",
+      "requestMs": 2223.580375,
+      "headersMs": 2220.8646660000004,
+      "downloadMs": 1114.0564999999997,
+      "bytes": 2950288,
+      "providerTimings": {
+        "inference": 0.42345499712973833
+      },
+      "file": "audit-video-0-turbo.mp4"
+    },
+    {
+      "label": "audit-video-1-max",
+      "kind": "video",
+      "model": "minimax/h3-max/image-to-video",
+      "variant": "max",
+      "transport": "raw-http",
+      "requestMs": 2607.1171660000005,
+      "headersMs": 2606.005041,
+      "downloadMs": 1098.2750830000004,
+      "bytes": 2955503,
+      "providerTimings": {
+        "inference": 0.8633740108925849
+      },
+      "file": "audit-video-1-max.mp4"
+    },
+    {
+      "label": "audit-video-2-max",
+      "kind": "video",
+      "model": "minimax/h3-max/image-to-video",
+      "variant": "max",
+      "transport": "raw-http",
+      "requestMs": 2340.7403750000003,
+      "headersMs": 2340.375000000001,
+      "downloadMs": 1459.2334169999995,
+      "bytes": 2947763,
+      "providerTimings": {
+        "inference": 0.5791112860024441
+      },
+      "file": "audit-video-2-max.mp4"
+    },
+    {
+      "label": "audit-video-3-turbo",
+      "kind": "video",
+      "model": "minimax/h3-max-turbo/image-to-video",
+      "variant": "turbo",
+      "transport": "raw-http",
+      "requestMs": 2718.8864159999994,
+      "headersMs": 2718.5234999999993,
+      "downloadMs": 1097.4345830000002,
+      "bytes": 2950288,
+      "providerTimings": {
+        "inference": 0.46361236181110144
+      },
+      "file": "audit-video-3-turbo.mp4"
+    },
+    {
+      "label": "audit-video-queue-turbo",
+      "kind": "video",
+      "model": "minimax/h3-max-turbo/image-to-video",
+      "transport": "sdk-queue",
+      "requestMs": 3208.340124999999,
+      "updates": [
+        {
+          "status": "IN_PROGRESS",
+          "observedMs": 262.86320799999885
+        },
+        {
+          "status": "IN_PROGRESS",
+          "observedMs": 819.5074169999989
+        },
+        {
+          "status": "IN_PROGRESS",
+          "observedMs": 1378.3203329999997
+        },
+        {
+          "status": "IN_PROGRESS",
+          "observedMs": 1936.6168749999997
+        },
+        {
+          "status": "IN_PROGRESS",
+          "observedMs": 2569.063374999998
+        },
+        {
+          "status": "COMPLETED",
+          "observedMs": 3151.049332999999
+        }
+      ],
+      "providerTimings": {
+        "inference": 0.47751513961702585
+      },
+      "file": "audit-video-queue-turbo.mp4"
+    },
+    {
+      "label": "audit-image-thomas-baseline",
+      "kind": "image",
+      "model": "fal-ai/nano-banana-2/edit",
+      "person": "thomas",
+      "variant": "baseline",
+      "transport": "raw-http",
+      "outputFormat": "png",
+      "requestMs": 35801.911374999996,
+      "headersMs": 35800.845667,
+      "downloadMs": 1195.4621669999979,
+      "bytes": 1956686,
+      "file": "audit-image-thomas-baseline.png"
+    },
+    {
+      "label": "audit-image-thomas-lite",
+      "kind": "image",
+      "model": "google/nano-banana-lite/edit",
+      "person": "thomas",
+      "variant": "lite",
+      "transport": "raw-http",
+      "outputFormat": "png",
+      "requestMs": 4743.060207999995,
+      "headersMs": 4742.436708000001,
+      "downloadMs": 1392.0460420000018,
+      "bytes": 1812959,
+      "file": "audit-image-thomas-lite.png"
+    },
+    {
+      "label": "audit-image-thomas-lite-jpeg",
+      "kind": "image",
+      "model": "google/nano-banana-lite/edit",
+      "person": "thomas",
+      "variant": "lite-jpeg",
+      "transport": "raw-http",
+      "outputFormat": "jpeg",
+      "requestMs": 4593.075874999995,
+      "headersMs": 4592.911957999997,
+      "downloadMs": 631.8122909999947,
+      "bytes": 161499,
+      "file": "audit-image-thomas-lite-jpeg.jpg"
+    },
+    {
+      "label": "audit-image-upload-lite-jpeg",
+      "kind": "image",
+      "model": "google/nano-banana-lite/edit",
+      "person": "upload",
+      "variant": "lite-jpeg",
+      "transport": "raw-http",
+      "outputFormat": "jpeg",
+      "requestMs": 3577.284958000004,
+      "headersMs": 3576.883083000008,
+      "downloadMs": 705.6799160000082,
+      "bytes": 504059,
+      "file": "audit-image-upload-lite-jpeg.jpg"
+    },
+    {
+      "label": "audit-image-upload-lite",
+      "kind": "image",
+      "model": "google/nano-banana-lite/edit",
+      "person": "upload",
+      "variant": "lite",
+      "transport": "raw-http",
+      "outputFormat": "png",
+      "requestMs": 4419.888250000004,
+      "headersMs": 4419.46495899999,
+      "downloadMs": 1501.6547500000015,
+      "bytes": 737936,
+      "file": "audit-image-upload-lite.png"
+    },
+    {
+      "label": "audit-image-upload-baseline",
+      "kind": "image",
+      "model": "fal-ai/nano-banana-2/edit",
+      "person": "upload",
+      "variant": "baseline",
+      "transport": "raw-http",
+      "outputFormat": "png",
+      "requestMs": 9781.190583000003,
+      "headersMs": 9780.761125000005,
+      "downloadMs": 954.7912089999882,
+      "bytes": 1820323,
+      "file": "audit-image-upload-baseline.png"
+    },
+    {
+      "label": "audit-video-sdk-turbo",
+      "kind": "video",
+      "model": "minimax/h3-max-turbo/image-to-video",
+      "transport": "sdk-run",
+      "requestMs": 2565.0458750000003,
+      "providerTimings": {
+        "inference": 0.4470034120604396
+      },
+      "file": "audit-video-sdk-turbo.mp4"
+    },
+    {
+      "label": "audit-video-sdk-max",
+      "kind": "video",
+      "model": "minimax/h3-max/image-to-video",
+      "transport": "sdk-run",
+      "requestMs": 2034.7355830000006,
+      "providerTimings": {
+        "inference": 0.574610790994484
+      },
+      "file": "audit-video-sdk-max.mp4"
+    }
+  ],
+  "sources": [
+    "https://fal.ai/minimax-h3-max",
+    "https://fal.ai/models/minimax/h3-max-turbo/image-to-video/api",
+    "https://fal.ai/models/google/nano-banana-lite/edit/api"
+  ]
+}

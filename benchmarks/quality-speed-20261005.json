@@ -505,5 +505,6 @@
     "All five TypeScript benchmark scripts pass standalone strict type checking.",
     "All 16 image requests succeeded; 13 of 14 video requests succeeded.",
     "Gallery generated and opened in the local browser."
-  ]
+  ],
+  "followup": "fal-latency-audit-20261005.json: fresh calls recovered to 2\u20133 seconds; earlier evidence does not establish Turbo as slower. Use the paired human A/B review for quality decisions."
 }

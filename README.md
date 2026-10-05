@@ -63,6 +63,15 @@ python3 -m http.server 5174 --bind 127.0.0.1 --directory analysis/optimization-2
 
 Open http://127.0.0.1:5174 for side-by-side images and playable videos. Timings measure provider request wall time, excluding reference upload and output download. The portrait-model control records HTTP attempts separately to distinguish SDK retries from a single slow provider response. Provider `inference` measures denoising only, not the complete request. Two identities and a few trials cannot establish production percentiles or quality equivalence; automated grades are supporting observations, not release gates by themselves.
 
+For generation quality decisions, use **paired A/B comparisons and the user's ratings**, rather than an output grid or automated scores alone. Keep still-image quality separate from downstream animation defects. The focused review shows the original sketch frame (or motion clip) beside the identity photo, hides model names and timing until revealed, saves ratings locally, and exports a timestamped JSON with a completeness flag. Pair IDs include output content hashes so rerunning generation cannot silently reuse old ratings.
+
+```sh
+npx tsx scripts/audit-fal-latency.ts /path/to/regression-photo.jpg
+node scripts/build-generation-ab.mjs /path/to/regression-photo.jpg
+```
+
+Run the initial image/portrait/motion benchmarks first; then open http://127.0.0.1:5174/ab.html using the local server above. The audit compares raw HTTP, the SDK queue and the production `fal.run` path with matched video inputs, plus Nano Banana 2/Lite portraits with identical prompts. It makes paid requests. The follow-up in `benchmarks/fal-latency-audit-20261005.json` recovered **2–3s** video calls with unchanged settings, so the earlier slow sample does not establish Turbo as slower. Lite portraits still took approximately 3.6–4.7s. Production defaults remain unchanged pending the paired quality review.
+
 ## Responsiveness and audio regression checks
 
 Music is decoded once and repeated by a Web Audio buffer source on the audio clock. Short crossfades smooth loop boundaries; generated tracks have near-silent outro padding removed. Speech ducks music only during audible playback and releases the duck on completion, interruption, mute, error or reset. Pending voice synthesis does not mute the music. Existing music continues while the next track loads.
