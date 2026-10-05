@@ -1,0 +1,132 @@
+{
+  "date": "2026-10-05",
+  "scope": "Local responsiveness regression and custom-command no-op",
+  "sampleNote": "Small diagnostic samples, not percentile estimates. Providers and network timings vary. Before/after repeat-move samples use different personalized profiles.",
+  "rootCauses": [
+    "Identity preservation fix switched all costume frames from FLUX (~1\u20132 seconds) to Nano Banana 1K (~10\u201312 seconds).",
+    "Costume image cache included the move, so identical outfits were regenerated for engaged, sway and flarhgunnstow.",
+    "Tayne intro was blocked on both dance clips.",
+    "Planner returned empty reaction for a new named performance in Tayne context; UI then said Command complete."
+  ],
+  "fixes": [
+    "Reuse costume frames across moves with matching outfit/framing/background, retaining identity and smile isolation.",
+    "Use Nano Banana 0.5K for full-body frames; retain 1K for portraits/prints. Existing cached frames remain valid.",
+    "Begin Tayne intro while follow-up choreography prepares.",
+    "Require custom plans for explicit novel performance requests, validate required fields, and only acknowledge completion after actual playback preparation.",
+    "Use H3 Max Turbo image-to-video for newly generated anchored portraits; keep Max reference-to-video for motion transfer.",
+    "Persist planner diagnostics under ignored cache/diagnostics/commands.jsonl."
+  ],
+  "imagePairs": [
+    {
+      "subject": "upload",
+      "resolution": "0.5K",
+      "requestMs": 8133.832416
+    },
+    {
+      "subject": "upload",
+      "resolution": "1K",
+      "requestMs": 10066.059166
+    },
+    {
+      "subject": "thomas",
+      "resolution": "0.5K",
+      "requestMs": 8863.727041000002
+    },
+    {
+      "subject": "thomas",
+      "resolution": "1K",
+      "requestMs": 11473.918832999996
+    }
+  ],
+  "freshOutfitAndRepeatMove": [
+    {
+      "variant": "base",
+      "job": "b5a32f8c36fbb44ff0f3",
+      "frameMs": 7813.346750020981,
+      "videoMs": 5959.047625005245,
+      "previewMs": 15254.820207983255,
+      "totalMs": 16701.98137500882
+    },
+    {
+      "variant": "engaged",
+      "job": "ec1a85e74bd28f4b9470",
+      "frameMs": 0.19612500071525574,
+      "videoMs": 6316.904707998037,
+      "previewMs": 7643.174207985401,
+      "totalMs": 8882.890707999468
+    }
+  ],
+  "portraitModelPair": [
+    {
+      "model": "minimax/h3-max/image-to-video",
+      "ms": 2964.968,
+      "providerTimings": {
+        "inference": 0.8257784941233695
+      }
+    },
+    {
+      "model": "minimax/h3-max-turbo/image-to-video",
+      "ms": 2047.3878749999994,
+      "providerTimings": {
+        "inference": 0.45131570659577847
+      }
+    }
+  ],
+  "turboIntegration": {
+    "id": "0d09b992c9d83ab63bef",
+    "status": "complete",
+    "stage": "Ready",
+    "started": 1791220885063,
+    "timings": {
+      "identityMs": 1336.9942090213299,
+      "frameMs": 2735.2572079896927,
+      "videoMs": 2187.673249989748,
+      "previewMs": 6259.93054202199,
+      "downloadMs": 3260.1252500116825,
+      "ffmpegMs": 111.93583300709724,
+      "persistMs": 1.9200420081615448,
+      "frameCacheHit": 1,
+      "totalMs": 9633.918667018414,
+      "finishMs": 113.86875000596046
+    },
+    "previewUrl": "/media/generated/0d09b992c9d83ab63bef.mp4?live=1",
+    "url": "/media/generated/0d09b992c9d83ab63bef.mp4",
+    "image": "/media/generated/0d09b992c9d83ab63bef.png",
+    "elapsed": 9633.918667018414
+  },
+  "browserCarrotChecks": [
+    {
+      "context": "celery",
+      "job": "06be16d614f20a6fc763",
+      "displayedSeconds": 5.6,
+      "paused": false,
+      "readyState": 4
+    },
+    {
+      "context": "tayne",
+      "job": "047ddf96baca86477d20",
+      "displayedSeconds": 5.5,
+      "paused": false,
+      "readyState": 4
+    }
+  ],
+  "tayneFreshProfile": {
+    "introJob": "ff719885185e8bae3b85",
+    "baseJob": "85a338a0e26ac95968d9",
+    "swayJob": "a99211e2117bdd5b93a5",
+    "costumeImageRequests": 1,
+    "introPreviewMs": 2996,
+    "dancePreviewMs": [
+      15490,
+      15343
+    ],
+    "browserResult": "Completed with seven Tayne videos playing. Intro UI start latency was not captured."
+  },
+  "checks": [
+    "npm run build",
+    "scripts/check-command-plans.ts",
+    "scripts/check-sketch-matching.ts (exact protocol sequence plus 19 confirmation/context variants)",
+    "git diff --check"
+  ],
+  "qualityReview": "Inspected both 0.5K identity frames and generated base/engaged posters. Inspected Max/Turbo portrait frames and integrated Turbo poster; recognizable identity retained. This is not a full fresh audio/video sketch grade."
+}

@@ -5,7 +5,7 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {fal} from '@fal-ai/client';
 import {videoPreviews} from './video-preview.ts';
-import {createHash} from 'node:crypto';
+import {costumeFrameInput,costumeFrameKey,costumeFrameVariant} from './costume-frame.ts';
 import {canonicalName,motionPrompt} from './choreography.ts';
 const exec=promisify(execFile);
 const motionReferences=new Map<string,Promise<string>>();
@@ -16,14 +16,15 @@ const costumeFrames=new Map<string,Promise<CostumeFrame>>();
 // the uploaded person here; the costume text describes clothing independently.
 // Klein also changed faces in the single-reference regression, so use Nano Banana.
 function identityCostumeFrame(profile:string,costume:string,closeup:boolean,ref:string,canonical:string,smiling=false){
- const key=createHash('sha256').update(JSON.stringify({profile,costume,closeup,canonical,...(smiling?{smiling:true}:{}),version:5})).digest('hex').slice(0,20);
- const old=costumeFrames.get(key);if(old)return old;
+ canonical=costumeFrameVariant(canonical);
+ const key=costumeFrameKey(profile,costume,closeup,canonical,smiling);
+ const old=costumeFrames.get(key);if(old)return old.then(frame=>({...frame,timings:{frameReused:1}}));
  const pending=(async()=>{
   const file=path.join(process.cwd(),'public/media/generated',`identity-frame-${key}.png`);
-  if(await fs.access(file).then(()=>true,()=>false))return {url:await fal.storage.upload(new File([await fs.readFile(file)],'costume.png',{type:'image/png'}))};
+  if(await fs.access(file).then(()=>true,()=>false))return {url:await fal.storage.upload(new File([await fs.readFile(file)],'costume.png',{type:'image/png'})),timings:{frameCacheHit:1}};
   const started=performance.now();
-  const result:any=await fal.run('fal-ai/nano-banana-2/edit',{input:{image_urls:[ref],prompt:`Create a new coherent whole-person photograph of the adult person in the supplied image. This photo is the ONLY identity reference. Preserve this person's recognizable face, facial proportions, skin tone, hair, age appearance and body build. Preserve the presence OR absence of facial hair and eyeglasses; never add a beard, mustache or glasses that are absent, unless the requested costume specifically requires glasses. Keep the person's appearance when changing clothes; do not change the person to fit a costume. Preserve the actual face even when it differs from a stereotypical wearer of this outfit. Render the entire person naturally together. General costume description: ${costume}. ${smiling?'A smiling headshot for a photo print: an unmistakable warm, awkward closed-mouth smile with raised cheeks, looking slightly off camera. Hold the whole hat and shoulders inside the frame.':''} ${closeup?'TIGHT head-and-shoulders closeup: hat nearly touches the top edge, face occupies half the image height, crop at upper chest. No waist, legs, feet or full body.':'Entire coherent person from hair to shoe soles, centered and occupying 80% of image height, hands on hips, empty margins above and below.'} ${canonical.endsWith('-face')?'Solid hot pink studio background, edge to edge, no gradient or yellow border.':'Flat light gray seamless studio background.'} Low-budget 1990s lighting. No text, collage or pasted head.`,aspect_ratio:closeup||canonical==='oyster'?'4:3':'9:16',resolution:'1K',output_format:'png'}});
-  const timings:Record<string,number>={frameRequestMs:performance.now()-started};
+  const result:any=await fal.run('fal-ai/nano-banana-2/edit',{input:costumeFrameInput(ref,costume,closeup,canonical,smiling,closeup?'1K':'0.5K')});
+  const timings:Record<string,number>={frameCacheHit:0,frameRequestMs:performance.now()-started};
   if(typeof result.data.timings?.inference==='number')timings.frameInferenceMs=result.data.timings.inference*1000;
   // The video provider can use its own image URL immediately. Persisting our
   // copy must not hold up inference (especially on the production GCS mount).
@@ -51,8 +52,8 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  if(costumeFrame&&!['face','smile'].includes(body.variant))prompt+=' Image 2 is the original photo of the same person in Image 1. Preserve their recognizable appearance from both images. Only Image 1 supplies the costume; do not copy the original photo clothing or scenery.';
  if(body.variant==='face')prompt+=' Preserve the tight head-and-shoulders composition of Image 1 throughout. Hat at the top edge, upper chest at bottom edge. Never zoom out or show legs or feet. Solid hot pink backdrop.';
  const anchoredPortrait=['face','smile'].includes(body.variant)&&!!costumeFrame;
- const model=anchoredPortrait?'minimax/h3-max/image-to-video':'minimax/h3-max/reference-to-video';
- if(anchoredPortrait)prompt='Animate this exact head-and-shoulders portrait. Keep the camera fixed at this exact close-up scale, with the same face, eyeglasses, hat and clothing. Tiny rhythmic head bobs and glances, subtle awkward smile. Solid hot pink background. No zoom, no cuts, no speech. Keep the upper chest at the bottom edge; do not show the waist, legs or feet. End in the initial pose for a seamless loop.';
+ const model=anchoredPortrait?'minimax/h3-max-turbo/image-to-video':'minimax/h3-max/reference-to-video';
+ if(anchoredPortrait)prompt='Animate this exact head-and-shoulders portrait. Keep the camera fixed at this exact close-up scale, with the same face, clothing and accessories. Preserve the presence or absence of eyeglasses and headwear exactly. Tiny rhythmic head bobs and glances, subtle awkward smile. Solid hot pink background. No zoom, no cuts, no speech. Keep the upper chest at the bottom edge; do not show the waist, legs or feet. End in the initial pose for a seamless loop.';
  if(body.variant==='smile')prompt='Animate this exact smiling head-and-shoulders portrait for a photo print. Keep the same hat, face, eyewear and costume. Preserve the framing and pale gray background. Hold a clear warm closed-mouth smile from the first frame through the entire clip, with only natural tiny breathing and eye movement. No zoom, no full body, no speech, no text, no cuts. Upper chest at bottom edge.';
  // Synchronous inference avoids the hosted queue's poll/delivery round trips.
  const video:any=await fal.run(model,{input:{...(anchoredPortrait?{image_url:costumeFrame!.url}:{reference_image_urls:costumeFrame?[costumeFrame.url,ref]:[ref],...(canonical==='oyster'&&costumeFrame?{image_url:costumeFrame.url}:{})}),...(motionRef?{reference_video_urls:[motionRef]}:{}),prompt,duration:5,resolution:'480P',aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='oyster'?'4:3':body.variant==='intro'?'9:16':closeup?'4:3':'9:16',prompt_expansion_mode:'disabled'}});
