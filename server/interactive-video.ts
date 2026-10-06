@@ -1,3 +1,4 @@
+import {fastVideoEndpoint,fastVideoReferenceInput} from './video-model.ts';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
@@ -72,14 +73,14 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  if(costumeFrame&&!['face','smile'].includes(body.variant))prompt+=' Image 2 is the original photo of the same person in Image 1. Preserve their recognizable appearance from both images. Only Image 1 supplies the costume; do not copy the original photo clothing or scenery.';
  if(body.variant==='face'&&!directDance)prompt+=' Preserve the tight head-and-shoulders composition of Image 1 throughout. Hat at the top edge, upper chest at bottom edge. Never zoom out or show legs or feet. Solid hot pink backdrop.';
  const anchoredPortrait=['face','smile'].includes(body.variant)&&!!costumeFrame;
- const model=anchoredPortrait?'minimax/h3-max-turbo/image-to-video':'minimax/h3-max/reference-to-video';
+ const model=directDance?fastVideoEndpoint():anchoredPortrait?'minimax/h3-max-turbo/image-to-video':'minimax/h3-max/reference-to-video';
  if(anchoredPortrait)prompt='Animate this exact head-and-shoulders portrait. Keep the camera fixed at this exact close-up scale, with the same face, clothing and accessories. Preserve the presence or absence of eyeglasses and headwear exactly. Tiny rhythmic head bobs and glances, subtle awkward smile. Solid hot pink background. No zoom, no cuts, no speech. Keep the upper chest at the bottom edge; do not show the waist, legs or feet. End in the initial pose for a seamless loop.';
  const motionWaitAt=performance.now(),motionResult=await motionPending;
  if('error' in motionResult)throw motionResult.error;
  const motionRef=motionResult.url;timings.motionWaitMs=performance.now()-motionWaitAt;
  // Synchronous inference avoids the hosted queue's poll/delivery round trips.
  const videoStarted=performance.now();
- const video:any=await fal.run(model,{input:{...(anchoredPortrait?{image_url:costumeFrame!.url}:{reference_image_urls:costumeFrame?[costumeFrame.url,ref]:[ref],...(canonical==='oyster'&&costumeFrame?{image_url:costumeFrame.url}:{})}),...(motionRef?{reference_video_urls:[motionRef]}:{}),prompt,duration:5,resolution:'480P',aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='oyster'?'4:3':body.variant==='intro'?'9:16':closeup?'4:3':'9:16',prompt_expansion_mode:'disabled'},abortSignal:AbortSignal.timeout(170000)});
+ const video:any=await fal.run(model,{input:{...(directDance?fastVideoReferenceInput(ref):anchoredPortrait?{image_url:costumeFrame!.url}:{reference_image_urls:costumeFrame?[costumeFrame.url,ref]:[ref],...(canonical==='oyster'&&costumeFrame?{image_url:costumeFrame.url}:{})}),...(motionRef?{reference_video_urls:[motionRef]}:{}),prompt,duration:5,resolution:'480P',aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='oyster'?'4:3':body.variant==='intro'?'9:16':closeup?'4:3':'9:16',prompt_expansion_mode:'disabled'},abortSignal:AbortSignal.timeout(170000)});
  timings.videoMs=performance.now()-videoStarted;
  timings.previewMs=performance.now()-start;
  const downloadStarted=performance.now(),download=new VideoDownload(video.data.video.url);

@@ -69,3 +69,23 @@ Rollback changes the application image, not stored media. Do not delete the medi
 The Worker explicitly caches the public HTML shell for 30 seconds at the edge (`max-age=0, s-maxage=30`), retaining the full query string in its cache key. Hashed `/assets/` bundles cache for a year; fonts have shorter browser/edge TTLs. Cookies, authorization, cross-origin requests and ranges bypass shared cache lookup. APIs, streamed speech, uploaded/generated media, errors and responses setting cookies remain uncached. Cached HTML still loads and executes the browser app normally; identity/session state and API requests are not embedded into the shell. If personalized data is ever rendered into HTML, return `private, no-store` for that response.
 
 Startup archives hashed bundles in `/data/cache/static-assets`; the origin can serve older bundles to cached HTML and already-open tabs after deployment. Keep that archive when rolling revisions. `X-Cinco-Cache` reports HIT, MISS or BYPASS. Run `node scripts/check-edge-cache.mjs` to verify policy.
+
+
+### Fast-path video model
+
+`FAST_VIDEO_MODEL=reference` (default) uses `minimax/h3-max/reference-to-video`.
+`FAST_VIDEO_MODEL=turbo` uses `minimax/h3-max-turbo/image-to-video` directly with the original identity photo.
+This server-only flag applies to all fast-path variants and custom characters. The legacy non-fast pipeline is unchanged.
+Turbo has its own generation cache keys; switching back reuses existing reference-model assets.
+Turbo can show the source photo for the first few frames and had weaker identity preservation in the initial ratings. Its output canvas follows the identity photo rather than the requested portrait/full-body aspect ratio. No automatic trimming or cropping is applied.
+
+After deploying code containing this flag, switch production without rebuilding:
+
+```sh
+gcloud run services update celeryman --project=celeryman-os --region=us-central1 --update-env-vars=FAST_VIDEO_MODEL=turbo
+# Restore the default model:
+gcloud run services update celeryman --project=celeryman-os --region=us-central1 --update-env-vars=FAST_VIDEO_MODEL=reference
+```
+
+These commands create a new Cloud Run revision. Normal deployments preserve this setting (`--update-env-vars`).
+Locally, set the variable in `.env` and restart the server.
