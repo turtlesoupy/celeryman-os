@@ -67,7 +67,7 @@ async function open(mode:string){
    socket.on('framesent',frame=>{const e=JSON.parse(String(frame.payload));if(e.type==='input_audio_buffer.commit')commits++;if(e.type==='input_audio_buffer.append'){const pcm=Buffer.from(e.audio,'base64');bytes+=pcm.length;nonzero ||=pcm.some(x=>x!==0);}});
   });
  }
- const entry=await page.goto(origin);assert.equal(entry?.status(),200,'test desktop must be accessible');await page.getByRole('button',{name:'Start',exact:true}).click();
+ const entry=await page.goto(origin+(origin.includes('?')?'&':'?')+'streamingTranscription=1');assert.equal(entry?.status(),200,'test desktop must be accessible');await page.getByRole('button',{name:'Start',exact:true}).click();
  await page.locator('.launch').waitFor({state:'detached'});
  return {page,stats:()=>({fallback,connections,commits,bytes,nonzero,closed,errors})};
 }

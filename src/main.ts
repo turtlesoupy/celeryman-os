@@ -6,13 +6,19 @@ import {incompleteTranscript} from './transcript-quality';
 import {launchIdentity} from './identity-launcher';
 import './style.css';
 import {createCommandStatus} from './command-status';
+import {createGenerationOverlay} from './generation-overlay';
 import {createScriptGuide} from './script-guide';
 import {StreamingSpeech} from './streaming-speech';
 import {TranscriptionTurn,prepareTranscription,warmTranscription,closeTranscription} from './streaming-transcription';
 import hatTrack from './hat-track.json';
-import {routeAudio,unlockAudio,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop} from './audio';
+import {routeAudio,unlockAudio,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop,playDesktopDoubleClick} from './audio';
 import {sketch,scripted,type Command,type Context} from './protocol';
 import {costumes,motions} from './dances';
+import {revealVideoWindow} from './video-presentation';
+// Opt in with /?fastPath=1; omit it (or use 0) for the anchored control.
+const fastPath=new URLSearchParams(location.search).get('fastPath')==='1';
+// Compare streaming explicitly while full-recording transcription is the control.
+const streamingTranscription=new URLSearchParams(location.search).get('streamingTranscription')==='1';
 const app=document.querySelector<HTMLDivElement>('#app')!;
 app.innerHTML='<main class="viewport"><section class="desktop" aria-label="Cinco desktop"></section></main>';
 const desktop=document.querySelector<HTMLElement>('.desktop')!;
@@ -23,6 +29,7 @@ inputControls.innerHTML='<button type="button" class="classic-button record-butt
 const recordButton=inputControls.querySelector<HTMLButtonElement>('.record-button')!,settingsButton=inputControls.querySelector<HTMLButtonElement>('.mic-settings')!;
 const activity=document.createElement('div');activity.className='input-activity';
 const diagnostics=document.createElement('div');diagnostics.className='input-diagnostics';
+const generationOverlay=createGenerationOverlay();
 const commandStatus=createCommandStatus(activity,()=>desktop.classList.contains('paused')?'Paused':'Ready',diagnostics);let feedbackToken=0;
 const scriptGuide=createScriptGuide(diagnostics,activity.querySelector<HTMLElement>('.command-status-line')!);
 let profile=localStorage.getItem('cinco-profile')||'paul',identity=localStorage.getItem('cinco-name')||'Paul';
@@ -47,7 +54,8 @@ addEventListener('pagehide',()=>{microphoneTurn?.cancel();closeTranscription();}
 let recordingRequested=false,recordingStarting=false,pushToTalk=false,recordingNumber=0;
 let recordingPointer:number|undefined,recordingCancelled=false;
 let stopRecordingTimer:number|undefined,lastMicUrl='',lastMicPlayback:HTMLAudioElement|undefined;
-const microphone=new MicrophoneDevices(()=>{stream?.getTracks().forEach(t=>t.stop());stream=null;},()=>recordingStarting||recorder?.state==='recording');
+let microphoneOpening:{token:number;promise:Promise<MediaStream>}|undefined;
+const microphone=new MicrophoneDevices(()=>{stream?.getTracks().forEach(t=>t.stop());stream=null;if(started)void readyMicrophone().catch(()=>{});},()=>recordingStarting||recorder?.state==='recording');
 const events:any[]=[];
 const spokenLines:Record<string,string>={'okay':'Okay.','print':'Okay.','confirm':'Okay.','yes':'Yes.','hat':'Yes.','flower':'Yes.','yes-paul':'Yes, Paul!','greeting':'Good morning Paul. What will your first sequence of the day be?','beta':"I have a beta sequence I've been working on. Would you like to see it?",'repeat':'Not computing. Please repeat.','nsfw':'This is not suitable for work. Are you sure?','call':"Excuse me Paul. Your wife is on the phone. It's an emergency."};
 const delay=(ms:number)=>new Promise(r=>setTimeout(r,ms));
@@ -112,6 +120,7 @@ function fitTerminalResponse(win:HTMLElement){
 function terminal(large=false){let win=desktop.querySelector<HTMLElement>('[data-id="terminal"]');if(win){if(large){win.classList.add('large');placeWindow(win,{x:204,y:147,w:532,h:283,className:'terminal large'});}return win;}
  const t=windowBox({title:`${identity}'s COMPUTER`,x:60,y:405,w:362,h:101,id:'terminal',className:`terminal ${large?'large':''}`});
  if(large)placeWindow(t.win,{x:204,y:147,w:532,h:283,className:'terminal large'});
+ const display=document.createElement('div');display.className='terminal-display';t.content.replaceWith(display);display.append(t.content,generationOverlay.element);
  t.win.querySelector('.bottom-edge')!.remove();t.win.append(inputControls,activity);
  t.content.setAttribute('role','log');t.content.setAttribute('aria-label','Computer response');
  const mutations=new MutationObserver(()=>fitTerminalResponse(t.win));
@@ -129,10 +138,13 @@ function dancer(character:string,o:Partial<W>={},variant='',url?:string,deferPla
  // Keep generated soundtrack URLs tied to this window, even if its asset cache changes.
  v.dataset.musicSource=sequenceMusicSource(character,source);queueMicrotask(syncSequenceMusic);
  const status=feedbackToken,key=`video:${++mediaStatusId}`;commandStatus.job(status,key,'Loading video');
- const done=()=>{clearTimeout(timeout);commandStatus.jobDone(status,key);};
- const timeout=window.setTimeout(()=>{if(v.isConnected){commandStatus.error(status,'Video is not playing. Try the command again.');}done();},30000);
- mediaStatusCleanup.set(v,done);v.addEventListener('playing',done,{once:true});v.addEventListener('loadeddata',()=>{if(paused)done();},{once:true});
- v.addEventListener('error',()=>{done();if(!v.isConnected)return;commandStatus.error(status,'Video playback failed. Try the command again.');t.content.textContent='Sequence unavailable. Open controls to regenerate.';events.push({kind:'media-error',url:v.src});});if(!paused&&!deferPlayback)void v.play().catch((error:Error)=>{if(!v.isConnected||error.name==='AbortError')return;done();commandStatus.error(status,`Video playback failed: ${error.message}`);});return t;
+ const progress=mode==='live'?generationOverlay.begin(generationEpoch,key,face?'Portrait':'Dancer'):undefined;
+ const done=()=>{clearTimeout(timeout);progress?.done();commandStatus.jobDone(status,key);};
+ const timeout=window.setTimeout(()=>{if(v.isConnected){cancelReveal();t.win.style.visibility='';t.content.textContent='Sequence unavailable. Try the command again.';commandStatus.error(status,'Video is not playing. Try the command again.');}done();},30000);
+ const loadingAt=performance.now();
+ const cancelReveal=revealVideoWindow(v,t.win,()=>{done();syncSequenceMusic();const elapsedMs=Math.round(performance.now()-loadingAt);events.push({kind:'video-visible',url:source,character,variant,elapsedMs,time:performance.now()});void api('client-event',{event:'video-visible',character,variant,elapsedMs,message:source}).catch(()=>{});});
+ mediaStatusCleanup.set(v,()=>{done();cancelReveal();});
+ v.addEventListener('error',()=>{done();cancelReveal();if(!v.isConnected)return;t.win.style.visibility='';commandStatus.error(status,'Video playback failed. Try the command again.');t.content.textContent='Sequence unavailable. Open controls to regenerate.';events.push({kind:'media-error',url:v.src});});if(!paused&&!deferPlayback)void v.play().catch((error:Error)=>{if(!v.isConnected||error.name==='AbortError')return;done();cancelReveal();t.win.style.visibility='';t.content.textContent='Sequence unavailable. Try the command again.';commandStatus.error(status,`Video playback failed: ${error.message}`);});return t;
 }
 function portrait(character:string){return dancer(character,{title:'',x:125,y:62,w:375,h:332,menu:character==='celery'?'Celery Man':character==='oyster'?'Celery Man':'Tayne',blue:true,className:'portrait'},character+'-face');}
 function sequenceMusicSource(character:string,source=videoSource(character)){
@@ -142,7 +154,7 @@ function syncSequenceMusic(){
  // The scripted finale has one shared score across its cascade of windows.
  if(desktop.classList.contains('finale'))return;
  const front=[...desktop.querySelectorAll<HTMLElement>('.window:not(.minimized):not(.hidden)')]
-  .filter(win=>win.style.display!=='none'&&win.querySelector('video[data-music-source]'))
+  .filter(win=>win.style.display!=='none'&&win.style.visibility!=='hidden'&&win.querySelector('video[data-music-source]'))
   .sort((a,b)=>Number(b.style.zIndex)-Number(a.style.zIndex))[0];
  const video=front?.querySelector<HTMLVideoElement>('video[data-music-source]');
  const intros=[...desktop.querySelectorAll<HTMLVideoElement>('video.intro-video')];
@@ -164,6 +176,10 @@ function musicFor(character:string,source=sequenceMusicSource(character)){
  const status=feedbackToken,key=`music:${token}`;commandStatus.job(status,key,'Loading music');const next=new MusicLoop(source,!source.includes('/original/'));next.volume=0;
  void next.ready.then(()=>{if(token!==musicEpoch){next.stop();commandStatus.jobDone(status,key);return;}pendingMusic=undefined;music?.stop();music=next;musicLevel();if(!paused)void music.play();commandStatus.jobDone(status,key);events.push({kind:'music-playing',url:source,time:performance.now()});}).catch(e=>{next.stop();commandStatus.jobDone(status,key);if(token!==musicEpoch)return;pendingMusic=undefined;commandStatus.error(status,'Music could not load. Try the command again.');events.push({kind:'music-error',message:String(e)});});
 }
+async function speechOutputReady(){
+ await microphoneOpening?.promise.catch(()=>{});
+ await unlockAudio();
+}
 async function speak(cmd:Command){
  if(!sound||!cmd.response)return;
  stopSpeech();const epoch=speechEpoch,status=feedbackToken,key=`voice:${epoch}`;
@@ -174,13 +190,15 @@ async function speak(cmd:Command){
   events.push({kind:'audio',src,text:cmd.response,spokenText:cmd.response,time:requestedAt});
   const release=()=>{done();if(epoch===speechEpoch){ducks.delete('speech');musicLevel();}};
   const current=new StreamingSpeech(cmd.response,{
+   beforePlayback:speechOutputReady,
    onStart:()=>{if(epoch!==speechEpoch||!sound)return;commandStatus.job(status,key,'Speaking');ducks.add('speech');musicLevel();events.push({kind:'audio-playing',src,text:cmd.response,spokenText:cmd.response,latencyMs:performance.now()-requestedAt,time:performance.now()});},
    onEnd:()=>{release();events.push({kind:'voice-ended',text:cmd.response,time:performance.now()});},
    onError:error=>{release();if(epoch===speechEpoch){commandStatus.error(status,`Voice unavailable: ${error.message}`);notify(`Voice unavailable: ${error.message}`);events.push({kind:'voice-error',message:error.message});}},
    onComplete:summary=>events.push({kind:'voice-stream-complete',text:cmd.response,...summary,time:performance.now()})
   });streamedSpeech=current;await current.started;return;
  }
- try{const src=`/media/original/${cmd.audio}.wav`;
+ try{const src=`/media/original/${cmd.audio}.wav${cmd.audio==='engaged'?'?v=2':''}`;
+  await speechOutputReady();
   if(epoch!==speechEpoch||!sound)return;const current=new Audio(src);routeAudio(current);speech=current;current.volume=1;
   const release=()=>{done();if(epoch===speechEpoch){ducks.delete('speech');musicLevel();}};
   events.push({kind:'audio',src,text:cmd.response,spokenText:cmd.audio?(spokenLines[cmd.audio]||cmd.response):cmd.response,time:performance.now()});
@@ -279,12 +297,12 @@ function chaos(){
 function presentSequence(show:()=>void,ms:number){const status=feedbackToken,order=commandEpoch,token=run;commandStatus.job(status,'presentation','Opening sequence');schedule(()=>{if(order===commandEpoch&&token===run)show();commandStatus.jobDone(status,'presentation');},ms);}
 async function apply(cmd:Command,acknowledged=false){
  const preparingAt=performance.now();events.push({kind:'action',...cmd,time:performance.now()});if(cmd.action==='reaction')return;clearTimers();if(desktop.classList.contains('finale')&&!['pause','resume','attention'].includes(cmd.action))clearWindows();if(!['attention','pause','resume'].includes(cmd.action))context.pending='';
- if(!acknowledged&&cmd.action!=='greeting'&&(cmd.audio||['celery','attention','pause','resume','custom'].includes(cmd.action)))void speak(cmd);
+ if(!acknowledged&&!['greeting','engage'].includes(cmd.action)&&(cmd.audio||['celery','attention','pause','resume','custom','dialogue'].includes(cmd.action)))void speak(cmd);
  // Start the spoken introduction as soon as it is ready; the two dance clips
  // prepare behind it instead of blocking all visible response for ~20 seconds.
  if(mode==='live'&&cmd.action==='tayne'){
   const epoch=++generationEpoch;
-  const followup=Promise.all([prepareDance('tayne','base',epoch,undefined,true),prepareDance('tayne','sway',epoch,undefined,true)]).then(ready=>ready.every(Boolean));
+  const followup=Promise.all([prepareDance('tayne','base',epoch),prepareDance('tayne','sway',epoch)]).then(ready=>ready.every(Boolean));
   if(!await prepareDance('tayne','intro',epoch))return false;
   context.character='tayne';context.costume=costumes.tayne;showTayne(followup);return true;
  }
@@ -292,7 +310,7 @@ async function apply(cmd:Command,acknowledged=false){
  // the finished dancer. Keep its job visible while it finishes independently.
  if(mode==='live'&&['celery','oyster'].includes(cmd.action)){
   const character=cmd.action,epoch=++generationEpoch,token=run;
-  const face=prepareDance(character,'face',epoch,undefined,true);
+  const face=prepareDance(character,'face',epoch);
   if(!await prepareDance(character,'base',epoch))return false;
   context.character=character;context.costume=costumes[character];
   if(character==='celery'){clearWindows();terminal();}
@@ -304,20 +322,44 @@ async function apply(cmd:Command,acknowledged=false){
  const generating=(['celery','oyster','tayne','hat','flarhgunnstow','print'].includes(cmd.action)||(cmd.action==='engage'&&context.character==='celery'));
  if(mode==='live'&&generating){const epoch=++generationEpoch;const character=cmd.action==='engage'?'celery':['hat','flarhgunnstow'].includes(cmd.action)?'tayne':cmd.action==='print'?(cmd.target||context.character):cmd.action;const variant=cmd.action==='engage'?'engaged':cmd.action==='hat'?'hat':cmd.action==='flarhgunnstow'?'flarhgunnstow':cmd.action==='print'?'smile':'base';
   const work=[prepareDance(character,variant,epoch,cmd.action==='print'?cmd:undefined)];
-  if(variant==='base'&&['celery','oyster'].includes(character))work.push(prepareDance(character,'face',epoch,undefined,true));
-  if(character==='tayne'&&variant==='base')work.push(prepareDance(character,'intro',epoch,undefined,true),prepareDance(character,'sway',epoch,undefined,true));
+  if(variant==='base'&&['celery','oyster'].includes(character))work.push(prepareDance(character,'face',epoch));
+  if(character==='tayne'&&variant==='base')work.push(prepareDance(character,'intro',epoch),prepareDance(character,'sway',epoch));
   const ready=await Promise.all(work);if(ready.some(ok=>!ok))return false;
  }
- if(mode==='live'&&cmd.action==='chaos'){const epoch=++generationEpoch;const ready=await Promise.all([prepareDance('mozzarell','base',epoch),prepareDance('mozzarell','face',epoch,undefined,true)]);if(ready.some(ok=>!ok))return false;}
+ if(mode==='live'&&cmd.action==='chaos'){const epoch=++generationEpoch;const ready=await Promise.all([prepareDance('mozzarell','base',epoch),prepareDance('mozzarell','face',epoch)]);if(ready.some(ok=>!ok))return false;}
  if(cmd.action==='reset'){reset();return;}
  if(cmd.action==='greeting'){
   clearWindows();const loader=loading('Preparing computer voice, please wait...',true);
   terminal().style.zIndex=String(++topZ);
-  const speaking=speak(cmd),epoch=speechEpoch;await speaking;if(epoch!==speechEpoch)return;
-  loader.content.querySelector('.loading-label')!.textContent='please wait...';schedule(()=>loader.win.remove(),4000);void type(cmd.response);
+  // Show the greeting and accept commands immediately; cloud speech can arrive later.
+  void type(cmd.response);void speak(cmd);schedule(()=>loader.win.remove(),4000);
  }
  if(cmd.action==='celery'){context.character='celery';context.costume=costumes.celery;clearWindows();loading('Loading CELERY MAN, please wait...');void type(cmd.response);presentSequence(showCelery,mode==='live'?Math.max(0,1500-(performance.now()-preparingAt)):1500);}
- if(cmd.action==='engage'){desktop.querySelectorAll('video').forEach(v=>{if(v.dataset.character==='celery'&&!v.classList.contains('face-video')){v.dataset.sequence='Celery Man / 4d3d3d3';v.src=videoSource('celery','engaged');void v.play();}else v.playbackRate=1.4;});void type(cmd.response);}
+ if(cmd.action==='engage'){
+  const order=commandEpoch,token=run,status=feedbackToken;
+  const videos=[...desktop.querySelectorAll('video')];
+  await Promise.all(videos.map(async v=>{
+   if(v.dataset.character!=='celery'||v.classList.contains('face-video')){v.playbackRate=1.4;return;}
+   const key='engaged-video',progress=mode==='live'?generationOverlay.begin(generationEpoch,key,'Dancer'):undefined;
+   commandStatus.job(status,key,'Loading video');
+   try{
+    await new Promise<void>((resolve,reject)=>{
+     let frame:number|undefined;
+     const cleanup=()=>{clearTimeout(timer);v.removeEventListener('loadeddata',loaded);v.removeEventListener('error',failed);if(frame!==undefined)v.cancelVideoFrameCallback(frame);};
+     const ready=()=>{cleanup();resolve();};
+     const loaded=()=>{if(v.readyState>=2&&(v.paused||!v.requestVideoFrameCallback))ready();};
+     const failed=()=>{cleanup();reject(Error('Engaged video could not load.'));};
+     const timer=setTimeout(failed,30000);
+     v.addEventListener('loadeddata',loaded);v.addEventListener('error',failed);
+     v.dataset.sequence='Celery Man / 4d3d3d3';v.src=videoSource('celery','engaged');
+     if(v.requestVideoFrameCallback)frame=v.requestVideoFrameCallback(ready);
+     if(!paused)void v.play().catch(failed);
+    });
+   }finally{progress?.done();commandStatus.jobDone(status,key);}
+  }));
+  if(token!==run||order!==commandEpoch)return false;
+  void type(cmd.response);if(!acknowledged)void speak(cmd);
+ }
  if(cmd.action==='oyster'){context.character='oyster';context.costume=costumes.oyster;portrait('oyster');dancer('oyster',{x:421,y:47,w:487,h:424});musicFor('oyster');void type(cmd.response);}
  if(cmd.action==='print'){
   const character=cmd.target||context.character,image=mode==='reference'?'/media/original/oyster-face.png':liveAssets[`${profile}:${character}:smile`]?.image||'';
@@ -327,6 +369,7 @@ async function apply(cmd:Command,acknowledged=false){
   finally{commandStatus.jobDone(status,'print-image');}
  }
  if(cmd.action==='attention'||cmd.action==='cancel')void type(cmd.response);
+ if(cmd.action==='dialogue'){context.pending='dialogue';void type(cmd.response);}
  if(cmd.action==='beta'){clearWindows();music?.pause();context.pending='beta';void type(cmd.response,true);}
  if(cmd.action==='tayne'){context.character='tayne';context.costume=costumes.tayne;clearWindows();loading('Loading BETA, please wait...');presentSequence(showTayne,mode==='live'?Math.max(0,1150-(performance.now()-preparingAt)):1150);}
  if(cmd.action==='hat'){context.character='tayne';showHat();void type(cmd.response);}
@@ -340,22 +383,23 @@ async function apply(cmd:Command,acknowledged=false){
  if(cmd.action==='custom')return customDance(cmd);
 
 }
-async function prepareDance(character:string,variant:string,epoch:number,cmd?:Command,quiet=false){
- const l=loading('Compiling personalized sequence, please wait...');if(quiet)l.win.style.display='none';const token=run;const key=`${profile}:${character}:${variant}`;
+async function prepareDance(character:string,variant:string,epoch:number,cmd?:Command){
+ terminal();const token=run;const key=`${profile}:${character}:${variant}`;
  const startedAt=performance.now(),feedback=feedbackToken,jobKey=`${epoch}:${key}`;let generationId:string|undefined;
  const report=(event:string,message?:string)=>void api('client-event',{event,jobId:generationId,character,variant,elapsedMs:Math.round(performance.now()-startedAt),message}).catch(()=>{});
  const describe=(stage:string)=>`${stage} (${variant==='face'?'portrait':variant==='base'?'dancer':variant})`;
+ const progress=generationOverlay.begin(epoch,jobKey,variant==='face'?'Portrait':variant==='base'?'Dancer':variant==='smile'?'Printout':variant==='intro'?'Introduction':variant==='hat'?'Hat wobble':'Dance');
  commandStatus.job(feedback,jobKey,describe('Loading'));
- try{const req={profile,character,variant,...(cmd?.playbackRate?{playbackRate:cmd.playbackRate}:{}),canonical:!cmd&&['celery','oyster','tayne','mozzarell'].includes(character),motion:variant==='intro'?`Tight head-and-shoulders close up. Face fills most of the vertical frame, head and upper chest only. Light gray background. Look at camera and say in a warm natural American voice: Hey ${identity}. I'm Tayne, your latest dancer. I can't wait to entertain you. Keep the same clothing, face, and fixed camera.`:cmd?.motion||motions[variant]||motions[character],costume:cmd?.costume||costumes[character]||costumes.tayne};
+ try{const req={profile,character,variant,fastPath,...(cmd?.playbackRate?{playbackRate:cmd.playbackRate}:{}),canonical:!cmd&&['celery','oyster','tayne','mozzarell'].includes(character),motion:variant==='intro'?`Tight head-and-shoulders close up. Face fills most of the vertical frame, head and upper chest only. Light gray background. Look at camera and say in a warm natural American voice: Hey ${identity}. I'm Tayne, your latest dancer. I can't wait to entertain you. Keep the same clothing, face, and fixed camera.`:cmd?.motion||motions[variant]||motions[character],costume:cmd?.costume||costumes[character]||costumes.tayne};
   let job=cmd?.generationId?await api('job/'+cmd.generationId):await api('generate',req);generationId=job.id;events.push({kind:'generation',id:job.id,request:req,time:performance.now()});
-  while(job.status==='working'&&(!job.previewUrl||variant==='smile')){if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');l.win.remove();return false;}const elapsed=Math.floor((performance.now()-startedAt)/1000);if(elapsed>180)throw Error('Sequence is taking too long. Please try again.');commandStatus.job(feedback,jobKey,describe(job.providerStatus==='IN_QUEUE'?'Queued for video':job.stage||'Rendering'));l.content.querySelector('.loading-label')!.textContent=job.stage+' · '+elapsed+' sec';if(job.image&&!l.content.querySelector('img')){const img=document.createElement('img');img.src=job.image;img.style.cssText='position:absolute;right:12px;top:5px;width:45px;height:70px;object-fit:contain';l.content.append(img);}await delay(120);job=await api('job/'+job.id);}
-  if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');l.win.remove();return false;}if(job.status==='error')throw Error(job.error||'Generation failed. Please retry the command.');l.win.remove();liveAssets[key]={url:job.status==='complete'?job.url:job.previewUrl||job.url,image:job.image,playbackRate:cmd?.playbackRate};
+  while(job.status==='working'&&(!job.previewUrl||variant==='smile')){if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');return false;}const elapsed=Math.floor((performance.now()-startedAt)/1000);if(elapsed>180)throw Error('Sequence is taking too long. Please try again.');const stage=job.providerStatus==='IN_QUEUE'?'Queued for video':job.stage||'Rendering dance';commandStatus.job(feedback,jobKey,describe(stage));progress.update(stage);await delay(120);job=await api('job/'+job.id);}
+  if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');return false;}if(job.status==='error')throw Error(job.error||'Generation failed. Please retry the command.');liveAssets[key]={url:job.status==='complete'?job.url:job.previewUrl||job.url,image:job.image,playbackRate:cmd?.playbackRate};
   if(variant==='hat')liveAssets[`${profile}:tayne:hat`]=liveAssets[key];
   report('generation-ready');events.push({kind:'generated-ready',url:job.url,previewUrl:job.previewUrl,id:job.id,playbackRate:cmd?.playbackRate||1,timings:job.timings,time:performance.now(),elapsedMs:performance.now()-startedAt,character,variant});return true;
- }catch(e){const message=variant==='face'?`Portrait generation failed: ${(e as Error).message}`:`Dance generation failed: ${(e as Error).message}`;report('generation-error',message);l.win.remove();if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{commandStatus.jobDone(feedback,jobKey);}
+ }catch(e){const message=variant==='face'?`Portrait generation failed: ${(e as Error).message}`:`Dance generation failed: ${(e as Error).message}`;report('generation-error',message);if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{progress.done();commandStatus.jobDone(feedback,jobKey);}
 }
 async function customDance(cmd:Command){
- const term=terminal();term.classList.add('custom-terminal');const character=cmd.label||'custom';
+ const term=terminal();term.classList.add('custom-terminal');const character=cmd.sequenceMode==='modify'?(cmd.target||context.character):cmd.label||'custom';
  placeWindow(term,{x:60,y:378,w:362,h:129,className:'terminal custom-terminal'});
  void type(`Computing ${character}...`);const epoch=++generationEpoch;
  if(!await prepareDance(character,'base',epoch,cmd))return false;
@@ -368,13 +412,15 @@ async function dispatch(text:string,source='keyboard',feedback?:number){
  const status=feedback??commandStatus.begin('Interpreting…',text,source==='microphone'?'Heard':'Command');feedbackToken=status;commandStatus.retry(status,()=>dispatch(text,'retry'));
  events.push({kind:'input',text,source,time:performance.now()});
  try{
+  context.scriptStep=scriptGuide.nextIndex();
   const known=scripted(text,context);let acknowledged=false;
   commandStatus.phase(status,known?'Running command':'Interpreting command');
   if(!known){acknowledged=true;void speak({action:'custom',response:'Okay.',audio:'okay'});void type('Computing sequence...');}
-  const cmd=known||await api('command',{text,context,profile});
+  const cmd=known||await api('command',{text,context,profile,fastPath});
   if(token!==run||order!==commandEpoch||!commandStatus.current(status))return;
   if(!known){typing++;const content=desktop.querySelector('[data-id="terminal"] .content');if(content)content.textContent=cmd.action==='custom'?`Computing ${cmd.label||'sequence'}...`:cmd.response||(cmd.action==='reaction'?'Acknowledged. No new sequence requested.':'Preparing command…');}
   context.history.push(text);context.history=context.history.slice(-12);
+  context.conversation=[...(context.conversation||[]),{role:'user' as const,content:text},{role:'assistant' as const,content:cmd.response}].slice(-12);
   commandStatus.phase(status,'Preparing sequence');const applied=await apply(cmd,acknowledged&&cmd.action==='custom');if(applied===false)return;if(token===run&&order===commandEpoch){scriptGuide.observe(text,cmd.action);commandStatus.finish(status);}events.push({kind:'command-complete',text,action:cmd.action,time:performance.now()});return cmd;
  }catch(e){if(token===run&&order===commandEpoch&&commandStatus.current(status)){const message=(e as Error).name==='TimeoutError'?'Computer timed out. Please try again.':(e as Error).message;commandStatus.error(status,message);typing++;const content=desktop.querySelector('[data-id="terminal"] .content');if(content)content.textContent='Command failed.';}throw e;}
 }
@@ -398,24 +444,25 @@ async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,rec
   result??=await api('transcribe',{audio:base64,mime,requestId});if(token!==run||!commandStatus.current(status))return;
   if(result.requestId!==requestId)throw Error('Transcript did not match this recording. Please try again.');
   const text=String(result.text||'').trim();events.push({kind:'transcription',text,requestId,recording,model:result.model,firstPartialMs:result.firstPartialMs,transcriptionMs:result.transcriptionMs,elapsedMs:performance.now()-startedAt});
+  void api('client-event',{event:'transcription',requestId,model:result.model,message:text,durationMs:recording?.durationMs,elapsedMs:Math.round(performance.now()-startedAt)}).catch(()=>{});
   if(incompleteTranscript(text)){commandStatus.error(status,text?'Could not hear a complete command. Hold Record, wait for “Speak now”, then repeat.':'No speech heard. Settings → Replay mic to check the recording.');return;}
   commandStatus.echo(status,text);commandStatus.detail(status,`${capture||'Audio file'} · transcription ${(result.transcriptionMs/1000).toFixed(1)}s${recording?' · '+recording.device:''}`);
   return dispatch(text,'microphone',status);
  }catch(e){if(token===run&&commandStatus.current(status))commandStatus.error(status,(e as Error).name==='TimeoutError'?'Transcription timed out. Settings → Replay mic to check the recording.':(e as Error).message);throw e;}
 }
 
-function reset(){microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','paused','flash');clearWindows(false);started=false;replaying=false;paused=false;setMicState('idle');fit();launch();}
-async function begin(){scriptGuide.reset();void unlockAudio();warmTranscription();void prepareTranscription(speechBus().context).catch(()=>{});void api('warm',{profile,name:identity}).catch(()=>{});clearWindows(false);started=true;fit();terminal();await dispatch('Good morning','boot');}
+function reset(){generationOverlay.clear();microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','paused','flash');clearWindows(false);started=false;replaying=false;paused=false;setMicState('idle');fit();launch();}
+async function begin(){scriptGuide.reset();void unlockAudio();if(streamingTranscription){warmTranscription();void prepareTranscription(speechBus().context).catch(()=>{});}void api('warm',{profile,name:identity}).catch(()=>{});clearWindows(false);started=true;fit();terminal();void readyMicrophone().catch(()=>{});await dispatch('Good morning','boot');}
 function launch(){
  const existing=desktop.querySelector<HTMLElement>('.launch');if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);return;}
  let warmTimer:number;
  const t=launchIdentity({profile,name:identity,compact,windowBox,removeWindow,upload:image=>api('profile',{image}),
   select:person=>{clearTimeout(warmTimer);warmTimer=window.setTimeout(()=>void api('warm',{profile:person.id,name:person.name}).catch(()=>{}),500);},
-  start:async(person,win)=>{
-   // Opening then closing a Bluetooth mic here can interrupt the greeting's output
-   // route. Request microphone access only when the user actually holds Record.
+  doubleClick:()=>{if(sound)playDesktopDoubleClick();},
+  start:async(person,win,feedback)=>{
+   // Start authorizes microphone setup; begin keeps the input warm for Space.
    const ready=unlockAudio(),token=run;void microphone.refresh();
-   await ready;
+   await Promise.all([ready,feedback]);
    if(token!==run||!win.isConnected)return;
    mode='live';profile=person.id;identity=person.name;context.identity=identity;
    localStorage.setItem('cinco-profile',profile);localStorage.setItem('cinco-name',identity);
@@ -426,11 +473,20 @@ function launch(){
 }
 async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};started=true;fit();replaying=true;terminal();let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){const a=new Audio('/media/original/keyboard.wav');routeAudio(a);if(sound)void a.play();}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
 async function fileBase64(blob:Blob){return new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(blob);});}
+// Keep the input device active for the session; Space only gates recording.
+function readyMicrophone():Promise<MediaStream>{
+ const token=run;if(microphoneOpening?.token===token)return microphoneOpening.promise;
+ const promise=microphone.open(stream).then(opened=>{
+  if(token!==run){opened.getTracks().forEach(t=>t.stop());throw new DOMException('Session ended','AbortError');}
+  stream=opened;return opened;
+ }).finally(()=>{if(microphoneOpening?.promise===promise){microphoneOpening=undefined;if(!recordingRequested)setMicState('idle');}});
+ microphoneOpening={token,promise};if(!recordingRequested)inputControls.querySelector('.record-hint')!.textContent='Opening mic…';return promise;
+}
 async function startRecording(){
  recordingRequested=true;recordingCancelled=false;clearTimeout(stopRecordingTimer);
  if(recordingStarting||recorder?.state==='recording')return;
  recordingStarting=true;recordingCancelled=false;void unlockAudio();setMicState('opening');
- microphoneTurn?.cancel();microphoneTurn=undefined;warmTranscription();
+ microphoneTurn?.cancel();microphoneTurn=undefined;if(streamingTranscription)warmTranscription();
  // Opening the microphone is not a replacement dance command. Keep pending
  // generation alive, including when this recording is empty or fails.
  commandEpoch++;typing++;stopSpeech();lastMicPlayback?.pause();duckForMicrophone(true);
@@ -440,9 +496,9 @@ async function startRecording(){
  try{
   const audioContext=speechBus().context;let streamingAvailable=false;
   // Recording must not wait for the optional streaming worklet to download.
-  void prepareTranscription(audioContext).then(()=>{streamingAvailable=true;}).catch(()=>{});
-  stream=await microphone.open(stream);
-  if(!recordingRequested||recordingRun!==run||!commandStatus.current(status)){stream.getTracks().forEach(t=>t.enabled=false);duckForMicrophone(false);setMicState('idle');commandStatus.finish(status);return;}
+  if(streamingTranscription)void prepareTranscription(audioContext).then(()=>{streamingAvailable=true;}).catch(()=>{});
+  stream=await readyMicrophone();
+  if(!recordingRequested||recordingRun!==run||!commandStatus.current(status)){duckForMicrophone(false);setMicState('idle');commandStatus.finish(status);return;}
   stream.getTracks().forEach(t=>t.enabled=true);
   commandStatus.detail(status,`Input: ${stream.getAudioTracks()[0]?.label||microphone.label}`);
   const activeStream=stream,chunks:Blob[]=[],mime=MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4';
@@ -461,7 +517,7 @@ async function startRecording(){
   current.onerror=()=>{commandStatus.error(status,'Microphone recording failed. Try again.');stopRecording();};
   current.onstop=async()=>{
    clearInterval(interval);source.disconnect();meter.disconnect();
-   if(recorder===current){activeStream.getTracks().forEach(t=>t.enabled=false);duckForMicrophone(false);setMicState('idle');}
+   if(recorder===current){duckForMicrophone(false);setMicState('idle');}
    if(recordingCancelled||recordingRun!==run||!commandStatus.current(status)){turn?.cancel();if(recordingCancelled)commandStatus.finish(status);return;}
    const blob=new Blob(chunks,{type:mime}),durationMs=performance.now()-began,device=activeStream.getAudioTracks()[0]?.label||'Default microphone';
    if(lastMicUrl)URL.revokeObjectURL(lastMicUrl);lastMicUrl=URL.createObjectURL(blob);
@@ -527,6 +583,6 @@ function cancelHeldRecording(){if(pushToTalk||recordingPointer!==undefined){push
 document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelHeldRecording();});
 addEventListener('pagehide',()=>{stream?.getTracks().forEach(t=>t.stop());});
 addEventListener('blur',cancelHeldRecording);
-Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,liveAssets,profile,context,lastPrint,started,replaying,paused,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();syncSequenceMusic();},settle:()=>delay(1800)}});
+Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,fastPath,streamingTranscription,liveAssets,profile,context,lastPrint,started,replaying,paused,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();syncSequenceMusic();},settle:()=>delay(1800)}});
 launch();
 for(const name of ['okay','yes','greeting','hat','flower']){const audio=new Audio(`/media/original/${name}.wav`);audio.preload='auto';audio.load();}

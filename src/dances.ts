@@ -6,7 +6,7 @@ export const costumes:Record<string,string>={
 };
 export const motions:Record<string,string>={
  mozzarell:'Full-body goofy aerobic dance. Feet very wide, bend knees deeply, bob up and down, pump both bent elbows inward and outward with closed fists. Lean left and right while bouncing. Cheerful awkward grin, orange baseball cap stays on. White studio backdrop. Athletic comedy, nonsexual movement.',
- sway:'Full body, upright confident disco sway: lean left and right, point one bent arm sideways and pull it back, alternately shift weight on feet. Keep hat and glasses, never squat. Copy the supplied motion reference precisely.',
+ sway:'Full body, upright confident disco sway: lean left and right, point one bent arm sideways and pull it back, alternately shift weight on feet. Keep hat and glasses, never squat.',
  celery:'Jaunty awkward side to side stepping dance. Hands on hips, then elbows out and bent, palms up, shrugging shoulders, bend knees and swing hips, extend one arm to point toward viewer, turn head with a deadpan face. Stay full body and centered.',
  oyster:'Energetic awkward dance: spread legs wide, hinge forward deeply at hips, fists together between knees, bob torso up and down, then stand up swaying and smiling. Whole body visible.',
  tayne:'Awkward confident disco dance. Step wide, point arms sideways, deeply squat with knees apart, hands low between thighs, rise and move hips, black hat and sunglasses stay on. Deadpan serious face.',

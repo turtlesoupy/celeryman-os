@@ -27,10 +27,13 @@ try{
   // Even a streaming module that never loads must not delay local recording.
   Worklet.prototype.addModule=()=>new Promise(()=>{});
   const open=navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-  navigator.mediaDevices.getUserMedia=async constraints=>{await new Promise(resolve=>setTimeout(resolve,300));return open(constraints);};
+  Object.assign(window,{micOpens:0,micStreams:[]});
+  navigator.mediaDevices.getUserMedia=async constraints=>{(window as any).micOpens++;await new Promise(resolve=>setTimeout(resolve,300));const stream=await open(constraints);(window as any).micStreams.push(stream);return stream;};
  });
  await page.goto('http://127.0.0.1:5173');await page.evaluate(()=>(window as any).cinco.setSound(false));
  await page.getByRole('button',{name:'Start',exact:true}).click();
+ await page.waitForFunction(()=>(window as any).micOpens===1);
+ assert.equal(fallback,0,'Opening the mic must not transcribe anything');
  await page.keyboard.down('Space');
  await page.waitForFunction(()=>document.querySelector('.record-button')?.getAttribute('data-state')==='opening');
  assert.equal(await page.locator('.record-hint').innerText(),'Wait for mic');
@@ -41,5 +44,15 @@ try{
  await page.waitForTimeout(1500);await page.keyboard.up('Space');
  try{await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='command-complete'&&e.action==='pause'),null,{timeout:5000});}catch(error){console.log(await page.evaluate(()=>(window as any).cinco.events));throw error;}
  assert.equal(fallback,1);
- console.log('PASS: waiting/ready indicators and complete file capture while streaming worklet is unavailable');
+ assert.equal(await page.evaluate(()=>(window as any).micStreams[0].getAudioTracks()[0].enabled),true,'Idle input stays warm');
+ await page.keyboard.down('Space');
+ await page.waitForFunction(()=>document.querySelector('.record-button')?.getAttribute('data-state')==='recording');
+ assert.equal(await page.evaluate(()=>(window as any).micOpens),1,'Next command reuses the open device');
+ await page.waitForTimeout(600);await page.keyboard.up('Space');
+ await page.waitForFunction(()=>(window as any).cinco.events.filter((e:any)=>e.kind==='microphone-capture').length===2);
+ await page.waitForFunction(()=>(window as any).cinco.events.filter((e:any)=>e.kind==='command-complete'&&e.action==='pause').length===2);
+ assert.equal(fallback,2);
+ await page.evaluate(()=>(window as any).cinco.reset());
+ assert.equal(await page.evaluate(()=>(window as any).micStreams[0].getAudioTracks()[0].readyState),'ended','Reset releases the input');
+ console.log('PASS: Start prewarms once, capture stays behind Space, input stays enabled between commands, reset releases input, and worklet cannot delay capture');
 }finally{await browser.close();await rm(dir,{recursive:true,force:true});}

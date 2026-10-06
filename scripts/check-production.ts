@@ -15,6 +15,10 @@ try{
  assert.equal(range.status,206);assert.equal((await range.arrayBuffer()).byteLength,44);
  assert.equal((await request('/media/%2e%2e%2f%2e%2e%2f.env')).status,404,'traversal is rejected');
  assert.equal((await request('/api/health',{headers:{Origin:'https://evil.example'}})).status,403);
+ assert.equal((await request('/api/transcribe/session',{method:'POST',headers:{Origin:'https://evil.example'},body:'{}'})).status,403,'transcription credentials reject foreign origins');
+ const credentialGet=await request('/api/transcribe/session');
+ assert.equal(credentialGet.status,405,'transcription credential creation requires POST');
+ assert.equal(credentialGet.headers.get('cache-control'),'no-store');
  const command=await request('/api/command',{method:'POST',headers:{Origin:'https://celeryman.fun','Content-Type':'application/json'},body:JSON.stringify({text:'Computer?',context:{identity:'Thomas',character:'oyster',pending:'',history:[]}})});
  assert.equal(command.status,200);assert.equal((await command.json()).action,'attention');
  for(let i=0;i<31;i++){

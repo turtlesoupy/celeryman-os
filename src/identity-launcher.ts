@@ -8,7 +8,8 @@ type LauncherOptions={
  removeWindow:(win:Element)=>void;
  upload:(image:string)=>Promise<{id:string}>;
  select:(identity:Identity)=>void;
- start:(identity:Identity,win:HTMLElement)=>Promise<void>;
+ doubleClick:()=>void;
+ start:(identity:Identity,win:HTMLElement,feedback:Promise<void>)=>Promise<void>;
 };
 
 // Small, hard-edged drawings use the same palette as Program Manager icons.
@@ -28,8 +29,8 @@ export function launchIdentity(options:LauncherOptions){
  try{const saved=JSON.parse(localStorage.getItem('cinco-custom-identity')||'null');if(saved?.id&&saved?.name)custom={id:String(saved.id),name:String(saved.name),label:String(saved.name),thumbnail:typeof saved.thumbnail==='string'?saved.thumbnail:undefined};}catch{}
  if(!presets.some(p=>p.id===options.profile)&&options.name.trim())custom={id:options.profile,name:options.name,label:options.name,thumbnail:custom?.id===options.profile?custom.thumbnail:undefined};
  let selected=presets.find(p=>p.id===options.profile)||custom||presets[0];
- const t=windowBox({title:'Cinco Identity Generator 2.5',x:230,y:105,w:500,h:330,className:'launch'});
- t.content.innerHTML=`<h1>Your first sequence of the day.</h1><p>Choose an identity to get started.</p><fieldset class="identity-group"><legend>Identity</legend><div class="identity-icons" role="group" aria-label="Identity"></div></fieldset><div class="buttons"><button type="button" class="classic-button start">Start</button></div><div class="note">${options.compact?'Tap Talk to speak · Type for commands':'F1 for controls · Space to talk'}<br>${['localhost','127.0.0.1'].includes(location.hostname)?'Private local session':'Photos are processed by AI providers'}</div><p class="launch-status" role="status"></p>`;
+ const t=windowBox({title:'Cinco Identity Generator 2.5',x:230,y:155,w:500,h:230,className:'launch'});
+ t.content.innerHTML='<fieldset class="identity-group"><legend>Identity</legend><div class="identity-icons" role="group" aria-label="Identity"></div></fieldset><div class="buttons"><button type="button" class="classic-button start">Start</button></div><p class="launch-status" role="status"></p>';
  const icons=t.content.querySelector<HTMLElement>('.identity-icons')!,start=t.content.querySelector<HTMLButtonElement>('.start')!,status=t.content.querySelector<HTMLElement>('.launch-status')!;
  let uploadWindow:DesktopWindow|undefined,starting=false;
  const render=()=>{
@@ -38,7 +39,13 @@ export function launchIdentity(options:LauncherOptions){
    const button=document.createElement('button');button.type='button';button.className='identity-icon';button.setAttribute('aria-pressed',String(person.id===selected.id));
    button.innerHTML=icon(presets.includes(person)?person.id:'custom');const label=document.createElement('span');label.textContent=person.label;button.append(label);
    void fillPortraitIcon(button,person.id,person.thumbnail);
-   button.onclick=()=>{selected=person;render();options.select(selected);icons.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();};icons.append(button);
+   button.onclick=()=>{
+    selected=person;
+    // Keep the button mounted so the second click can produce a native dblclick.
+    icons.querySelectorAll<HTMLButtonElement>('[aria-pressed]').forEach(other=>other.setAttribute('aria-pressed',String(other===button)));
+    options.select(selected);button.focus();
+   };
+   button.ondblclick=()=>void startSelected(true);icons.append(button);
   }
   const upload=document.createElement('button');upload.type='button';upload.className='identity-icon';upload.innerHTML=icon('upload')+'<span>Upload</span>';upload.onclick=openUpload;icons.append(upload);
  };
@@ -48,11 +55,17 @@ export function launchIdentity(options:LauncherOptions){
   uploadWindow=createUploadWindow(options,person=>{custom=selected=person;localStorage.setItem('cinco-custom-identity',JSON.stringify(person));render();options.select(person);},()=>{uploadWindow=undefined;sync();icons.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();});sync();
  }
  t.win.addEventListener('windowclose',()=>{if(uploadWindow)removeWindow(uploadWindow.win);});
- start.onclick=async()=>{
-  if(starting||uploadWindow)return;starting=true;sync();status.textContent='Allow microphone access to speak, or continue with typing.';
-  try{await options.start(selected,t.win);}catch(error){status.textContent=(error as Error).message;}
-  finally{starting=false;sync();}
- };
+ async function startSelected(doubleClick=false){
+  if(starting||uploadWindow)return;starting=true;sync();status.textContent='';
+  let feedback=Promise.resolve();
+  if(doubleClick){
+   t.win.classList.add('identity-opening');options.doubleClick();
+   feedback=new Promise(resolve=>setTimeout(resolve,180));
+  }
+  try{await options.start(selected,t.win,feedback);}catch(error){status.textContent=(error as Error).message;}
+  finally{starting=false;t.win.classList.remove('identity-opening');sync();}
+ }
+ start.onclick=()=>void startSelected();
  render();options.select(selected);return t;
 }
 
@@ -67,9 +80,12 @@ function createUploadWindow(options:LauncherOptions,saved:(identity:Identity)=>v
  const stopCamera=()=>{cameraStream?.getTracks().forEach(track=>track.stop());cameraStream=undefined;video.srcObject=null;video.classList.add('hidden');capture.classList.add('hidden');capture.disabled=true;camera.textContent='Use camera';preview.classList.toggle('hidden',!image);placeholder.classList.toggle('hidden',!!image);};
  const cleanup=()=>{epoch++;stopCamera();removeEventListener('pagehide',stopCamera);closed();};
  t.win.addEventListener('windowclose',cleanup,{once:true});addEventListener('pagehide',stopCamera);
- function setPhoto(source:CanvasImageSource,width:number,height:number){
+ function setPhoto(source:CanvasImageSource,width:number,height:number,mirror=false){
   const canvas=document.createElement('canvas'),scale=Math.min(1,1600/Math.max(width,height));canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);
-  const context=canvas.getContext('2d')!;context.fillStyle='#fff';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(source,0,0,canvas.width,canvas.height);
+  const context=canvas.getContext('2d')!;context.fillStyle='#fff';context.fillRect(0,0,canvas.width,canvas.height);
+  // Camera pixels must match the mirrored live preview, including the saved file.
+  if(mirror){context.translate(canvas.width,0);context.scale(-1,1);}
+  context.drawImage(source,0,0,canvas.width,canvas.height);
   image=canvas.toDataURL('image/jpeg',.9);thumbnail=bitmapPortrait(canvas,canvas.width,canvas.height);preview.src=image;stopCamera();status.textContent='Photo ready. Add your name, then save.';sync();
  }
  name.oninput=sync;choose.onclick=()=>file.click();
@@ -91,7 +107,7 @@ function createUploadWindow(options:LauncherOptions,saved:(identity:Identity)=>v
   }catch{if(current===epoch){stopCamera();status.textContent='Camera unavailable. Allow camera access or choose a photo instead.';}}
   finally{if(current===epoch)sync();}
  };
- capture.onclick=()=>{if(video.videoWidth&&video.videoHeight){epoch++;setPhoto(video,video.videoWidth,video.videoHeight);}};
+ capture.onclick=()=>{if(video.videoWidth&&video.videoHeight){epoch++;setPhoto(video,video.videoWidth,video.videoHeight,true);}};
  save.onclick=async()=>{
   const identityName=name.value.trim();if(busy||!image||!identityName)return;const current=++epoch;stopCamera();busy=true;sync();status.textContent='Saving identity…';
   try{const result=await options.upload(image.split(',')[1]);if(current!==epoch||!t.win.isConnected)return;saved({id:result.id,name:identityName,label:identityName,thumbnail});options.removeWindow(t.win);}

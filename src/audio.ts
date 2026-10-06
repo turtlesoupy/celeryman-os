@@ -6,9 +6,9 @@ const connected=new WeakSet<HTMLMediaElement>();
 let recorder:MediaRecorder|undefined;
 let chunks:Blob[]=[];
 function bus(){
- context??=new AudioContext();
+ context??=new AudioContext({latencyHint:'playback'});
  capture??=context.createMediaStreamDestination();
- void context.resume();
+ if(context.state!=='running')void context.resume().catch(()=>{});
  if(!output){output=context.createGain();output.connect(context.destination);output.connect(capture);}
  return {context,capture,output};
 }
@@ -20,6 +20,25 @@ export function duckForMicrophone(recording:boolean){
  gain.setTargetAtTime(recording?.4:1,now,.025);
 }
 export function unlockAudio(){return bus().context.resume();}
+let desktopClick:AudioBuffer|undefined;
+export function playDesktopDoubleClick(){
+ try{
+  const b=bus();
+  if(!desktopClick){
+   // Two short, slightly different plastic-switch clicks with a grainy 8-bit tail.
+   const rate=22050;desktopClick=b.context.createBuffer(1,Math.ceil(rate*.16),rate);
+   const samples=desktopClick.getChannelData(0);let seed=17;
+   for(const [at,level] of [[0,1],[.085,.85]])for(let i=0;i<rate*.045;i++){
+    const t=i/rate;seed=(Math.imul(seed,1664525)+1013904223)>>>0;
+    const noise=(seed/4294967296)*2-1;
+    const snap=noise*Math.exp(-t*260)+.45*Math.sin(2*Math.PI*1850*t)*Math.exp(-t*190)+.3*Math.sin(2*Math.PI*620*t)*Math.exp(-t*110);
+    samples[Math.round(at*rate)+i]=Math.round(snap*level*24)/128;
+   }
+  }
+  const source=b.context.createBufferSource();source.buffer=desktopClick;source.connect(b.output);
+  source.onended=()=>source.disconnect();source.start();
+ }catch{/* Sound feedback must never prevent opening an identity. */}
+}
 export function routeAudio(media:HTMLMediaElement){
  if(connected.has(media))return media;
  const b=bus();const source=b.context.createMediaElementSource(media);

@@ -1,7 +1,33 @@
-export type Action='greeting'|'celery'|'engage'|'oyster'|'print'|'attention'|'beta'|'tayne'|'hat'|'flarhgunnstow'|'repeat'|'nsfw'|'confirm'|'call'|'chaos'|'pause'|'resume'|'reset'|'custom'|'reaction'|'cancel';
-export interface Command {action:Action;response:string;audio?:string;label?:string;motion?:string;costume?:string;target?:string;generationId?:string;playbackRate?:number}
-export interface Context {identity:string;character:string;pending:string;history:string[];costume?:string}
+import {commandText} from './command-text.ts';
+export type Action='greeting'|'celery'|'engage'|'oyster'|'print'|'attention'|'beta'|'tayne'|'hat'|'flarhgunnstow'|'repeat'|'nsfw'|'confirm'|'call'|'chaos'|'pause'|'resume'|'reset'|'custom'|'reaction'|'cancel'|'dialogue';
+export interface Command {action:Action;response:string;audio?:string;label?:string;motion?:string;costume?:string;target?:string;sequenceMode?:'new'|'modify';generationId?:string;playbackRate?:number}
+export interface Context {identity:string;character:string;pending:string;history:string[];costume?:string;scriptStep?:number;conversation?:{role:'user'|'assistant';content:string}[]}
 export function scripted(text:string,c:Context):Command|null {
+ if(c.pending==='dialogue')return null;
+ if((c.scriptStep??0)>=sketch.length&&/new sequence|more sequence|anything (?:new|else)|another (?:sequence|dance)/i.test(text))return null;
+ const exact=scriptedExact(text,c);if(exact)return exact;
+ const step=Number.isInteger(c.scriptStep)?sketch[c.scriptStep!]:undefined;
+ if(!step)return null;
+ const plain=commandText(text);
+ // A near-reading of the next cue should execute that cue, not invite a new
+ // interpretation. Preserve explicit refusals and requested modifications.
+ if(/\b(no|not|dont|never|cancel|without|instead|wearing|with|in|but|except|slower|faster)\b/.test(plain))return null;
+ const name=step.action==='celery'?/\bcelery ?man\b/:step.action==='oyster'?/\boyster\b/:step.action==='tayne'?/\btayne\b/:undefined;
+ const mention=name?.exec(plain);
+ if(mention&&!/^(?: sequence)?(?: please)?(?: computer)?$/.test(plain.slice(mention.index+mention[0].length)))return null;
+ const compact=(value:string)=>commandText(value).replace(/\b(computer|please)\b/g,'').replace(/ /g,'');
+ const actual=compact(text),expected=compact(step.text);
+ if(expected.length<12||actual.length<8)return null;
+ let previous=Array.from({length:expected.length+1},(_,i)=>i);
+ for(let i=0;i<actual.length;i++){
+  const row=[i+1];for(let j=0;j<expected.length;j++)row.push(Math.min(row[j]+1,previous[j+1]+1,previous[j]+Number(actual[i]!==expected[j])));
+  previous=row;
+ }
+ if(previous[expected.length]>Math.floor(expected.length*.2))return null;
+ const command=scriptedExact(step.text,c);
+ return command?.action===step.action?command:null;
+}
+function scriptedExact(text:string,c:Context):Command|null {
  const t=text.toLowerCase().replace(/[’']/g,'').replace(/^[.\s]+/,'').trim();
  const answer=t.replace(/^computer[,!. ]*/, '').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
  const compact=answer.replace(/ /g,'');
@@ -10,7 +36,8 @@ export function scripted(text:string,c:Context):Command|null {
  if(['beta','nsfw'].includes(c.pending)&&negative)return {action:'cancel',response:'Okay.',audio:'okay'};
  if(c.pending==='beta'&&affirmative)return {action:'tayne',response:'Okay.',audio:'okay'};
  if(c.pending==='nsfw'&&affirmative)return {action:'confirm',response:'Okay.',audio:'confirm'};
- if(/(tayne|tane).*get into|^(im|i am) okay|^oh\b/.test(t))return {action:'reaction',response:''};
+ if(/^(?:now )?tayne i can get into (?:can|could) i see (?:a )?hat wobble$/.test(commandText(text)))return {action:'hat',response:'HAT WOBBLE',audio:'hat'};
+ if(/(tayne|tane).*get into|^(im|i am) okay|^oh\b/.test(commandText(text)))return {action:'reaction',response:''};
  if(/^(reset|restart|start over)$/.test(t))return {action:'reset',response:''};
  if(/^(pause|stop|freeze)( music| dancing| everything)?$/.test(t))return {action:'pause',response:'Sequence paused.'};
  if(/^(resume|continue)( dancing)?$/.test(t))return {action:'resume',response:'Sequence resumed.'};
@@ -20,14 +47,17 @@ export function scripted(text:string,c:Context):Command|null {
  if(/print/.test(t))return {action:'print',response:'Okay.',audio:'print',target:/oyster/.test(t)?'oyster':c.character,costume:/oyster/.test(t)?undefined:c.costume};
  if(/4\s*d|4d3|four.?d|kick up|dimensional/.test(t))return {action:'engage',response:'4d3d3d3 Engaged.',audio:'engaged'};
  if(/^(could (i|you) (see|show me) |show me |do |and |a )*(a )?hat wobble[?.! ]*$/.test(t))return {action:'hat',response:'HAT WOBBLE',audio:'hat'};
- if(/^(and |a |could i see |show me )*(flar[a-z]*|flower getting smelled)[?.! ]*$/.test(t))return {action:'flarhgunnstow',response:'FLARHGUNNSTOW',audio:'flower'};
- if(/new sequence|beta sequence|anything new|new dancer/.test(t))return {action:'beta',response:'I have a BETA sequence\nI have been working on\n\nWould you like to see it?',audio:'beta'};
- const plain=t.replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
- const named=(name:string)=>new RegExp(`^(computer )?((load( up)?|show( me)?|can i see|could i see|add sequence|run|start) )?${name}( please)?$`).test(plain);
+ if(/^(and |did |a |could i see |show me )*(flar[a-z]*|flower getting smelled)[?.! ]*$/.test(commandText(text)))return {action:'flarhgunnstow',response:'FLARHGUNNSTOW',audio:'flower'};
+ if(/^(?:computer[, ]*)?(?:do we have any new sequences|any new sequences|new sequence|beta sequence|anything new|new dancer)[?.! ]*$/.test(t))return {action:'beta',response:'I have a BETA sequence\nI have been working on\n\nWould you like to see it?',audio:'beta'};
+ const plain=commandText(text);
+ // Accept ordinary request wrappers and a clipped "load up". Keep the
+ // entire request anchored so costume/motion modifiers still reach the planner.
+ const request='(?:(?:can|could|would) you )?(?:please )?(?:(?:load(?: up)?|line up|up|show(?: me)?|bring(?: up)?|(?:can|could) i (?:see|have)|add(?: sequence)?|run|start) )?(?:please )?';
+ const named=(name:string)=>new RegExp(`^(?:computer )?${request}(?:a |the )?${name}(?: sequence)?(?: please)?(?: computer)?$`).test(plain);
  if(named('oyster'))return {action:'oyster',response:'add sequence: OYSTER'};
  if(named('(tayne|tane)'))return {action:'tayne',response:'Loading BETA, please wait...',audio:'okay'};
  if(named('celery( ?man)?'))return {action:'celery',response:`Yes, ${c.identity}!`,audio:c.identity==='Paul'?'yes-paul':undefined};
- if(/^(computer)[?!. ]*$/.test(t))return {action:'attention',response:'Yes.',audio:'yes'};
+ if(commandText(text)==='computer')return {action:'attention',response:'Yes.',audio:'yes'};
  if(/wife.*phone|incoming call/.test(t))return {action:'call',response:`Excuse me ${c.identity}. Your wife is on the phone. It's an emergency.`,audio:c.identity==='Paul'?'call':undefined};
  return null;
 }
