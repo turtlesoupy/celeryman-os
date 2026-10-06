@@ -1,6 +1,13 @@
 import OpenAI, {toFile} from 'openai';
 
 export const transcriptionVocabulary = 'Vocabulary: Celery Man, Cinco, Tayne, Oyster, 4d3d3d3 (four dee three dee three dee three), hat wobble, flarhgunnstow.';
+
+export async function transcriptionSession(client:OpenAI){
+ if(process.env.STREAMING_TRANSCRIPTION==='false')throw Error('Streaming transcription is disabled');
+ // The client receives only a short-lived, transcription-only credential.
+ const secret=await client.realtime.clientSecrets.create({expires_after:{anchor:'created_at',seconds:60},session:{type:'transcription',audio:{input:{format:{type:'audio/pcm',rate:24000},transcription:{model:'gpt-live-transcribe',languages:['en'],keywords:['Celery Man','Cinco','Tayne','Oyster','4d3d3d3','hat wobble','flarhgunnstow'],delay:'low'},turn_detection:null}}}});
+ return {value:secret.value,expiresAt:secret.expires_at};
+}
 // Selected using real sketch recordings. Keep an env override for comparison
 // and rollback; the client cannot select arbitrary paid models.
 export const transcriptionModel = process.env.TRANSCRIPTION_MODEL || 'gpt-4o-mini-transcribe';

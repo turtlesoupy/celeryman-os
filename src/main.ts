@@ -2,29 +2,29 @@ import {requestJson} from './api-client';
 import {preparePrintout,type Printout} from './printout';
 import {mobileFrame,clampFrame,type Frame,type Workspace} from './window-layout';
 import {MicrophoneDevices} from './microphone-device';
+import {incompleteTranscript} from './transcript-quality';
 import {launchIdentity} from './identity-launcher';
 import './style.css';
 import {createCommandStatus} from './command-status';
 import {createScriptGuide} from './script-guide';
 import {StreamingSpeech} from './streaming-speech';
+import {TranscriptionTurn,prepareTranscription,warmTranscription,closeTranscription} from './streaming-transcription';
 import hatTrack from './hat-track.json';
 import {routeAudio,unlockAudio,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop} from './audio';
 import {sketch,scripted,type Command,type Context} from './protocol';
 import {costumes,motions} from './dances';
 const app=document.querySelector<HTMLDivElement>('#app')!;
-app.innerHTML=`<main class="viewport"><section class="desktop" aria-label="Cinco desktop"><button class="hint" type="button" title="Show controls">F1 · controls</button><form class="dock hidden"><span class="lamp"></span><button type="button" class="classic-button mic">Microphone</button><button type="button" class="classic-button" data-tool="input">Input device</button><button type="button" class="classic-button replay-mic" disabled title="Replay the exact audio sent for transcription">Replay mic</button><input aria-label="Computer command" placeholder="Computer…" autocomplete="off"><button class="classic-button">Enter</button><button type="button" class="classic-button" data-tool="identity">Identity</button><button type="button" class="classic-button" data-tool="replay">Sketch</button><button type="button" class="classic-button" data-tool="pause">Pause</button><button type="button" class="classic-button" data-tool="printout">Printout</button><button type="button" class="classic-button" data-tool="sound">Sound on</button><button type="button" class="classic-button" data-tool="reset">Reset</button><button type="button" class="classic-button" data-tool="hide">×</button></form></section></main>`;
-const desktop=document.querySelector<HTMLElement>('.desktop')!,dock=document.querySelector<HTMLFormElement>('.dock')!,input=dock.querySelector('input')!;
-const touchBar=document.createElement('nav');touchBar.className='touch-bar';touchBar.setAttribute('aria-label','Computer controls');
-touchBar.innerHTML='<button type="button" class="classic-button touch-mic" aria-label="Start microphone" aria-pressed="false">● Talk</button><button type="button" class="classic-button" data-touch="type">Type</button><button type="button" class="classic-button" data-touch="windows" aria-expanded="false">Windows</button><button type="button" class="classic-button" data-touch="more" aria-expanded="false">More</button>';
-const windowList=document.createElement('div');windowList.className='window-list hidden';windowList.setAttribute('aria-label','Open windows');desktop.append(touchBar,windowList);
-const debugBar=document.createElement('div');debugBar.className='debug-bar';debugBar.setAttribute('role','group');debugBar.setAttribute('aria-label','Debug diagnostics');debugBar.innerHTML='<span class="debug-bar-badge">DEBUG</span>';desktop.append(debugBar);
-const commandStatus=createCommandStatus(debugBar,()=>{
- const videos=[...desktop.querySelectorAll<HTMLVideoElement>('video')];
- if(videos.some(v=>!v.paused&&v.readyState>=2))return desktop.classList.contains('finale')?`Playing finale · ${videos.length} windows · ready for command`:`Idle · playing ${videos.slice().reverse().find(v=>!v.paused&&v.readyState>=2)?.dataset.sequence||context.character}`;
- if(videos.length&&videos.every(v=>v.paused))return 'Idle · playback paused';
- return desktop.classList.contains('mobile')?'Ready · tap Talk to speak':'Waiting for command · hold Space to talk';
-});let feedbackToken=0;
-const scriptGuide=createScriptGuide(debugBar);
+app.innerHTML='<main class="viewport"><section class="desktop" aria-label="Cinco desktop"></section></main>';
+const desktop=document.querySelector<HTMLElement>('.desktop')!;
+const dock=document.createElement('div');dock.className='dock settings-actions';
+dock.innerHTML='<button type="button" class="classic-button replay-mic" disabled>Replay mic</button><button type="button" class="classic-button" data-tool="identity">Identity</button><button type="button" class="classic-button" data-tool="replay">Sketch</button><button type="button" class="classic-button" data-tool="pause">Pause</button><button type="button" class="classic-button" data-tool="printout">Printout</button><button type="button" class="classic-button" data-tool="sound">Sound on</button><button type="button" class="classic-button" data-tool="reset">Reset</button>';
+const inputControls=document.createElement('div');inputControls.className='input-controls';
+inputControls.innerHTML='<button type="button" class="classic-button record-button" aria-label="Record" aria-pressed="false" aria-describedby="record-hint"><i class="record-light" aria-hidden="true"></i><span>Record</span></button><span id="record-hint" class="record-hint">Hold Space</span><span class="input-microphone">Default microphone</span><button type="button" class="classic-button mic-settings" aria-label="Microphone settings" title="Microphone settings"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 0h4v3l2-2 3 3-2 2h3v4h-3l2 2-3 3-2-2v3H6v-3l-2 2-3-3 2-2H0V6h3L1 4l3-3 2 2z"/><path fill="#ededed" d="M6 5h4v1h1v4h-1v1H6v-1H5V6h1z"/></svg></button>';
+const recordButton=inputControls.querySelector<HTMLButtonElement>('.record-button')!,settingsButton=inputControls.querySelector<HTMLButtonElement>('.mic-settings')!;
+const activity=document.createElement('div');activity.className='input-activity';
+const diagnostics=document.createElement('div');diagnostics.className='input-diagnostics';
+const commandStatus=createCommandStatus(activity,()=>desktop.classList.contains('paused')?'Paused':'Ready',diagnostics);let feedbackToken=0;
+const scriptGuide=createScriptGuide(diagnostics,activity.querySelector<HTMLElement>('.command-status-line')!);
 let profile=localStorage.getItem('cinco-profile')||'paul',identity=localStorage.getItem('cinco-name')||'Paul';
 let context:Context={identity,character:'celery',pending:'',history:[]};
 let mode:'live'|'reference'='live';
@@ -34,6 +34,7 @@ let topZ=10,winCount=0,typing=0,started=false,sound=true,paused=false,run=0,repl
 let timers:number[]=[],music:MusicLoop|null=null,speech:HTMLAudioElement|null=null;
 let streamedSpeech:StreamingSpeech|undefined;
 let speechEpoch=0,musicEpoch=0,commandEpoch=0;
+let pendingMusic:{source:string;token:number}|undefined;
 let finishSpeechStatus:(()=>void)|undefined;
 let mediaStatusId=0;const mediaStatusCleanup=new WeakMap<HTMLVideoElement,()=>void>();
 const ducks=new Set<string>();
@@ -41,7 +42,10 @@ function musicLevel(){if(music)music.volume=sound?(ducks.size?.16:.6):0;}
 function stopSpeech(){finishSpeechStatus?.();finishSpeechStatus=undefined;speechEpoch++;streamedSpeech?.stop();streamedSpeech=undefined;speech?.pause();ducks.delete('speech');musicLevel();}
 let lastPrint:Printout|undefined;let openPrintDialog:(()=>void)|undefined;
 let recorder:MediaRecorder|null=null,stream:MediaStream|null=null;
+let microphoneTurn:TranscriptionTurn|undefined;
+addEventListener('pagehide',()=>{microphoneTurn?.cancel();closeTranscription();});
 let recordingRequested=false,recordingStarting=false,pushToTalk=false,recordingNumber=0;
+let recordingPointer:number|undefined,recordingCancelled=false;
 let stopRecordingTimer:number|undefined,lastMicUrl='',lastMicPlayback:HTMLAudioElement|undefined;
 const microphone=new MicrophoneDevices(()=>{stream?.getTracks().forEach(t=>t.stop());stream=null;},()=>recordingStarting||recorder?.state==='recording');
 const events:any[]=[];
@@ -51,8 +55,8 @@ const schedule=(fn:()=>void,ms:number)=>{const id=window.setTimeout(fn,ms);timer
 const api=requestJson;
 const originalFrames=new WeakMap<HTMLElement,Frame>();
 let compact=false;
-function workspace():Workspace{return {width:desktop.clientWidth,height:desktop.clientHeight,top:compact?(started?(desktop.clientHeight<500?84:112):12):8,bottom:desktop.clientHeight-(compact&&started?Math.max(84,touchBar.offsetHeight+8):8)};}
-function placeWindow(win:HTMLElement,frame:Frame){originalFrames.set(win,frame);const r=compact?mobileFrame(frame,workspace()):frame;Object.assign(win.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',transform:''});}
+function workspace():Workspace{return {width:desktop.clientWidth,height:desktop.clientHeight,top:8,bottom:desktop.clientHeight-(compact&&started?156:8)};}
+function placeWindow(win:HTMLElement,frame:Frame){originalFrames.set(win,frame);const space=workspace();if(/terminal|launch|input-settings|identity-upload/.test(frame.className||''))space.bottom=desktop.clientHeight-8;const r=compact?mobileFrame(frame,space):frame;Object.assign(win.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',transform:''});}
 function fit(){
  compact=innerWidth<760||(innerHeight<500&&innerWidth<1000)||(matchMedia('(pointer: coarse)').matches&&innerWidth<1200);
  desktop.classList.toggle('mobile',compact);desktop.classList.toggle('running',started);
@@ -74,9 +78,9 @@ function windowBox(o:W){
  const content=document.createElement('div');content.className='content';win.append(content);const bottom=document.createElement('div');bottom.className='bottom-edge';win.append(bottom);
  const handle=document.createElement('div');handle.className='resize';handle.setAttribute('aria-label','Resize window');win.append(handle);
  // Window chrome stays clickable without taking focus from the active input.
- win.addEventListener('pointerdown',event=>{win.style.zIndex=String(++topZ);if((event.target as Element).closest('.titlebar button'))event.preventDefault();});
- bar.querySelector('.close')!.addEventListener('click',()=>removeWindow(win));bar.querySelector('.min')!.addEventListener('click',()=>win.classList.toggle('minimized'));
- let saved:Frame|undefined;bar.querySelector('.max')!.addEventListener('click',()=>{win.classList.remove('minimized');const target=saved||{x:8,y:workspace().top,w:desktop.clientWidth-16,h:workspace().bottom-workspace().top};const r=compact?clampFrame(target,workspace()):target;saved=saved?undefined:{x:win.offsetLeft,y:win.offsetTop,w:win.offsetWidth,h:win.offsetHeight};Object.assign(win.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px'});});
+ win.addEventListener('pointerdown',event=>{win.style.zIndex=String(++topZ);syncSequenceMusic();if((event.target as Element).closest('.titlebar button'))event.preventDefault();});
+ bar.querySelector('.close')!.addEventListener('click',()=>{removeWindow(win);syncSequenceMusic();});bar.querySelector('.min')!.addEventListener('click',()=>{win.classList.toggle('minimized');syncSequenceMusic();});
+ let saved:Frame|undefined;bar.querySelector('.max')!.addEventListener('click',()=>{win.classList.remove('minimized');const target=saved||{x:8,y:workspace().top,w:desktop.clientWidth-16,h:workspace().bottom-workspace().top};const r=compact?clampFrame(target,workspace()):target;saved=saved?undefined:{x:win.offsetLeft,y:win.offsetTop,w:win.offsetWidth,h:win.offsetHeight};Object.assign(win.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px'});syncSequenceMusic();});
  function drag(e:PointerEvent,resize=false){if((e.target as HTMLElement).closest('button'))return;e.preventDefault();const scale=desktop.getBoundingClientRect().width/desktop.clientWidth,sx=e.clientX,sy=e.clientY,x=win.offsetLeft,y=win.offsetTop,w=win.offsetWidth,h=win.offsetHeight;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);const el=e.currentTarget as HTMLElement;
   const move=(ev:PointerEvent)=>{const dx=(ev.clientX-sx)/scale,dy=(ev.clientY-sy)/scale;if(compact){const r=clampFrame({x:resize?x:x+dx,y:resize?y:y+dy,w:resize?Math.max(240,w+dx):w,h:resize?Math.max(88,h+dy):h},workspace());Object.assign(win.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px'});}else if(resize){win.style.width=Math.max(120,w+dx)+'px';win.style.height=Math.max(60,h+dy)+'px';}else{win.style.left=Math.max(-w+40,Math.min(920,x+dx))+'px';win.style.top=Math.max(0,Math.min(515,y+dy))+'px';}};
   const end=()=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',end);el.removeEventListener('pointercancel',end);};el.addEventListener('pointermove',move);el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
@@ -88,7 +92,11 @@ function removeWindow(win:Element){
   mediaStatusCleanup.get(v)?.();mediaStatusCleanup.delete(v);v.pause();v.removeAttribute('src');v.load();
  });
 }
-function clearWindows(){windowList.classList.add('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded','false');desktop.classList.remove('finale');ducks.delete('intro');musicLevel();desktop.querySelectorAll('.window,.free-dancer').forEach(removeWindow);}
+function clearWindows(keepInput=started){desktop.classList.remove('finale');ducks.delete('intro');musicLevel();desktop.querySelectorAll<HTMLElement>('.window,.free-dancer').forEach(win=>{
+ if(!keepInput||!win.classList.contains('terminal')){removeWindow(win);return;}
+ typing++;win.classList.remove('large','custom-terminal');win.querySelector('.content')!.replaceChildren();
+ placeWindow(win,{x:60,y:405,w:362,h:101,className:'terminal'});
+});}
 function clearTimers(){timers.forEach(clearTimeout);timers=[];}
 function fitTerminalResponse(win:HTMLElement){
  if(!win.isConnected||win.classList.contains('minimized'))return;
@@ -101,14 +109,11 @@ function fitTerminalResponse(win:HTMLElement){
  }
  content.scrollTop=0;
 }
-function terminal(large=false){let win=desktop.querySelector<HTMLElement>('[data-id="terminal"]');if(win)return win;
+function terminal(large=false){let win=desktop.querySelector<HTMLElement>('[data-id="terminal"]');if(win){if(large){win.classList.add('large');placeWindow(win,{x:204,y:147,w:532,h:283,className:'terminal large'});}return win;}
  const t=windowBox({title:`${identity}'s COMPUTER`,x:60,y:405,w:362,h:101,id:'terminal',className:`terminal ${large?'large':''}`});
  if(large)placeWindow(t.win,{x:204,y:147,w:532,h:283,className:'terminal large'});
- t.win.querySelector('.bottom-edge')!.remove();const drive=document.createElement('div');drive.className='drive';drive.innerHTML='<span>▧ C　　　　　　　　　　　　　　　　　↕</span>';t.win.append(drive);const status=document.createElement('div');status.className='status';status.textContent='▱₁  ▱₂';t.win.append(status);
- const commandInput=document.createElement('input');commandInput.className='terminal-input';commandInput.setAttribute('aria-label','Terminal command');t.win.append(commandInput);
- const content=t.content;content.addEventListener('click',()=>{commandInput.value='';commandInput.focus();});
- commandInput.oninput=()=>{typing++;content.textContent=commandInput.value;const cursor=document.createElement('i');cursor.className='cursor';content.append(cursor);};
- commandInput.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const text=commandInput.value;commandInput.value='';commandInput.blur();void dispatch(text,'keyboard').catch(e=>notify(e.message));}};
+ t.win.querySelector('.bottom-edge')!.remove();t.win.append(inputControls,activity);
+ t.content.setAttribute('role','log');t.content.setAttribute('aria-label','Computer response');
  const mutations=new MutationObserver(()=>fitTerminalResponse(t.win));
  mutations.observe(t.content,{childList:true,characterData:true,subtree:true});
  const resize=new ResizeObserver(()=>fitTerminalResponse(t.win));resize.observe(t.content);
@@ -121,6 +126,8 @@ function dancer(character:string,o:Partial<W>={},variant='',url?:string,deferPla
  const face=variant.includes('face')||variant==='hat';const title=character==='celery'?'CINCO ID':character==='oyster'?'OYSTER':'Tayne';
  const t=windowBox({title,x:520,y:12,w:282,h:502,menu:'',...o});
  const v=document.createElement('video');const source=url||videoSource(character,variant);if(!source){t.content.textContent='Sequence not loaded.';return t;}v.src=source;v.poster=mode==='live'?(liveAssets[`${profile}:${character}:${variant==='hat'?'hat':variant.includes('face')?'face':variant==='tayne-intro'?'intro':'base'}`]?.image||''):'';v.playbackRate=liveAssets[`${profile}:${character}:${variant||'base'}`]?.playbackRate||1;v.muted=true;v.loop=true;v.autoplay=!paused&&!deferPlayback;v.playsInline=true;v.dataset.character=character;v.dataset.sequence=character==='celery'?'Celery Man':character;v.className=face?'face-video':mode==='live'&&variant==='tayne-intro'?'intro-video':'';t.content.append(v);
+ // Keep generated soundtrack URLs tied to this window, even if its asset cache changes.
+ v.dataset.musicSource=sequenceMusicSource(character,source);queueMicrotask(syncSequenceMusic);
  const status=feedbackToken,key=`video:${++mediaStatusId}`;commandStatus.job(status,key,'Loading video');
  const done=()=>{clearTimeout(timeout);commandStatus.jobDone(status,key);};
  const timeout=window.setTimeout(()=>{if(v.isConnected){commandStatus.error(status,'Video is not playing. Try the command again.');}done();},30000);
@@ -128,11 +135,34 @@ function dancer(character:string,o:Partial<W>={},variant='',url?:string,deferPla
  v.addEventListener('error',()=>{done();if(!v.isConnected)return;commandStatus.error(status,'Video playback failed. Try the command again.');t.content.textContent='Sequence unavailable. Open controls to regenerate.';events.push({kind:'media-error',url:v.src});});if(!paused&&!deferPlayback)void v.play().catch((error:Error)=>{if(!v.isConnected||error.name==='AbortError')return;done();commandStatus.error(status,`Video playback failed: ${error.message}`);});return t;
 }
 function portrait(character:string){return dancer(character,{title:'',x:125,y:62,w:375,h:332,menu:character==='celery'?'Celery Man':character==='oyster'?'Celery Man':'Tayne',blue:true,className:'portrait'},character+'-face');}
-function musicFor(character:string){
- const token=++musicEpoch,source=['celery','oyster','tayne','chaos'].includes(character)?`/media/original/music-${character}.wav`:videoSource(character);
+function sequenceMusicSource(character:string,source=videoSource(character)){
+ return ['celery','oyster','tayne','chaos'].includes(character)?`/media/original/music-${character}.wav`:source;
+}
+function syncSequenceMusic(){
+ // The scripted finale has one shared score across its cascade of windows.
+ if(desktop.classList.contains('finale'))return;
+ const front=[...desktop.querySelectorAll<HTMLElement>('.window:not(.minimized):not(.hidden)')]
+  .filter(win=>win.style.display!=='none'&&win.querySelector('video[data-music-source]'))
+  .sort((a,b)=>Number(b.style.zIndex)-Number(a.style.zIndex))[0];
+ const video=front?.querySelector<HTMLVideoElement>('video[data-music-source]');
+ const intros=[...desktop.querySelectorAll<HTMLVideoElement>('video.intro-video')];
+ intros.forEach(intro=>intro.muted=!sound||intro!==video);
+ if(intros.some(intro=>!intro.muted&&!intro.paused))ducks.add('intro');else ducks.delete('intro');
+ musicLevel();
+ if(video){musicFor(video.dataset.character!,video.dataset.musicSource);return;}
+ if(desktop.querySelector('.free-dancer'))return;
+ ++musicEpoch;pendingMusic=undefined;music?.stop();music=null;
+}
+function musicFor(character:string,source=sequenceMusicSource(character)){
+ if(pendingMusic?.source===source&&pendingMusic.token===musicEpoch)return;
+ const token=++musicEpoch;pendingMusic=undefined;
  if(music?.url===source){if(!paused)void music.play();return;}
+ // Do not keep the previous foreground sequence audible while the new one loads.
+ music?.pause();
+ if(!source)return;
+ pendingMusic={source,token};
  const status=feedbackToken,key=`music:${token}`;commandStatus.job(status,key,'Loading music');const next=new MusicLoop(source,!source.includes('/original/'));next.volume=0;
- void next.ready.then(()=>{if(token!==musicEpoch){next.stop();commandStatus.jobDone(status,key);return;}music?.stop();music=next;musicLevel();if(!paused)void music.play();commandStatus.jobDone(status,key);events.push({kind:'music-playing',url:source,time:performance.now()});}).catch(e=>{next.stop();commandStatus.error(status,'Music could not load. Try the command again.');commandStatus.jobDone(status,key);events.push({kind:'music-error',message:String(e)});});
+ void next.ready.then(()=>{if(token!==musicEpoch){next.stop();commandStatus.jobDone(status,key);return;}pendingMusic=undefined;music?.stop();music=next;musicLevel();if(!paused)void music.play();commandStatus.jobDone(status,key);events.push({kind:'music-playing',url:source,time:performance.now()});}).catch(e=>{next.stop();commandStatus.jobDone(status,key);if(token!==musicEpoch)return;pendingMusic=undefined;commandStatus.error(status,'Music could not load. Try the command again.');events.push({kind:'music-error',message:String(e)});});
 }
 async function speak(cmd:Command){
  if(!sound||!cmd.response)return;
@@ -174,7 +204,7 @@ function showTayne(followupReady?:Promise<boolean>){
   schedule(()=>{clearWindows();for(let i=0;i<7;i++)dancer('tayne',{x:233+i*36,y:28+[0,25,55,73,52,22,-2][i],w:282,h:502},'tayne-squat');},3700);
  };
  v.loop=false;
- if(mode==='live'){routeAudio(v);v.muted=!sound;v.addEventListener('playing',()=>{ducks.add('intro');musicLevel();});v.addEventListener('ended',advance,{once:true});}
+ if(mode==='live'){routeAudio(v);v.muted=!sound;v.addEventListener('playing',syncSequenceMusic);v.addEventListener('ended',advance,{once:true});}
  else {v.muted=true;v.addEventListener('playing',()=>{void speak({action:'tayne',response:"Hey Paul. I'm Tayne, your latest dancer. I can't wait to entertain you.",audio:'intro'});schedule(advance,4800);},{once:true});}
  v.addEventListener('pause',release);v.addEventListener('error',()=>{release();commandStatus.jobDone(status,key);});
  const previousCleanup=mediaStatusCleanup.get(v);mediaStatusCleanup.set(v,()=>{previousCleanup?.();commandStatus.jobDone(status,key);release();});
@@ -306,7 +336,7 @@ async function apply(cmd:Command,acknowledged=false){
  if(cmd.action==='confirm'){showNsfw(true);schedule(showCall,6900);}
  if(cmd.action==='call')showCall();
  if(cmd.action==='chaos')chaos();
- if(cmd.action==='pause'||cmd.action==='resume'){paused=cmd.action==='pause';desktop.classList.toggle('paused',paused);desktop.querySelectorAll('video').forEach(v=>paused?v.pause():void v.play());if(paused)music?.pause();else void music?.play();}
+ if(cmd.action==='pause'||cmd.action==='resume'){paused=cmd.action==='pause';desktop.classList.toggle('paused',paused);desktop.querySelectorAll('video').forEach(v=>paused?v.pause():void v.play());if(paused)music?.pause();else if(!pendingMusic||pendingMusic.token!==musicEpoch)void music?.play();}
  if(cmd.action==='custom')return customDance(cmd);
 
 }
@@ -334,6 +364,7 @@ async function customDance(cmd:Command){
 }
 async function dispatch(text:string,source='keyboard',feedback?:number){
  if(!text.trim())return;const token=run,order=++commandEpoch;void unlockAudio();
+ if(source!=='microphone'){microphoneTurn?.cancel();microphoneTurn=undefined;}
  const status=feedback??commandStatus.begin('Interpreting…',text,source==='microphone'?'Heard':'Command');feedbackToken=status;commandStatus.retry(status,()=>dispatch(text,'retry'));
  events.push({kind:'input',text,source,time:performance.now()});
  try{
@@ -347,105 +378,155 @@ async function dispatch(text:string,source='keyboard',feedback?:number){
   commandStatus.phase(status,'Preparing sequence');const applied=await apply(cmd,acknowledged&&cmd.action==='custom');if(applied===false)return;if(token===run&&order===commandEpoch){scriptGuide.observe(text,cmd.action);commandStatus.finish(status);}events.push({kind:'command-complete',text,action:cmd.action,time:performance.now()});return cmd;
  }catch(e){if(token===run&&order===commandEpoch&&commandStatus.current(status)){const message=(e as Error).name==='TimeoutError'?'Computer timed out. Please try again.':(e as Error).message;commandStatus.error(status,message);typing++;const content=desktop.querySelector('[data-id="terminal"] .content');if(content)content.textContent='Command failed.';}throw e;}
 }
-async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,recording?:{requestId:string;durationMs:number;peak:number;device:string}){
+async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,recording?:{requestId:string;durationMs:number;peak:number;device:string},streaming?:TranscriptionTurn){
  if(feedback!==undefined&&!commandStatus.current(feedback))return;
  const token=run,status=feedback??commandStatus.begin('Transcribing…');feedbackToken=status;
  const requestId=recording?.requestId||crypto.randomUUID(),startedAt=performance.now();
  const capture=recording?`Mic #${recording.requestId.split('-').pop()} · ${(recording.durationMs/1000).toFixed(1)}s captured`:'';
  commandStatus.phase(status,`Transcribing${capture?' · '+capture:''}`);
  try{
-  const result=await api('transcribe',{audio:base64,mime,requestId});if(token!==run||!commandStatus.current(status))return;
+  let result;
+  if(streaming){
+   try{result={...await streaming.finish(),requestId};if(incompleteTranscript(result.text)){events.push({kind:'transcription-incomplete',requestId,text:result.text});result=undefined;throw Error('Streaming transcript was incomplete');}}
+   catch(error){
+    if(token!==run||!commandStatus.current(status)||(error as Error).name==='AbortError')return;
+    events.push({kind:'transcription-fallback',requestId,message:(error as Error).message});
+    commandStatus.phase(status,'Transcribing recording…');
+   }
+  }
+  if(token!==run||!commandStatus.current(status))return;
+  result??=await api('transcribe',{audio:base64,mime,requestId});if(token!==run||!commandStatus.current(status))return;
   if(result.requestId!==requestId)throw Error('Transcript did not match this recording. Please try again.');
-  const text=String(result.text||'').trim();events.push({kind:'transcription',text,requestId,recording,model:result.model,elapsedMs:performance.now()-startedAt});input.value=text;
-  if(!text){commandStatus.error(status,'No speech heard. F1 → Replay mic to check the recording.');return;}
+  const text=String(result.text||'').trim();events.push({kind:'transcription',text,requestId,recording,model:result.model,firstPartialMs:result.firstPartialMs,transcriptionMs:result.transcriptionMs,elapsedMs:performance.now()-startedAt});
+  if(incompleteTranscript(text)){commandStatus.error(status,text?'Could not hear a complete command. Hold Record, wait for “Speak now”, then repeat.':'No speech heard. Settings → Replay mic to check the recording.');return;}
   commandStatus.echo(status,text);commandStatus.detail(status,`${capture||'Audio file'} · transcription ${(result.transcriptionMs/1000).toFixed(1)}s${recording?' · '+recording.device:''}`);
   return dispatch(text,'microphone',status);
- }catch(e){if(token===run&&commandStatus.current(status))commandStatus.error(status,(e as Error).name==='TimeoutError'?'Transcription timed out. F1 → Replay mic to check the recording.':(e as Error).message);throw e;}
+ }catch(e){if(token===run&&commandStatus.current(status))commandStatus.error(status,(e as Error).name==='TimeoutError'?'Transcription timed out. Settings → Replay mic to check the recording.':(e as Error).message);throw e;}
 }
 
-function reset(){commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','paused','flash');clearWindows();started=false;replaying=false;paused=false;setMicState('idle');fit();launch();}
-async function begin(){scriptGuide.reset();void unlockAudio();void api('warm',{profile,name:identity}).catch(()=>{});clearWindows();started=true;fit();dock.classList.add('hidden');await dispatch('Good morning','boot');}
+function reset(){microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','paused','flash');clearWindows(false);started=false;replaying=false;paused=false;setMicState('idle');fit();launch();}
+async function begin(){scriptGuide.reset();void unlockAudio();warmTranscription();void prepareTranscription(speechBus().context).catch(()=>{});void api('warm',{profile,name:identity}).catch(()=>{});clearWindows(false);started=true;fit();terminal();await dispatch('Good morning','boot');}
 function launch(){
  const existing=desktop.querySelector<HTMLElement>('.launch');if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);return;}
  let warmTimer:number;
  const t=launchIdentity({profile,name:identity,compact,windowBox,removeWindow,upload:image=>api('profile',{image}),
   select:person=>{clearTimeout(warmTimer);warmTimer=window.setTimeout(()=>void api('warm',{profile:person.id,name:person.name}).catch(()=>{}),500);},
   start:async(person,win)=>{
-   // Unlock playback while Start still has the browser's user activation.
-   void unlockAudio();const token=run;let microphoneError='';
-   try{const checked=await microphone.open();checked.getTracks().forEach(track=>track.stop());}
-   catch{microphoneError=compact?'Microphone unavailable. Tap Type to enter commands, or choose an input in More → Input device.':'Microphone unavailable. Click the terminal to type, or choose an input in F1 → Input device.';}
+   // Opening then closing a Bluetooth mic here can interrupt the greeting's output
+   // route. Request microphone access only when the user actually holds Record.
+   const ready=unlockAudio(),token=run;void microphone.refresh();
+   await ready;
    if(token!==run||!win.isConnected)return;
    mode='live';profile=person.id;identity=person.name;context.identity=identity;
    localStorage.setItem('cinco-profile',profile);localStorage.setItem('cinco-name',identity);
-   if(microphoneError)notify(microphoneError);await begin();
+   await begin();
   }
  });
  t.win.addEventListener('windowclose',()=>clearTimeout(warmTimer));
 }
-async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};started=true;fit();replaying=true;dock.classList.add('hidden');let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){const a=new Audio('/media/original/keyboard.wav');routeAudio(a);if(sound)void a.play();}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
+async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};started=true;fit();replaying=true;terminal();let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){const a=new Audio('/media/original/keyboard.wav');routeAudio(a);if(sound)void a.play();}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
 async function fileBase64(blob:Blob){return new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(blob);});}
 async function startRecording(){
- recordingRequested=true;clearTimeout(stopRecordingTimer);
+ recordingRequested=true;recordingCancelled=false;clearTimeout(stopRecordingTimer);
  if(recordingStarting||recorder?.state==='recording')return;
- recordingStarting=true;void unlockAudio();setMicState('opening');
+ recordingStarting=true;recordingCancelled=false;void unlockAudio();setMicState('opening');
+ microphoneTurn?.cancel();microphoneTurn=undefined;warmTranscription();
  // Opening the microphone is not a replacement dance command. Keep pending
  // generation alive, including when this recording is empty or fails.
  commandEpoch++;typing++;stopSpeech();lastMicPlayback?.pause();duckForMicrophone(true);
- const recordingRun=run,status=commandStatus.begin('Opening microphone · wait to speak');feedbackToken=status;
- const number=++recordingNumber,requestId=`${crypto.randomUUID()}-${number}`;
+ const recordingRun=run,status=commandStatus.begin('Opening microphone…');feedbackToken=status;
+ const number=++recordingNumber,requestId=`${crypto.randomUUID()}-${number}`,openingAt=performance.now();
+ events.push({kind:'microphone-opening',requestId,time:openingAt});
  try{
+  const audioContext=speechBus().context;let streamingAvailable=false;
+  // Recording must not wait for the optional streaming worklet to download.
+  void prepareTranscription(audioContext).then(()=>{streamingAvailable=true;}).catch(()=>{});
   stream=await microphone.open(stream);
-  if(!recordingRequested||recordingRun!==run||!commandStatus.current(status)){stream.getTracks().forEach(t=>t.enabled=false);duckForMicrophone(false);setMicState('idle');commandStatus.error(status,compact?'Microphone was not ready. Tap Talk again and wait for Listening.':'Microphone was not ready. Hold Space again and wait for Listening.');return;}
+  if(!recordingRequested||recordingRun!==run||!commandStatus.current(status)){stream.getTracks().forEach(t=>t.enabled=false);duckForMicrophone(false);setMicState('idle');commandStatus.finish(status);return;}
   stream.getTracks().forEach(t=>t.enabled=true);
   commandStatus.detail(status,`Input: ${stream.getAudioTracks()[0]?.label||microphone.label}`);
   const activeStream=stream,chunks:Blob[]=[],mime=MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4';
   const current=new MediaRecorder(activeStream,{mimeType:mime});recorder=current;
-  const audioContext=speechBus().context,source=audioContext.createMediaStreamSource(activeStream),meter=audioContext.createAnalyser();meter.fftSize=2048;source.connect(meter);
+  const source=audioContext.createMediaStreamSource(activeStream),meter=audioContext.createAnalyser();meter.fftSize=2048;source.connect(meter);
+  let turn:TranscriptionTurn|undefined;
+  if(streamingAvailable){
+   try{turn=new TranscriptionTurn(audioContext,activeStream,text=>{
+    if(recordingRun!==run||!commandStatus.current(status))return;
+    commandStatus.echo(status,text,'Hearing');events.push({kind:'transcription-partial',requestId,text,time:performance.now()});
+   });microphoneTurn=turn;}catch{closeTranscription();}
+  }
   const samples=new Float32Array(meter.fftSize);let peak=0;const began=performance.now();
-  const interval=window.setInterval(()=>{meter.getFloatTimeDomainData(samples);const rms=Math.sqrt(samples.reduce((sum,v)=>sum+v*v,0)/samples.length);peak=Math.max(peak,rms);commandStatus.phase(status,`Listening #${number} · ${rms>.005?'signal OK':'quiet'} · ${compact?'tap Send to finish':'release Space to send'}`);},100);
+  const interval=window.setInterval(()=>{meter.getFloatTimeDomainData(samples);const rms=Math.sqrt(samples.reduce((sum,v)=>sum+v*v,0)/samples.length);peak=Math.max(peak,rms);if(recordButton.dataset.state==='recording')commandStatus.phase(status,rms>.005?'Recording…':'Speak now · recording');},100);
   current.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
   current.onerror=()=>{commandStatus.error(status,'Microphone recording failed. Try again.');stopRecording();};
   current.onstop=async()=>{
    clearInterval(interval);source.disconnect();meter.disconnect();
    if(recorder===current){activeStream.getTracks().forEach(t=>t.enabled=false);duckForMicrophone(false);setMicState('idle');}
-   if(recordingRun!==run||!commandStatus.current(status))return;
+   if(recordingCancelled||recordingRun!==run||!commandStatus.current(status)){turn?.cancel();if(recordingCancelled)commandStatus.finish(status);return;}
    const blob=new Blob(chunks,{type:mime}),durationMs=performance.now()-began,device=activeStream.getAudioTracks()[0]?.label||'Default microphone';
    if(lastMicUrl)URL.revokeObjectURL(lastMicUrl);lastMicUrl=URL.createObjectURL(blob);
    const replay=dock.querySelector<HTMLButtonElement>('.replay-mic')!;replay.disabled=false;replay.title=`Replay mic #${number}: ${(durationMs/1000).toFixed(1)} seconds from ${device}`;
-   commandStatus.echo(status,`${(durationMs/1000).toFixed(1)}s · ${compact?'More':'F1'} → Replay mic`,'Captured');
+   commandStatus.echo(status,`${(durationMs/1000).toFixed(1)}s · Settings → Replay mic`,'Captured');
    events.push({kind:'microphone-capture',requestId,durationMs,peak,bytes:blob.size,device});
-   if(durationMs<250||peak<.001){commandStatus.error(status,`Recording too short or quiet. ${compact?'More':'F1'} → Replay mic to check.`);return;}
-   try{await receiveAudio(await fileBase64(blob),mime,status,{requestId,durationMs,peak,device});}catch(e){notify((e as Error).message);}
+   if(durationMs<250||peak<.001){turn?.cancel();commandStatus.error(status,`Recording too short or quiet. Settings → Replay mic to check.`);return;}
+   try{await receiveAudio(await fileBase64(blob),mime,status,{requestId,durationMs,peak,device},turn);}catch{/* receiveAudio keeps the failure in the input status. */}finally{turn?.cancel();if(microphoneTurn===turn)microphoneTurn=undefined;}
   };
-  current.start();commandStatus.phase(status,`Listening #${number} · speak now`);setMicState('recording');
- }catch(e){duckForMicrophone(false);setMicState('idle');commandStatus.error(status,(e as Error).message||`Microphone unavailable: ${microphone.label}. Open F1 → Input device to select a connected microphone.`);notify(`Check the microphone selection in ${compact?'More':'F1'} → Input device.`);}
+  current.onstart=()=>{if(!recordingRequested||recordingCancelled||recordingRun!==run||!commandStatus.current(status))return;events.push({kind:'microphone-ready',requestId,openingMs:performance.now()-openingAt,time:performance.now()});commandStatus.phase(status,'Speak now · recording');setMicState('recording');};
+  current.start();
+ }catch(e){duckForMicrophone(false);setMicState('idle');commandStatus.error(status,`Microphone unavailable: ${(e as Error).message||microphone.label}. Use the gear to choose a microphone.`);}
  finally{recordingStarting=false;}
 }
 function stopRecording(){recordingRequested=false;const current=recorder;clearTimeout(stopRecordingTimer);if(current?.state==='recording')stopRecordingTimer=window.setTimeout(()=>{if(current.state==='recording')current.stop();},150);}
 dock.querySelector('.replay-mic')!.addEventListener('click',()=>{if(!lastMicUrl||recorder?.state==='recording')return;stopSpeech();lastMicPlayback?.pause();lastMicPlayback=new Audio(lastMicUrl);routeAudio(lastMicPlayback);void lastMicPlayback.play();});
 function setMicState(state:'idle'|'opening'|'recording'){
- if(state==='idle')recordingRequested=false;const active=state!=='idle';document.querySelector('.lamp')!.classList.toggle('on',active);
- dock.querySelector('.mic')!.textContent=active?'Stop recording':'Microphone';
- const b=touchBar.querySelector<HTMLButtonElement>('.touch-mic')!;b.textContent=state==='opening'?'Opening…':state==='recording'?'■ Send':'● Talk';b.setAttribute('aria-label',active?'Stop microphone and send':'Start microphone');b.setAttribute('aria-pressed',String(active));
+ if(state==='idle')recordingRequested=false;
+ recordButton.dataset.state=state;recordButton.setAttribute('aria-pressed',String(state!=='idle'));
+ recordButton.setAttribute('aria-label',state==='idle'?'Record (press and hold)':state==='opening'?'Opening microphone (wait to speak)':'Recording (release to send)');
+ recordButton.querySelector('span')!.textContent=state==='opening'?'Opening…':state==='recording'?'Recording':'Record';
+ inputControls.querySelector('.record-hint')!.textContent=state==='idle'?'Hold Space':state==='opening'?'Wait for mic':pushToTalk?'Release Space':'Release to send';
 }
-const toggleRecording=()=>recordingRequested||recorder?.state==='recording'?stopRecording():void startRecording();
-touchBar.querySelector('.touch-mic')!.addEventListener('click',toggleRecording);
-touchBar.querySelector('[data-touch="type"]')!.addEventListener('click',()=>{windowList.classList.add('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded','false');dock.classList.remove('hidden');input.focus();});
-touchBar.querySelector('[data-touch="more"]')!.addEventListener('click',()=>{windowList.classList.add('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded','false');dock.classList.toggle('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded',String(!dock.classList.contains('hidden')));});
-touchBar.querySelector('[data-touch="windows"]')!.addEventListener('click',()=>{
- dock.classList.add('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded','false');windowList.replaceChildren();windowList.classList.toggle('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded',String(!windowList.classList.contains('hidden')));
- for(const win of desktop.querySelectorAll<HTMLElement>('.window')){if(win.style.display==='none')continue;const button=document.createElement('button');button.type='button';button.className='classic-button';button.textContent=win.getAttribute('aria-label')||win.querySelector('.menu-line')?.textContent||'Sequence';button.onclick=()=>{win.classList.remove('minimized');win.style.zIndex=String(++topZ);windowList.classList.add('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded','false');};windowList.append(button);}
- if(!windowList.children.length)windowList.textContent='No open windows.';
+recordButton.setAttribute('aria-label','Record (press and hold)');recordButton.setAttribute('aria-keyshortcuts','Space');recordButton.title='Hold Record or Space, wait for Speak now, then talk. Release to send.';
+recordButton.addEventListener('pointerdown',event=>{
+ if(event.button!==0||!event.isPrimary||recordingRequested||recorder?.state==='recording')return;
+ event.preventDefault();recordButton.focus({preventScroll:true});recordingPointer=event.pointerId;
+ recordButton.setPointerCapture(event.pointerId);void startRecording();
 });
-dock.onsubmit=e=>{e.preventDefault();void unlockAudio();const text=input.value;input.value='';if(compact){input.blur();dock.classList.add('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded','false');}void dispatch(text).catch(e=>notify(e.message));};dock.querySelector('.mic')!.addEventListener('click',toggleRecording);
-document.querySelector('.hint')!.addEventListener('click',()=>{dock.classList.toggle('hidden');input.focus();});
-dock.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.onclick=()=>{if(compact&&b.dataset.tool!=='sound'){dock.classList.add('hidden');touchBar.querySelector('[data-touch="more"]')!.setAttribute('aria-expanded','false');}switch(b.dataset.tool){case'input':{const t=windowBox({title:'Microphone input',x:250,y:180,w:460,h:190,className:'input-settings'});microphone.mount(t.content);break;}case'identity':launch();break;case'printout':showPrintout();break;case'replay':void replay();break;case'reset':reset();break;case'hide':dock.classList.add('hidden');break;case'pause':void dispatch(paused?'resume':'pause');break;case'sound':sound=!sound;b.textContent=sound?'Sound on':'Sound off';if(!sound)stopSpeech();musicLevel();desktop.querySelectorAll<HTMLVideoElement>('video.intro-video').forEach(v=>v.muted=!sound);break;}});
-addEventListener('keydown',e=>{if(e.key==='F1'||e.key==='Escape'){e.preventDefault();dock.classList.toggle('hidden');if(!dock.classList.contains('hidden'))input.focus();}if(e.code==='Space'&&!(e.target instanceof HTMLButtonElement)&&!(e.target instanceof HTMLInputElement)&&!(e.target instanceof HTMLSelectElement)&&!e.repeat&&started){e.preventDefault();pushToTalk=true;void startRecording();}if(e.key==='Enter'&&!(e.target instanceof HTMLButtonElement)&&!(e.target instanceof HTMLInputElement)&&started){dock.classList.remove('hidden');input.focus();}});
-addEventListener('keyup',e=>{if(e.code==='Space'&&pushToTalk){pushToTalk=false;stopRecording();}});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&recordingRequested)stopRecording();});
+function releaseRecordPointer(event:PointerEvent,cancelled=false){
+ if(event.pointerId!==recordingPointer)return;recordingPointer=undefined;
+ if(recordButton.hasPointerCapture(event.pointerId))recordButton.releasePointerCapture(event.pointerId);
+ recordingCancelled=cancelled;stopRecording();
+}
+recordButton.addEventListener('pointerup',event=>releaseRecordPointer(event));
+recordButton.addEventListener('pointercancel',event=>releaseRecordPointer(event,true));
+recordButton.addEventListener('lostpointercapture',event=>releaseRecordPointer(event,true));
+recordButton.addEventListener('contextmenu',event=>event.preventDefault());
+function openInputSettings(){
+ const existing=desktop.querySelector<HTMLElement>('.input-settings');
+ if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);return;}
+ const t=windowBox({title:'Microphone',x:250,y:160,w:460,h:260,className:'input-settings'});
+ t.win.setAttribute('role','dialog');microphone.mount(t.content);
+ const details=document.createElement('details');details.className='activity-details';
+ const summary=document.createElement('summary');summary.textContent='Activity';details.append(summary,diagnostics);
+ details.open=activity.classList.contains('has-error')||activity.classList.contains('has-warning');
+ dock.classList.remove('hidden');t.content.append(details,dock);
+ t.win.addEventListener('windowclose',()=>settingsButton.focus(),{once:true});
+ t.content.querySelector('select')?.focus();
+}
+settingsButton.onclick=openInputSettings;
+microphone.subscribe(label=>{const name=inputControls.querySelector<HTMLElement>('.input-microphone')!;name.textContent=label;name.title=label;settingsButton.title=`Microphone settings: ${label}`;});
+dock.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.onclick=()=>{switch(b.dataset.tool){case'identity':launch();break;case'printout':showPrintout();break;case'replay':void replay();break;case'reset':reset();break;case'pause':void dispatch(paused?'resume':'pause');break;case'sound':sound=!sound;b.textContent=sound?'Sound on':'Sound off';if(!sound)stopSpeech();musicLevel();syncSequenceMusic();break;}});
+addEventListener('keydown',e=>{
+ if(e.key==='F1'){e.preventDefault();const settings=desktop.querySelector('.input-settings');if(settings)removeWindow(settings);else openInputSettings();return;}
+ if(e.key==='Escape'){const settings=desktop.querySelector('.input-settings');if(settings){e.preventDefault();removeWindow(settings);}return;}
+ const target=e.target instanceof Element?e.target:null;
+ if(e.code!=='Space'||!started||target?.closest('input,textarea,select,[contenteditable="true"],.launch,.identity-upload,.input-settings')||target?.closest('button:not(.record-button)'))return;
+ e.preventDefault();if(e.repeat||recordingRequested||recorder?.state==='recording')return;pushToTalk=true;void startRecording();
+});
+addEventListener('keyup',e=>{if(e.code==='Space'&&pushToTalk){e.preventDefault();pushToTalk=false;stopRecording();}});
+function cancelHeldRecording(){if(pushToTalk||recordingPointer!==undefined){pushToTalk=false;recordingPointer=undefined;recordingCancelled=true;stopRecording();}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelHeldRecording();});
 addEventListener('pagehide',()=>{stream?.getTracks().forEach(t=>t.stop());});
-addEventListener('blur',()=>{if(pushToTalk){pushToTalk=false;stopRecording();}});
-Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,liveAssets,profile,context,lastPrint,started,replaying,paused,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();},settle:()=>delay(1800)}});
+addEventListener('blur',cancelHeldRecording);
+Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,liveAssets,profile,context,lastPrint,started,replaying,paused,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();syncSequenceMusic();},settle:()=>delay(1800)}});
 launch();
 for(const name of ['okay','yes','greeting','hat','flower']){const audio=new Audio(`/media/original/${name}.wav`);audio.preload='auto';audio.load();}

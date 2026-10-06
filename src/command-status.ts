@@ -1,6 +1,6 @@
 import {describeServiceError,primaryFailure,type ServiceFailure} from './service-errors';
 /** Persistent diagnostics: a command is only idle once all of its work settles. */
-export function createCommandStatus(parent:HTMLElement,idle=()=> 'Waiting for command · hold Space to talk'){
+export function createCommandStatus(parent:HTMLElement,idle=()=> 'Ready',detailsParent=parent){
  const element=document.createElement('aside');element.className='command-status';element.setAttribute('aria-label','Computer activity');
  element.innerHTML='<div class="command-status-line"><span class="command-status-label" role="status"></span><span class="command-status-time"></span></div><div class="command-status-echo" aria-live="polite"></div><div class="command-status-detail"></div>';parent.append(element);
  const alert=document.createElement('aside');alert.className='command-error hidden';alert.setAttribute('role','alert');alert.setAttribute('aria-label','Computer error');
@@ -9,11 +9,11 @@ export function createCommandStatus(parent:HTMLElement,idle=()=> 'Waiting for co
  let failures:ServiceFailure[]=[],retryAction:(()=>Promise<unknown>)|undefined;
  const clearError=()=>{failures=[];alert.classList.add('hidden');parent.classList.remove('has-error','has-warning');};
  retry.onclick=()=>{const action=retryAction;if(!action)return;retry.disabled=true;void action().catch(()=>{}).finally(()=>{retry.disabled=false;});};
- alert.querySelector<HTMLButtonElement>('.dismiss-error')!.onclick=()=>{clearError();render();};
+ alert.querySelector<HTMLButtonElement>('.dismiss-error')!.onclick=()=>{clearError();if(failed){failed=false;phaseText='';jobs.clear();completedAt=0;element.classList.remove('failed');}render();};
  function renderErrors(){
   const primary=primaryFailure(failures);if(!primary)return;
   errorTitle.textContent=(primary.blocking?'ERROR':'NOTICE')+' · '+primary.title;
-  const guidance=(text:string)=>parent.closest('.mobile')?text.replace(/\bF1\b/g,'More'):text;
+  const guidance=(text:string)=>text.replace(/\bF1\b/g,'Settings');
   list.replaceChildren();
   for(const failure of failures){const item=document.createElement('li');const message=document.createElement('span'),help=document.createElement('span'),details=document.createElement('details'),summary=document.createElement('summary'),raw=document.createElement('pre');
    message.className='command-error-message';message.textContent=(failures.length>1?failure.title+': ':'')+guidance(failure.message);
@@ -22,6 +22,7 @@ export function createCommandStatus(parent:HTMLElement,idle=()=> 'Waiting for co
   retry.classList.toggle('hidden',!retryAction);alert.classList.remove('hidden');parent.classList.toggle('has-error',primary.blocking);parent.classList.toggle('has-warning',!primary.blocking);
  }
  const echo=element.querySelector<HTMLElement>('.command-status-echo')!,label=element.querySelector<HTMLElement>('.command-status-label')!,time=element.querySelector<HTMLElement>('.command-status-time')!,detail=element.querySelector<HTMLElement>('.command-status-detail')!;
+ if(detailsParent!==parent)detailsParent.append(echo,detail,alert);
  let token=0,start=0,working=false,failed=false,phaseText='',completedAt=0,detailText='';
  const jobs=new Map<string,{text:string;since:number}>();
  function render(){

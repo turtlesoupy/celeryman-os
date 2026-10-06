@@ -29,14 +29,15 @@ export class MicrophoneDevices{
  private detecting=false;
  private verified='';
  private verifiedId='';
+ private listeners=new Set<(label:string)=>void>();
  constructor(private changed:()=>void,private busy:()=>boolean,private media=navigator.mediaDevices,private storage:Pick<Storage,'getItem'|'setItem'>=localStorage){this.selected=storage.getItem('cinco-microphone')||'default';this.savedLabel=storage.getItem('cinco-microphone-label')||'';media?.addEventListener('devicechange',()=>void this.refresh());}
  get constraints(){return microphoneConstraints(resolveMicrophone(this.devices,this.selected)?.deviceId||this.selected);}
  get label(){return this.devices.find(d=>d.deviceId===this.selected)?.label||this.savedLabel||(this.selected==='default'?'Default microphone':'Selected microphone');}
+ subscribe(listener:(label:string)=>void){this.listeners.add(listener);listener(this.verified||resolveMicrophone(this.devices,this.selected)?.label||this.label);return ()=>this.listeners.delete(listener);}
  async open(existing?:MediaStream|null):Promise<MediaStream>{
   await this.refresh();
   let expected=resolveMicrophone(this.devices,this.selected);
-  if(!expected?.deviceId&&this.selected==='default'){const permission=await this.media.getUserMedia({audio:true});permission.getTracks().forEach(t=>t.stop());await this.refresh();expected=resolveMicrophone(this.devices,this.selected);}
-  if(this.selected!=='default'&&!expected){existing?.getTracks().forEach(t=>t.stop());throw Error(`Selected microphone is disconnected: ${this.savedLabel||this.selected}. Choose a connected input in F1 → Input device (More → Input device on mobile).`);}
+  if(this.selected!=='default'&&!expected){existing?.getTracks().forEach(t=>t.stop());throw Error(`Selected microphone is disconnected: ${this.savedLabel||this.selected}. Use the gear to choose a connected microphone.`);}
   const cached=existing?.getAudioTracks().find(t=>t.readyState==='live');
   if(cached&&expected&&microphoneMatches(cached,expected))return existing!;
   existing?.getTracks().forEach(t=>t.stop());
@@ -44,7 +45,9 @@ export class MicrophoneDevices{
   const selected=this.selected;
   const opened=await this.media.getUserMedia({audio:microphoneConstraints(expected?.deviceId||selected)});
   try{
-   await this.refresh();expected=resolveMicrophone(this.devices,selected);
+   // First-time permission reveals device names. Keep that same stream open:
+   // stopping and reopening it makes Bluetooth startup happen twice.
+   if(!expected?.deviceId||!expected.label){await this.refresh();expected=resolveMicrophone(this.devices,selected);}
    const track=opened.getAudioTracks()[0];
    if(selected!==this.selected)throw Error('Microphone selection changed. Try again.');
    if(!track||!expected||!microphoneMatches(track,expected))throw Error(`Microphone mismatch: requested ${expected?.label||this.savedLabel||'default input'}, but the browser opened ${track?.label||'an unidentified input'}. Select your headphones by name. Recording was not started.`);
@@ -75,6 +78,7 @@ export class MicrophoneDevices{
   this.render();void this.refresh();
  }
  private render(){
+  for(const listener of this.listeners)listener(this.verified||resolveMicrophone(this.devices,this.selected)?.label||this.label);
   for(const view of this.views){
    if(!view.isConnected){this.views.delete(view);continue;}
    const select=view.querySelector('select')!;select.replaceChildren();

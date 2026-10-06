@@ -29,4 +29,11 @@ assert.equal(lastStream!.getAudioTracks()[0].readyState,'ended');
 storage.set('cinco-microphone','headset');storage.set('cinco-microphone-label',headset.label);devices=[laptop];
 const pinned=new MicrophoneDevices(()=>{},()=>false,media,settings);const before=calls;
 await assert.rejects(()=>pinned.open(),/disconnected.*Bluetooth Headphones/);assert.equal(calls,before);
+// First permission must retain the opened headset, not stop and reopen it.
+let permitted=false,firstOpens=0;
+const firstStream=stream(headset);
+const firstMedia={addEventListener(){},enumerateDevices:async()=>permitted?[input('default','Default - Bluetooth Headphones','bluetooth'),headset]:[input('','','')],getUserMedia:async()=>{firstOpens++;permitted=true;return firstStream;}} as unknown as MediaDevices;
+const fresh=new MicrophoneDevices(()=>{},()=>false,firstMedia,{getItem:()=>null,setItem(){}});
+assert.equal(await fresh.open(),firstStream);assert.equal(firstOpens,1);
+assert.equal(firstStream.getAudioTracks()[0].readyState,'live');
 console.log('Microphone checks passed: default resolution, exact constraints, stale stream replacement, warm reuse, default change, wrong-device rejection, disconnected selection.');

@@ -11,7 +11,7 @@ import {promisify} from 'node:util';
 const exec=promisify(execFile);
 import {createHash,randomUUID} from 'node:crypto';
 import OpenAI from 'openai';
-import {transcribeAudio} from './transcription.ts';
+import {transcribeAudio,transcriptionSession} from './transcription.ts';
 import {fal} from '@fal-ai/client';
 import type {Plugin} from 'vite';
 import type {IncomingMessage,ServerResponse} from 'node:http';
@@ -208,6 +208,10 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
      result.provider='gpt-4.1-mini';
     }else result.provider='reference-protocol';
     await logDiagnostic({event:'command',text,character:context.character,action:result.action,label:result.label,generationId:result.generationId,planningMs:result.planningMs,provider:result.provider});
+   }else if(req.url==='/api/transcribe/session'){
+    res.setHeader('Cache-Control','no-store');
+    if(req.method!=='POST'){res.statusCode=405;res.end(JSON.stringify({error:'POST required'}));return;}
+    result=await transcriptionSession(openai);
    }else if(req.url==='/api/transcribe'){
     const bytes=Buffer.from(String(b.audio||''),'base64');
     const requestId=String(b.requestId||randomUUID());
