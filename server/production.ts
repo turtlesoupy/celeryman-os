@@ -4,11 +4,9 @@ import {createReadStream} from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {apiMiddleware} from './api.ts';
-import {privateAccess} from './access.ts';
 import {timingSafeEqual} from 'node:crypto';
 
 const root=path.resolve('dist');
-const access=process.env.SITE_PASSWORD?privateAccess(process.env.SITE_PASSWORD,process.env.COOKIE_SECURE!=='false'):undefined;
 const allowedOrigins=new Set((process.env.APP_ORIGINS||'').split(',').filter(Boolean));
 const originToken=process.env.ORIGIN_TOKEN;
 const requests=new Map<string,{count:number;expires:number}>();
@@ -28,7 +26,6 @@ const server=createServer(async(req,res)=>{
    if(supplied.length!==expected.length||!timingSafeEqual(supplied,expected)){res.writeHead(403);res.end('Use celeryman.fun');return;}
   }
   if(req.headers.origin&&!allowedOrigins.has(req.headers.origin)){res.writeHead(403);res.end('Origin not allowed');return;}
-  if(access&&!await access(req,res))return;
   if(req.method==='POST'&&req.url?.startsWith('/api/')){
    for(const [key,value] of requests)if(value.expires<Date.now())requests.delete(key);
    const client=originToken?String(req.headers['x-cinco-client-ip']||'unknown'):req.socket.remoteAddress||'unknown';

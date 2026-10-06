@@ -9,7 +9,7 @@
 - Storage: `gs://celeryman-os-media`, public access prevented, uniform IAM, default seven-day soft deletion.
 - Cloudflare Worker: `celeryman-os`; custom domains `celeryman.fun` and `www.celeryman.fun` (redirects to apex).
 
-The user confirmed permission for public deployment. There is no access-code requirement on the public site. The optional `SITE_PASSWORD` environment variable can enable the private gate if needed; it is not set in production.
+The user confirmed permission for public deployment. There is no access-code requirement on the public site. The application has no password gate.
 
 ## Runtime
 
