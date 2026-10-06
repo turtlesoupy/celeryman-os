@@ -383,6 +383,8 @@ async function apply(cmd:Command,acknowledged=false){
    }finally{progress?.done();commandStatus.jobDone(status,key);}
   }));
   if(token!==run||order!==commandEpoch)return false;
+  // The sketch cuts to a new track once 4d3d3d3 kicks in; retag the portrait too so focus can't restore the old score.
+  videos.forEach(v=>{if(v.dataset.character==='celery')v.dataset.musicSource='/media/original/music-engaged.wav?v=2';});syncSequenceMusic();
   void type(cmd.response);if(!acknowledged)void speak(cmd);
  }
  if(cmd.action==='oyster'){context.character='oyster';context.costume=costumes.oyster;portrait('oyster');dancer('oyster',{x:421,y:47,w:487,h:424});musicFor('oyster');void type(cmd.response);}

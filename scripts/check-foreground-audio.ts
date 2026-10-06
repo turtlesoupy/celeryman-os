@@ -21,7 +21,7 @@ try{
  const music=()=>page.evaluate(()=>(window as any).cinco.state().music);
  const playing=async(character:string)=>page.waitForFunction(character=>{
   const m=(window as any).cinco.state().music;
-  return m?.url===`/media/original/music-${character}.wav`&&m.playing;
+  return m?.url.replace(/\?v=\d+$/,'')===`/media/original/music-${character}.wav`&&m.playing;
  },character);
  await playing('celery');
  await page.evaluate(()=>(window as any).cinco.apply({action:'oyster',response:''},true));
@@ -46,6 +46,11 @@ try{
  await page.keyboard.press('Escape');
  await celery.locator('.titlebar').click({position:{x:50,y:10}});
  await playing('celery');
+ // 4d3d3d3 switches to the sketch's second track, and focusing the portrait must keep it.
+ await page.evaluate(()=>(window as any).cinco.apply({action:'engage',response:''},true));
+ await playing('engaged');
+ await page.locator('.window.portrait').dispatchEvent('pointerdown');await page.waitForTimeout(200);
+ await playing('engaged');
  // Remove all remaining sequences through their controls, including portraits.
  while(await page.locator('.window:has(video)').count()){
   const win=page.locator('.window:has(video)').first();
