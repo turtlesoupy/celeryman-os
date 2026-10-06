@@ -23,7 +23,7 @@
 
 .error .content{font-weight:500}.desktop:after{box-shadow:inset 0 0 3px 1px #00354155}
 
-.custom-dancer .titlebar>span{font-size:11px;display:flex;align-items:center}.terminal.custom-terminal{top:378px!important;height:129px!important}.terminal.custom-terminal .content{font-size:23px;line-height:1.1}
+.custom-dancer .titlebar>span{font-size:11px;display:flex;align-items:center}.terminal.custom-terminal .content{font-size:23px;line-height:1.1}
 
 /* Measured from the reference desktop: roughly nine physical pixels per scanline cycle at 1080p. */
 .desktop{background:#01b2ce}.desktop:after{background:repeating-linear-gradient(0deg,#0000000e 0px,#ffffff05 2.25px,#0000000e 4.5px)}
@@ -75,7 +75,7 @@
 .mobile .microphone-settings{font-size:13px}.mobile .microphone-settings select{font-size:16px;min-height:44px}.mobile .input-settings .content{overflow:auto}
 .mobile .boot .loading-label{font-size:13px}.mobile .boot .identity-art{height:140px}.mobile .boot .identity-art svg{height:135px}
 .mobile .terminal .titlebar{height:32px;font-size:11px}.mobile .terminal .titlebar>span{padding:6px 4px}.mobile .terminal .content{font-size:23px;padding:6px 10px}
-.mobile .terminal.custom-terminal{top:auto!important;bottom:84px;height:128px!important}
+
 .mobile .portrait .content{padding:8px}.mobile .portrait .bottom-edge{height:10px}
 .mobile .nsfw .content{font-size:64px}.mobile .error .content{font-size:22px}
 .mobile .phone .titlebar{font-size:11px;height:32px}.mobile .phone .content{padding:6px}
@@ -118,3 +118,5 @@
 .command-error details{color:#66534a}.command-error summary{cursor:pointer;font-size:9px}.command-error pre{white-space:pre-wrap;overflow-wrap:anywhere;font:9px monospace;margin:4px 0;max-height:80px;overflow:auto;user-select:text}
 .debug-bar.has-warning .command-error{background:#f1e6bb;border-top-color:#9c7b3b;color:#594821}.debug-bar.has-warning .debug-bar-badge{background:#b89850;color:#211b0d}
 .mobile .command-error{max-height:32vh;font-size:12px}.mobile .command-error-actions button{font-size:12px;min-height:32px}.mobile .command-error summary{font-size:11px}
+
+.terminal .content{overflow-wrap:anywhere;scrollbar-width:thin}

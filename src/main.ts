@@ -90,6 +90,17 @@ function removeWindow(win:Element){
 }
 function clearWindows(){windowList.classList.add('hidden');touchBar.querySelector('[data-touch="windows"]')!.setAttribute('aria-expanded','false');desktop.classList.remove('finale');ducks.delete('intro');musicLevel();desktop.querySelectorAll('.window,.free-dancer').forEach(removeWindow);}
 function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+function fitTerminalResponse(win:HTMLElement){
+ if(!win.isConnected||win.classList.contains('minimized'))return;
+ const content=win.querySelector<HTMLElement>('.content')!;
+ const overflow=content.scrollHeight-content.clientHeight;
+ if(overflow>0){
+  const height=Math.min(win.offsetHeight+overflow,desktop.clientHeight-16);
+  const bottom=Math.min(win.offsetTop+win.offsetHeight,desktop.clientHeight-8);
+  win.style.height=height+'px';win.style.top=Math.max(8,bottom-height)+'px';
+ }
+ content.scrollTop=0;
+}
 function terminal(large=false){let win=desktop.querySelector<HTMLElement>('[data-id="terminal"]');if(win)return win;
  const t=windowBox({title:`${identity}'s COMPUTER`,x:60,y:405,w:362,h:101,id:'terminal',className:`terminal ${large?'large':''}`});
  if(large)placeWindow(t.win,{x:204,y:147,w:532,h:283,className:'terminal large'});
@@ -98,9 +109,13 @@ function terminal(large=false){let win=desktop.querySelector<HTMLElement>('[data
  const content=t.content;content.addEventListener('click',()=>{commandInput.value='';commandInput.focus();});
  commandInput.oninput=()=>{typing++;content.textContent=commandInput.value;const cursor=document.createElement('i');cursor.className='cursor';content.append(cursor);};
  commandInput.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const text=commandInput.value;commandInput.value='';commandInput.blur();void dispatch(text,'keyboard').catch(e=>notify(e.message));}};
+ const mutations=new MutationObserver(()=>fitTerminalResponse(t.win));
+ mutations.observe(t.content,{childList:true,characterData:true,subtree:true});
+ const resize=new ResizeObserver(()=>fitTerminalResponse(t.win));resize.observe(t.content);
+ t.win.addEventListener('windowclose',()=>{mutations.disconnect();resize.disconnect();},{once:true});
  return t.win;
 }
-async function type(text:string,large=false){const n=++typing,status=feedbackToken,key=`typing:${n}`,t=terminal(large),c=t.querySelector('.content')!;commandStatus.job(status,key,'Typing response');try{c.textContent='';const span=document.createElement('span'),cursor=document.createElement('i');cursor.className='cursor';c.append(span,cursor);for(const ch of text){if(n!==typing)return;span.textContent+=ch;c.scrollTop=c.scrollHeight;await delay(22);}events.push({kind:'terminal',text,time:performance.now()});}finally{commandStatus.jobDone(status,key);}}
+async function type(text:string,large=false){const n=++typing,status=feedbackToken,key=`typing:${n}`,t=terminal(large),c=t.querySelector('.content')!;commandStatus.job(status,key,'Typing response');try{c.textContent='';const span=document.createElement('span'),cursor=document.createElement('i');cursor.className='cursor';c.append(span,cursor);for(const ch of text){if(n!==typing)return;span.textContent+=ch;await delay(22);}events.push({kind:'terminal',text,time:performance.now()});}finally{commandStatus.jobDone(status,key);}}
 function videoSource(character:string,variant=''){if(mode==='reference')return `/media/original/${variant||character}.mp4`;const key=variant.endsWith('-face')?'face':variant==='tayne-intro'?'intro':variant==='tayne-squat'?'base':variant==='tayne-sway'?'sway':variant||'base';return liveAssets[`${profile}:${character}:${key}`]?.url||liveAssets[`${profile}:${character}:base`]?.url||'';}
 function dancer(character:string,o:Partial<W>={},variant='',url?:string,deferPlayback=false){
  const face=variant.includes('face')||variant==='hat';const title=character==='celery'?'CINCO ID':character==='oyster'?'OYSTER':'Tayne';
@@ -265,7 +280,12 @@ async function apply(cmd:Command,acknowledged=false){
  }
  if(mode==='live'&&cmd.action==='chaos'){const epoch=++generationEpoch;const ready=await Promise.all([prepareDance('mozzarell','base',epoch),prepareDance('mozzarell','face',epoch,undefined,true)]);if(ready.some(ok=>!ok))return false;}
  if(cmd.action==='reset'){reset();return;}
- if(cmd.action==='greeting'){clearWindows();const loader=loading('Preparing computer voice, please wait...',true);const speaking=speak(cmd),epoch=speechEpoch;await speaking;if(epoch!==speechEpoch)return;loader.content.querySelector('.loading-label')!.textContent='please wait...';schedule(()=>loader.win.remove(),4000);void type(cmd.response);}
+ if(cmd.action==='greeting'){
+  clearWindows();const loader=loading('Preparing computer voice, please wait...',true);
+  terminal().style.zIndex=String(++topZ);
+  const speaking=speak(cmd),epoch=speechEpoch;await speaking;if(epoch!==speechEpoch)return;
+  loader.content.querySelector('.loading-label')!.textContent='please wait...';schedule(()=>loader.win.remove(),4000);void type(cmd.response);
+ }
  if(cmd.action==='celery'){context.character='celery';context.costume=costumes.celery;clearWindows();loading('Loading CELERY MAN, please wait...');void type(cmd.response);presentSequence(showCelery,mode==='live'?Math.max(0,1500-(performance.now()-preparingAt)):1500);}
  if(cmd.action==='engage'){desktop.querySelectorAll('video').forEach(v=>{if(v.dataset.character==='celery'&&!v.classList.contains('face-video')){v.dataset.sequence='Celery Man / 4d3d3d3';v.src=videoSource('celery','engaged');void v.play();}else v.playbackRate=1.4;});void type(cmd.response);}
  if(cmd.action==='oyster'){context.character='oyster';context.costume=costumes.oyster;portrait('oyster');dancer('oyster',{x:421,y:47,w:487,h:424});musicFor('oyster');void type(cmd.response);}
@@ -306,6 +326,7 @@ async function prepareDance(character:string,variant:string,epoch:number,cmd?:Co
 }
 async function customDance(cmd:Command){
  const term=terminal();term.classList.add('custom-terminal');const character=cmd.label||'custom';
+ placeWindow(term,{x:60,y:378,w:362,h:129,className:'terminal custom-terminal'});
  void type(`Computing ${character}...`);const epoch=++generationEpoch;
  if(!await prepareDance(character,'base',epoch,cmd))return false;
  context.character=character;context.costume=cmd.costume;
