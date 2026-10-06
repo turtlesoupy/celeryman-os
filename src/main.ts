@@ -15,7 +15,7 @@ import {createScriptGuide} from './script-guide';
 import {StreamingSpeech} from './streaming-speech';
 import {TranscriptionTurn,prepareTranscription,warmTranscription,closeTranscription} from './streaming-transcription';
 import hatTrack from './hat-track.json';
-import {routeAudio,unlockAudio,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop,playDesktopDoubleClick} from './audio';
+import {routeAudio,unlockAudio,onAudioBlocked,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop,playDesktopDoubleClick} from './audio';
 import {sketch,scripted,type Command,type Context} from './protocol';
 import {advanceDirector,directorOwnsTurn,requestsPerformance,resolveLocally,type Beat,type ModeEffect,type Offer} from './director';
 import {costumes,motions} from './dances';
@@ -91,6 +91,7 @@ function fit(){
 }
 addEventListener('resize',fit);visualViewport?.addEventListener('resize',fit);fit();
 function notify(message:string){document.querySelector('.toast')?.remove();const e=document.createElement('div');e.className='toast';e.textContent=message;desktop.append(e);setTimeout(()=>e.remove(),7000);}
+onAudioBlocked(()=>{if(started)notify('Tap anywhere to hear the computer.');});
 type W={title:string;x:number;y:number;w:number;h:number;className?:string;menu?:string;blue?:boolean;id?:string};
 function windowBox(o:W){
  const win=document.createElement('section');win.className=`window active ${o.className||''}`;win.dataset.id=o.id||`window-${++winCount}`;win.setAttribute('aria-label',o.title);win.style.zIndex=String(++topZ);placeWindow(win,o);

@@ -75,14 +75,26 @@ export function launchIdentity(options:LauncherOptions){
 function createUploadWindow(options:LauncherOptions,saved:(identity:Identity)=>void,closed:()=>void){
  const t=options.windowBox({title:'New identity',x:270,y:55,w:420,h:440,className:'identity-upload'});
  t.win.setAttribute('role','dialog');
- t.content.innerHTML=`<p>Choose a clear photo of yourself.</p><div class="photo-stage"><span class="photo-placeholder">${icon('custom')}</span><img class="identity-preview hidden" alt="Your selected identity photo"><video class="camera-preview hidden" autoplay playsinline muted></video></div><div class="photo-actions"><button type="button" class="classic-button choose-photo">Choose photo…</button><button type="button" class="classic-button use-camera">Use camera</button><button type="button" class="classic-button take-photo hidden" disabled>Take photo</button></div><input class="photo-file hidden" type="file" accept="image/*" aria-label="Upload identity photo"><label class="identity-name">Your name <input aria-label="Your name" maxlength="35" required autocomplete="given-name"></label><p class="photo-status" role="status">Add a photo and a name to save your identity.</p><div class="buttons"><button type="button" class="classic-button save-identity" disabled>Save</button><button type="button" class="classic-button cancel-identity">Cancel</button></div>`;
- const name=t.content.querySelector<HTMLInputElement>('[aria-label="Your name"]')!,file=t.content.querySelector<HTMLInputElement>('.photo-file')!,preview=t.content.querySelector<HTMLImageElement>('.identity-preview')!,video=t.content.querySelector<HTMLVideoElement>('video')!,placeholder=t.content.querySelector<HTMLElement>('.photo-placeholder')!;
+ t.content.innerHTML=`<p>Choose a clear photo of yourself.</p><div class="photo-stage"><span class="photo-placeholder">${icon('custom')}</span><img class="identity-preview hidden" alt="Your selected identity photo"><video class="camera-source" autoplay playsinline muted></video><canvas class="camera-preview hidden" aria-label="Live camera preview"></canvas></div><div class="photo-actions"><button type="button" class="classic-button choose-photo">Choose photo…</button><button type="button" class="classic-button use-camera">Use camera</button><button type="button" class="classic-button take-photo hidden" disabled>Take photo</button></div><input class="photo-file hidden" type="file" accept="image/*" aria-label="Upload identity photo"><label class="identity-name">Your name <input aria-label="Your name" maxlength="35" required autocomplete="given-name"></label><p class="photo-status" role="status">Add a photo and a name to save your identity.</p><div class="buttons"><button type="button" class="classic-button save-identity" disabled>Save</button><button type="button" class="classic-button cancel-identity">Cancel</button></div>`;
+ const name=t.content.querySelector<HTMLInputElement>('[aria-label="Your name"]')!,file=t.content.querySelector<HTMLInputElement>('.photo-file')!,preview=t.content.querySelector<HTMLImageElement>('.identity-preview')!,video=t.content.querySelector<HTMLVideoElement>('video')!,live=t.content.querySelector<HTMLCanvasElement>('.camera-preview')!,placeholder=t.content.querySelector<HTMLElement>('.photo-placeholder')!;
  const status=t.content.querySelector<HTMLElement>('.photo-status')!,save=t.content.querySelector<HTMLButtonElement>('.save-identity')!,camera=t.content.querySelector<HTMLButtonElement>('.use-camera')!,capture=t.content.querySelector<HTMLButtonElement>('.take-photo')!,choose=t.content.querySelector<HTMLButtonElement>('.choose-photo')!;
- let image='',thumbnail='',cameraStream:MediaStream|undefined,epoch=0,busy=false;
+ let image='',thumbnail='',cameraStream:MediaStream|undefined,epoch=0,busy=false,frame=0;
  const sync=()=>{save.disabled=busy||!image||!name.value.trim();choose.disabled=camera.disabled=name.disabled=busy;};
- const stopCamera=()=>{cameraStream?.getTracks().forEach(track=>track.stop());cameraStream=undefined;video.srcObject=null;video.classList.add('hidden');capture.classList.add('hidden');capture.disabled=true;camera.textContent='Use camera';preview.classList.toggle('hidden',!image);placeholder.classList.toggle('hidden',!!image);};
+ const stopCamera=()=>{cancelAnimationFrame(frame);cameraStream?.getTracks().forEach(track=>track.stop());cameraStream=undefined;video.srcObject=null;live.classList.add('hidden');capture.classList.add('hidden');capture.disabled=true;camera.textContent='Use camera';preview.classList.toggle('hidden',!image);placeholder.classList.toggle('hidden',!!image);};
  const cleanup=()=>{epoch++;stopCamera();removeEventListener('pagehide',stopCamera);closed();};
  t.win.addEventListener('windowclose',cleanup,{once:true});addEventListener('pagehide',stopCamera);
+ // iOS Safari sizes a mirrored camera <video> layer wrongly (a thin sliver), so the
+ // hidden video only feeds frames and the mirrored preview is painted here.
+ function paintPreview(){
+  if(!cameraStream)return;
+  const ratio=devicePixelRatio||1,width=Math.round(live.clientWidth*ratio),height=Math.round(live.clientHeight*ratio);
+  if(width&&height&&video.videoWidth&&video.videoHeight){
+   if(live.width!==width||live.height!==height){live.width=width;live.height=height;}
+   const context=live.getContext('2d')!,scale=Math.min(width/video.videoWidth,height/video.videoHeight),w=video.videoWidth*scale,h=video.videoHeight*scale;
+   context.setTransform(-1,0,0,1,width,0);context.clearRect(0,0,width,height);context.drawImage(video,(width-w)/2,(height-h)/2,w,h);
+  }
+  frame=requestAnimationFrame(paintPreview);
+ }
  function setPhoto(source:CanvasImageSource,width:number,height:number,mirror=false){
   const canvas=document.createElement('canvas'),scale=Math.min(1,1600/Math.max(width,height));canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);
   const context=canvas.getContext('2d')!;context.fillStyle='#fff';context.fillRect(0,0,canvas.width,canvas.height);
@@ -105,8 +117,8 @@ function createUploadWindow(options:LauncherOptions,saved:(identity:Identity)=>v
   try{
    const opened=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
    if(current!==epoch||!t.win.isConnected){opened.getTracks().forEach(track=>track.stop());return;}
-   cameraStream=opened;video.srcObject=opened;video.classList.remove('hidden');preview.classList.add('hidden');placeholder.classList.add('hidden');capture.classList.remove('hidden');camera.textContent='Stop camera';
-   await video.play();if(current!==epoch||!t.win.isConnected)return;capture.disabled=false;status.textContent='Ready when you are. Take a photo.';
+   cameraStream=opened;video.srcObject=opened;live.classList.remove('hidden');preview.classList.add('hidden');placeholder.classList.add('hidden');capture.classList.remove('hidden');camera.textContent='Stop camera';
+   await video.play();if(current!==epoch||!t.win.isConnected)return;paintPreview();capture.disabled=false;status.textContent='Ready when you are. Take a photo.';
   }catch{if(current===epoch){stopCamera();status.textContent='Camera unavailable. Allow camera access or choose a photo instead.';}}
   finally{if(current===epoch)sync();}
  };

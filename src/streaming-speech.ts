@@ -1,5 +1,5 @@
 import {withSession} from './session';
-import {speechBus} from './audio';
+import {speechBus,unlockAudio} from './audio';
 type Hooks={beforePlayback?:()=>Promise<void>;onStart:()=>void;onEnd:()=>void;onError:(error:Error)=>void;onComplete:(summary:Record<string,unknown>)=>void};
 /** Schedule raw 24 kHz mono PCM on the same clock and capture bus as music. */
 export class StreamingSpeech {
@@ -51,7 +51,7 @@ export class StreamingSpeech {
    // but keep all PCM queued until that setup finishes.
    await this.hooks.beforePlayback?.();if(this.stopped)return;
    // Do not advance the speech timeline while the output context is suspended.
-   await speechBus().context.resume();if(this.stopped)return;
+   await unlockAudio();if(this.stopped)return;
    const reader=response.body?.getReader();if(!reader)throw Error('Missing voice stream');const decoder=new TextDecoder();let pending='',complete:Record<string,unknown>|undefined;
    while(true){const {value,done}=await reader.read();if(this.stopped)return;if(done)break;pending+=decoder.decode(value,{stream:true});let at:number;
     while((at=pending.indexOf('\n'))>=0){const line=pending.slice(0,at);pending=pending.slice(at+1);if(!line)continue;const event=JSON.parse(line);

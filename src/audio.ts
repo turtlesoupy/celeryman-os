@@ -19,7 +19,22 @@ export function duckForMicrophone(recording:boolean){
  gain.cancelScheduledValues(now);
  gain.setTargetAtTime(recording?.4:1,now,.025);
 }
-export function unlockAudio(){return bus().context.resume();}
+// iOS interrupts this context when the microphone opens and refuses resume()
+// outside a tap. Every tap retries it, so a later reply is not silenced.
+const blockedListeners=new Set<()=>void>();
+for(const type of ['pointerdown','pointerup','touchend','keydown'])addEventListener(type,()=>{if(context&&context.state!=='running')void context.resume().catch(()=>{});},{capture:true,passive:true});
+export function onAudioBlocked(listener:()=>void){blockedListeners.add(listener);return ()=>blockedListeners.delete(listener);}
+/** Resolves once output is running; when the browser wants a tap first, waits for one. */
+export async function unlockAudio(){
+ const {context:ctx}=bus();
+ try{await ctx.resume();}
+ catch(error){
+  if(!(error instanceof DOMException&&error.name==='NotAllowedError'))throw error;
+  blockedListeners.forEach(listener=>listener());
+ }
+ if(ctx.state==='running')return;
+ await new Promise<void>(resolve=>{const check=()=>{if(ctx.state!=='running')return;ctx.removeEventListener('statechange',check);resolve();};ctx.addEventListener('statechange',check);check();});
+}
 let desktopClick:AudioBuffer|undefined;
 export function playDesktopDoubleClick(){
  try{
