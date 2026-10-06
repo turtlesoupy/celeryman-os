@@ -9,6 +9,7 @@ import {timingSafeEqual} from 'node:crypto';
 const root=path.resolve('dist');
 const allowedOrigins=new Set((process.env.APP_ORIGINS||'').split(',').filter(Boolean));
 const originToken=process.env.ORIGIN_TOKEN;
+const publicMedia=/^\/media\/(?:original\/[\w.-]+\.(?:wav|mp4|png)|generated\/[a-f0-9]{20}(?:-print)?\.(?:mp4|png)|voice\/[a-f0-9]{20}\.wav)$/;
 const requests=new Map<string,{count:number;expires:number}>();
 await Promise.all(['generated','profiles','voice'].map(name=>fs.mkdir(`public/media/${name}`,{recursive:true})));
 await fs.mkdir('cache',{recursive:true});
@@ -40,6 +41,9 @@ const server=createServer(async(req,res)=>{
    if(entry.count>=limit){res.writeHead(429,{'Content-Type':'application/json','Retry-After':'60'});res.end('{"error":"Too many requests. Please try again in a minute."}');return;}
    entry.count++;requests.set(key,entry);
   }
+  // Serve only what the desktop plays. Provenance JSON, identity frames and
+  // uploaded photos stay private in the bucket even when an ID leaks.
+  if(req.url?.startsWith('/media/')&&!publicMedia.test(new URL(req.url,'http://localhost').pathname)){res.writeHead(404);res.end('Media not found');return;}
   if(req.url?.startsWith('/api/')||req.url?.startsWith('/media/')){await apiMiddleware(req,res,()=>{res.writeHead(404);res.end();});return;}
   if(!['GET','HEAD'].includes(req.method||'')){res.writeHead(405);res.end();return;}
   const pathname=decodeURIComponent(new URL(req.url||'/','http://localhost').pathname);

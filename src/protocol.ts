@@ -1,6 +1,6 @@
 import {commandText} from './command-text.ts';
-export type Action='greeting'|'celery'|'engage'|'oyster'|'print'|'attention'|'beta'|'tayne'|'hat'|'flarhgunnstow'|'repeat'|'nsfw'|'confirm'|'call'|'chaos'|'pause'|'resume'|'reset'|'custom'|'reaction'|'cancel'|'dialogue';
-export interface Command {action:Action;response:string;audio?:string;label?:string;motion?:string;costume?:string;target?:string;sequenceMode?:'new'|'modify';generationId?:string;playbackRate?:number}
+export type Action='greeting'|'celery'|'engage'|'oyster'|'print'|'attention'|'beta'|'tayne'|'hat'|'flarhgunnstow'|'repeat'|'nsfw'|'confirm'|'call'|'chaos'|'reset'|'custom'|'reaction'|'cancel'|'dialogue';
+export interface Command {action:Action;response:string;audio?:string;label?:string;motion?:string;costume?:string;target?:string;sequenceMode?:'new'|'modify';generationId?:string;generationRequest?:unknown;playbackRate?:number}
 export interface Context {identity:string;character:string;pending:string;history:string[];costume?:string;scriptStep?:number;conversation?:{role:'user'|'assistant';content:string}[]}
 export function scripted(text:string,c:Context):Command|null {
  if(c.pending==='dialogue')return null;
@@ -39,8 +39,6 @@ function scriptedExact(text:string,c:Context):Command|null {
  if(/^(?:now )?tayne i can get into (?:can|could) i see (?:a )?hat wobble$/.test(commandText(text)))return {action:'hat',response:'HAT WOBBLE',audio:'hat'};
  if(/(tayne|tane).*get into|^(im|i am) okay|^oh\b/.test(commandText(text)))return {action:'reaction',response:''};
  if(/^(reset|restart|start over)$/.test(t))return {action:'reset',response:''};
- if(/^(pause|stop|freeze)( music| dancing| everything)?$/.test(t))return {action:'pause',response:'Sequence paused.'};
- if(/^(resume|continue)( dancing)?$/.test(t))return {action:'resume',response:'Sequence resumed.'};
  if(/important work|ill get it later|ignore.*(call|phone)/.test(t))return {action:'chaos',response:'ERROR: BETA TAYNE\nIMPROPER CODING'};
  if(/nude|naked|nsfw/.test(t))return c.pending==='repeat'?{action:'nsfw',response:'This is not suitable for work.\nAre you sure?',audio:'nsfw'}:{action:'repeat',response:'Not computing. Please repeat.',audio:'repeat'};
  if(/good morning|^(boot|hello|hi)$/.test(t))return {action:'greeting',response:`Good morning ${c.identity}.\nWhat will your first sequence of the day be?`,audio:c.identity==='Paul'?'greeting':undefined};

@@ -8,7 +8,7 @@ export function requestsPerformance(text:string){
 }
 export function commandPlanFormat(text:string,custom=false){
  return {type:'json_schema' as const,json_schema:{name:'dance_command',strict:true,schema:{type:'object',additionalProperties:false,properties:{
-  action:{type:'string',enum:(custom||requestsPerformance(text))?['custom']:['reaction','custom','engage','print','beta','pause','resume','chaos']},
+  action:{type:'string',enum:(custom||requestsPerformance(text))?['custom']:['reaction','custom','engage','print','beta','chaos']},
   costume:{type:'string'},motion:{type:'string'},label:{type:'string'},response:{type:'string'}},required:['action','costume','motion','label','response']}}};
 }
 export function validateCommandPlan(plan:any,text:string,custom=false){

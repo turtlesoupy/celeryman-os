@@ -5,6 +5,7 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {fal} from '@fal-ai/client';
 import {videoPreviews,VideoDownload} from './video-preview.ts';
+import {isProviderMediaUrl,sealMediaUrl} from './media-token.ts';
 import {costumeFrameInput,costumeFrameKey,costumeFrameVariant} from './costume-frame.ts';
 import {canonicalName,motionPrompt} from './choreography.ts';
 import {usesTextOnlyDance,textMotionPrompt} from './text-motion.ts';
@@ -84,8 +85,10 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  const downloadStarted=performance.now(),download=new VideoDownload(video.data.video.url);
  videoPreviews.set(id,download);
  // The browser can stream the genuine completed model output immediately,
- // while the local cache and poster are written independently below.
- Object.assign(job,{previewUrl:`/media/generated/${id}.mp4?live=1`,url:`/media/generated/${id}.mp4`});
+ // while the local cache and poster are written independently below. The
+ // sealed provider URL lets any instance serve the preview, not just this one.
+ const live=isProviderMediaUrl(video.data.video.url)?sealMediaUrl(video.data.video.url):'1';
+ Object.assign(job,{previewUrl:`/media/generated/${id}.mp4?live=${live}`,url:`/media/generated/${id}.mp4`});
  job.stage='Loading sequence';
  const dir=path.join(process.cwd(),'public/media/generated'),output=path.join(dir,id+'.mp4');
  // FFmpeg seeks and rewrites headers. Do that on local scratch, not a cloud

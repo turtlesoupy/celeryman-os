@@ -42,15 +42,10 @@ try{
  report.interrupted=await page.evaluate(()=>(window as any).cinco.state());
  // Skip microphone transcription for this deliberately silent interruption test.
  await page.route('**/api/transcribe',route=>route.fulfill({json:{text:''}}));await page.keyboard.up('Space');
- await page.evaluate(()=>(window as any).cinco.dispatch('pause'));await page.waitForTimeout(100);
- report.paused=await page.evaluate(()=>(window as any).cinco.state().music);
- await page.evaluate(()=>(window as any).cinco.dispatch('resume'));await page.waitForTimeout(2500);
- report.resumed=await page.evaluate(()=>(window as any).cinco.state().music);
  const audio=await page.evaluate(()=>(window as any).cinco.stopOutputCapture());await fs.writeFile(`${dir}/output.webm`,Buffer.from(audio,'base64'));
  report.checks.push({name:'instant-recorded-acknowledgement',pass:report.commands.every((c:any)=>c.acknowledgementMs<250)});
  report.checks.push({name:'fresh-generated-dance-under-eight-seconds',pass:report.commands.every((c:any)=>c.firstFrameMs<8000)});
  report.checks.push({name:'interrupted-speech-restores-music',pass:report.interrupted.music.volume===.6&&report.interrupted.ducks.length===0});
- report.checks.push({name:'pause-resume-keeps-loop',pass:!report.paused.playing&&report.resumed.playing&&report.resumed.volume===.6});
  report.events=await page.evaluate(()=>(window as any).cinco.events);
  report.checks.push({name:'no-runtime-errors',pass:report.errors.length===0&&!report.events.some((e:any)=>/error/.test(e.kind))});
 }catch(e){report.errors.push(String(e));}finally{await fs.writeFile(`${dir}/report.json`,JSON.stringify(report,null,2));await browser.close();}

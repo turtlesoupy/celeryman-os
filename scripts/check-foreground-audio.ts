@@ -27,8 +27,6 @@ try{
  await page.evaluate(()=>(window as any).cinco.apply({action:'oyster',response:''},true));
  await page.waitForFunction(()=>document.querySelectorAll('video[data-character="oyster"]').length===2);
  assert.equal((await music()).playing,false,'Previous score must stop while the foreground score loads');
- await page.evaluate(async()=>{const c=(window as any).cinco;await c.apply({action:'pause',response:''},true);await c.apply({action:'resume',response:''},true);});
- assert.equal((await music()).playing,false,'Resume must not restart the old score while the foreground score loads');
  const celery=page.locator('[aria-label="CINCO ID"]');
  const oyster=page.locator('[aria-label="OYSTER"]');
  await celery.locator('.titlebar').click({position:{x:50,y:10}});
@@ -46,10 +44,7 @@ try{
  // A foreground utility window must not replace the highest sequence's score.
  await page.keyboard.press('F1');await playing('celery');
  await page.keyboard.press('Escape');
- await page.evaluate(()=>(window as any).cinco.apply({action:'pause',response:''},true));
  await celery.locator('.titlebar').click({position:{x:50,y:10}});
- assert.equal((await music()).playing,false,'Selecting a sequence must respect pause');
- await page.evaluate(()=>(window as any).cinco.apply({action:'resume',response:''},true));
  await playing('celery');
  // Remove all remaining sequences through their controls, including portraits.
  while(await page.locator('.window:has(video)').count()){
@@ -58,5 +53,5 @@ try{
  }
  assert.equal(await music(),undefined,'Closing the last sequence must stop its score');
  assert.deepEqual(errors,[]);
- console.log('PASS: foreground audio, delayed loading race, minimize/restore/close, utility windows, and pause/resume');
+ console.log('PASS: foreground audio, delayed loading race, minimize/restore/close, and utility windows');
 }finally{releaseOyster();await browser.close();}

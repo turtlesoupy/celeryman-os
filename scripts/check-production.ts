@@ -14,6 +14,9 @@ try{
  const range=await request('/media/original/okay.wav',{headers:{Range:'bytes=0-43'}});
  assert.equal(range.status,206);assert.equal((await range.arrayBuffer()).byteLength,44);
  assert.equal((await request('/media/%2e%2e%2f%2e%2e%2f.env')).status,404,'traversal is rejected');
+ // Only playable media is public; provenance, identity frames and uploaded photos stay private.
+ for(const path of ['/media/generated/0123456789abcdef0123.json','/media/generated/identity-frame-0123456789abcdef0123.png','/media/profiles/00000000-0000-0000-0000-000000000000.jpg','/media/motion/celery-5s.mp4'])assert.equal((await request(path)).status,404,path);
+ assert.equal((await request('/media/generated/0123456789abcdef0123.mp4?live=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')).status,404,'forged live preview tokens are refused');
  assert.equal((await request('/api/health',{headers:{Origin:'https://evil.example'}})).status,403);
  assert.equal((await request('/api/transcribe/session',{method:'POST',headers:{Origin:'https://evil.example'},body:'{}'})).status,403,'transcription credentials reject foreign origins');
  const credentialGet=await request('/api/transcribe/session');
@@ -23,9 +26,11 @@ try{
  assert.equal((await request('/api/job/0123456789abcdef0123')).status,200,'job polling stays a GET');
  const command=await request('/api/command',{method:'POST',headers:{Origin:'https://celeryman.fun','Content-Type':'application/json'},body:JSON.stringify({text:'Computer?',context:{identity:'Thomas',character:'oyster',pending:'',history:[]}})});
  assert.equal(command.status,200);assert.equal((await command.json()).action,'attention');
+ const streamed=await request('/api/command',{method:'POST',headers:{Origin:'https://celeryman.fun','Content-Type':'application/json',Accept:'text/event-stream'},body:JSON.stringify({text:'Computer?',context:{identity:'Thomas',character:'oyster',pending:'',history:[]}})});
+ assert.match(streamed.headers.get('content-type')||'',/text\/event-stream/);assert.match(await streamed.text(),/event: command\ndata: .*"action":"attention"/,'commands stream to browsers');
  for(let i=0;i<31;i++){
   const result=await request('/api/unknown',{method:'POST',body:'{}'});
   assert.equal(result.status,i===30?429:404);
  }
- console.log('Production checks passed: origin protection, public entry, font, range playback, source isolation, CSRF, protocol and rate limit.');
+ console.log('Production checks passed: origin protection, public entry, font, range playback, media allowlist, source isolation, CSRF, streamed protocol and rate limit.');
 }finally{server.kill('SIGTERM');}

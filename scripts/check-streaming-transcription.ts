@@ -36,7 +36,7 @@ async function open(mode:string){
  page.on('pageerror',error=>errors.push(error.message));
  await page.route('**/api/warm',route=>route.fulfill({json:{ok:true}}));
  if(!mode.startsWith('live')){
-  await page.route('**/api/command',route=>route.fulfill({json:{action:/resume/i.test(route.request().postDataJSON().text)?'resume':'pause',response:''}}));
+  await page.route('**/api/command',route=>route.fulfill({json:{action:'reaction',response:''}}));
   await page.route('**/api/transcribe/session',route=>route.fulfill({status:mode==='token-failure'?503:200,json:{value:'test-transcription-credential'}}));
   await page.route('**/api/transcribe',async route=>{fallback++;const body=route.request().postDataJSON();assert.ok(Buffer.from(body.audio,'base64').length>1000);await route.fulfill({json:{text:'Pause.',model:'file-fallback-test',requestId:body.requestId,transcriptionMs:1}});});
   await page.routeWebSocket('wss://api.openai.com/v1/realtime?intent=transcription',socket=>{
@@ -92,11 +92,11 @@ try{
    }else if(mode==='supersede'){
     await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='microphone-capture'));
     await page.keyboard.down('Space');await page.waitForTimeout(2300);await page.keyboard.up('Space');
-    await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='command-complete'&&e.action==='resume'));
+    await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='command-complete'&&/^resume/i.test(e.text)));
     const inputs=await page.evaluate(()=>(window as any).cinco.events.filter((e:any)=>e.kind==='input'&&e.source==='microphone'));
     assert.equal(inputs.length,1);assert.equal(inputs[0].text,'Resume.');assert.equal(stats().fallback,0);
    }else{
-    await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='command-complete'&&e.action==='pause'),null,{timeout:20000});
+    await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='command-complete'&&/^pause/i.test(e.text)),null,{timeout:20000});
     const events=await page.evaluate(()=>(window as any).cinco.events);
     const transcript=events.find((e:any)=>e.kind==='transcription');
     assert.equal(events.filter((e:any)=>e.kind==='input'&&e.source==='microphone').length,1);
@@ -108,7 +108,7 @@ try{
     if(mode==='success'){
      // A second turn uses its own item and cannot receive the first turn's final.
      await page.keyboard.down('Space');await page.waitForTimeout(2300);await page.keyboard.up('Space');
-     await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='command-complete'&&e.action==='resume'));
+     await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='command-complete'&&/^resume/i.test(e.text)));
      assert.equal(stats().connections,2);assert.equal(stats().commits,2);assert.equal(stats().fallback,0);assert.ok(stats().nonzero);
     }
    }

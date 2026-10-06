@@ -19,7 +19,7 @@ try{
   if(route.request().url().endsWith('/transcribe/session'))return route.fulfill({status:503,json:{error:'offline'}});
   if(route.request().url().endsWith('/transcribe')){
    fallback++;const body=route.request().postDataJSON();assert(Buffer.from(body.audio,'base64').length>1000);
-   return route.fulfill({json:{text:'Pause',requestId:body.requestId,transcriptionMs:1}});
+   return route.fulfill({json:{text:'Computer?',requestId:body.requestId,transcriptionMs:1}});
   }
   return route.fulfill({json:{}});
  });
@@ -42,7 +42,7 @@ try{
  const ready=await page.evaluate(()=>(window as any).cinco.events.find((e:any)=>e.kind==='microphone-ready'));
  assert(ready.openingMs<1500,'Optional worklet must not delay recording');
  await page.waitForTimeout(1500);await page.keyboard.up('Space');
- try{await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='command-complete'&&e.action==='pause'),null,{timeout:5000});}catch(error){console.log(await page.evaluate(()=>(window as any).cinco.events));throw error;}
+ try{await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='command-complete'&&e.action==='attention'),null,{timeout:5000});}catch(error){console.log(await page.evaluate(()=>(window as any).cinco.events));throw error;}
  assert.equal(fallback,1);
  assert.equal(await page.evaluate(()=>(window as any).micStreams[0].getAudioTracks()[0].enabled),true,'Idle input stays warm');
  await page.keyboard.down('Space');
@@ -50,7 +50,7 @@ try{
  assert.equal(await page.evaluate(()=>(window as any).micOpens),1,'Next command reuses the open device');
  await page.waitForTimeout(600);await page.keyboard.up('Space');
  await page.waitForFunction(()=>(window as any).cinco.events.filter((e:any)=>e.kind==='microphone-capture').length===2);
- await page.waitForFunction(()=>(window as any).cinco.events.filter((e:any)=>e.kind==='command-complete'&&e.action==='pause').length===2);
+ await page.waitForFunction(()=>(window as any).cinco.events.filter((e:any)=>e.kind==='command-complete'&&e.action==='attention').length===2);
  assert.equal(fallback,2);
  await page.evaluate(()=>(window as any).cinco.reset());
  assert.equal(await page.evaluate(()=>(window as any).micStreams[0].getAudioTracks()[0].readyState),'ended','Reset releases the input');

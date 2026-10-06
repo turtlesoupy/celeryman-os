@@ -77,3 +77,17 @@ export async function serveVideoPreview(download:VideoDownload,req:IncomingMessa
 // Only actual provider outputs are registered; callers cannot proxy arbitrary URLs.
 const shared=globalThis as typeof globalThis & {cincoVideoDownloads?:Map<string,VideoDownload>};
 export const videoPreviews=shared.cincoVideoDownloads??=new Map<string,VideoDownload>();
+
+// Another instance generated this video: stream the provider's copy directly,
+// forwarding byte ranges so seeking matches the generating instance.
+export async function proxyProviderVideo(url:string,req:IncomingMessage,res:ServerResponse){
+ const range=typeof req.headers.range==='string'&&/^bytes=\d*-\d*$/.test(req.headers.range)?req.headers.range:undefined;
+ const upstream=await fetch(url,{method:req.method==='HEAD'?'HEAD':'GET',headers:range?{Range:range}:{},signal:AbortSignal.timeout(30000)});
+ if(!upstream.ok){await upstream.body?.cancel();throw Error('Provider video unavailable');}
+ res.statusCode=upstream.status;
+ for(const name of ['content-type','content-length','content-range'])if(upstream.headers.has(name))res.setHeader(name,upstream.headers.get(name)!);
+ res.setHeader('Accept-Ranges','bytes');res.setHeader('Cache-Control','private, max-age=3600');
+ if(req.method==='HEAD'||!upstream.body){res.end();return;}
+ const stream=Readable.fromWeb(upstream.body as any);
+ stream.on('error',()=>res.destroy());res.on('close',()=>stream.destroy());stream.pipe(res);
+}

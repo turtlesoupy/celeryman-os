@@ -22,9 +22,9 @@ await page.route('**/api/**',async route=>{
  if(url.endsWith('/transcribe')){
   transcriptions++;const body=route.request().postDataJSON();
   assert(Buffer.from(body.audio,'base64').length>1000);
-  return route.fulfill({status:failTranscription?400:200,json:failTranscription?{error:'Microphone check failed'}:{text:'Pause.',requestId:body.requestId,transcriptionMs:1}});
+  return route.fulfill({status:failTranscription?400:200,json:failTranscription?{error:'Microphone check failed'}:{text:'Computer?',requestId:body.requestId,transcriptionMs:1}});
  }
- if(url.endsWith('/command'))return route.fulfill({json:{action:'pause',response:''}});
+ if(url.endsWith('/command'))return route.fulfill({json:{action:'reaction',response:''}});
  return route.fulfill({json:{}});
 });
 const record=page.locator('.record-button'),terminal=page.locator('[data-id="terminal"]');
@@ -94,7 +94,7 @@ try{
   assert(box.height>=44,'Mobile record control must have a touch-sized target');
  }
  await page.setViewportSize({width:1440,height:810});
- await page.evaluate(async()=>{const app=(window as any).cinco;app.setMode('reference');await app.apply({action:'resume',response:''});await app.apply({action:'celery',response:''});});
+ await page.evaluate(async()=>{const app=(window as any).cinco;app.setMode('reference');await app.apply({action:'celery',response:''});});
  await page.locator('.portrait video').waitFor();await page.locator('.portrait video').evaluate((video:HTMLVideoElement)=>video.play());
  assert.equal(await page.locator('.input-controls').count(),1,'Sequence changes retain one input strip');
  const bounds=await terminal.boundingBox();assert(bounds);assert.equal(Math.round(bounds.width),543);assert.equal(Math.round(bounds.height),152);

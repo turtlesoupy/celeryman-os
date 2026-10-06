@@ -1,5 +1,6 @@
 import {requestJson} from './api-client';
 import {safeStorage} from './storage';
+import {followGeneration,requestCommand,takeCommandGeneration,type GenerationFeed} from './generation-stream';
 import {preparePrintout,type Printout} from './printout';
 import {mobileFrame,clampFrame,type Frame,type Workspace} from './window-layout';
 import {MicrophoneDevices} from './microphone-device';
@@ -25,21 +26,21 @@ const app=document.querySelector<HTMLDivElement>('#app')!;
 app.innerHTML='<main class="viewport"><section class="desktop" aria-label="Cinco desktop"></section></main>';
 const desktop=document.querySelector<HTMLElement>('.desktop')!;
 const dock=document.createElement('div');dock.className='dock settings-actions';
-dock.innerHTML='<button type="button" class="classic-button replay-mic" disabled>Replay mic</button><button type="button" class="classic-button" data-tool="identity">Identity</button><button type="button" class="classic-button" data-tool="replay">Sketch</button><button type="button" class="classic-button" data-tool="pause">Pause</button><button type="button" class="classic-button" data-tool="printout">Printout</button><button type="button" class="classic-button" data-tool="sound">Sound on</button><button type="button" class="classic-button" data-tool="reset">Reset</button>';
+dock.innerHTML='<button type="button" class="classic-button replay-mic" disabled>Replay mic</button><button type="button" class="classic-button" data-tool="identity">Identity</button><button type="button" class="classic-button" data-tool="replay">Sketch</button><button type="button" class="classic-button" data-tool="printout">Printout</button><button type="button" class="classic-button" data-tool="sound">Sound on</button><button type="button" class="classic-button" data-tool="reset">Reset</button>';
 const inputControls=document.createElement('div');inputControls.className='input-controls';
 inputControls.innerHTML='<button type="button" class="classic-button record-button" aria-label="Record" aria-pressed="false" aria-describedby="record-hint"><i class="record-light" aria-hidden="true"></i><span>Record</span></button><span id="record-hint" class="record-hint">Hold Space</span><span class="input-microphone">Default microphone</span><button type="button" class="classic-button mic-settings" aria-label="Microphone settings" title="Microphone settings"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 0h4v3l2-2 3 3-2 2h3v4h-3l2 2-3 3-2-2v3H6v-3l-2 2-3-3 2-2H0V6h3L1 4l3-3 2 2z"/><path fill="#ededed" d="M6 5h4v1h1v4h-1v1H6v-1H5V6h1z"/></svg></button>';
 const recordButton=inputControls.querySelector<HTMLButtonElement>('.record-button')!,settingsButton=inputControls.querySelector<HTMLButtonElement>('.mic-settings')!;
 const activity=document.createElement('div');activity.className='input-activity';
 const diagnostics=document.createElement('div');diagnostics.className='input-diagnostics';
 const generationOverlay=createGenerationOverlay();
-const commandStatus=createCommandStatus(activity,()=>desktop.classList.contains('paused')?'Paused':'Ready',diagnostics);let feedbackToken=0;
+const commandStatus=createCommandStatus(activity,()=>'Ready',diagnostics);let feedbackToken=0;
 const scriptGuide=createScriptGuide(diagnostics,activity.querySelector<HTMLElement>('.command-status-line')!);
 let profile=safeStorage.getItem('cinco-profile')||'paul',identity=safeStorage.getItem('cinco-name')||'Paul';
 let context:Context={identity,character:'celery',pending:'',history:[]};
 let mode:'live'|'reference'='live';
 const liveAssets:Record<string,{url:string;image?:string;playbackRate?:number}>={};
 let generationEpoch=0;
-let topZ=10,winCount=0,typing=0,started=false,sound=true,paused=false,run=0,replaying=false;
+let topZ=10,winCount=0,typing=0,started=false,sound=true,run=0,replaying=false;
 let timers:number[]=[],music:MusicLoop|null=null,speech:HTMLAudioElement|null=null;
 let streamedSpeech:StreamingSpeech|undefined;
 let speechEpoch=0,musicEpoch=0,commandEpoch=0;
@@ -138,7 +139,7 @@ function videoSource(character:string,variant=''){if(mode==='reference')return `
 function dancer(character:string,o:Partial<W>={},variant='',url?:string,deferPlayback=false){
  const face=variant.includes('face')||variant==='hat';const title=character==='celery'?'CINCO ID':character==='oyster'?'OYSTER':'Tayne';
  const t=windowBox({title,x:520,y:12,w:282,h:502,menu:'',...o});
- const v=document.createElement('video');const source=url||videoSource(character,variant);if(!source){t.content.textContent='Sequence not loaded.';return t;}v.src=source;v.poster=mode==='live'?(liveAssets[`${profile}:${character}:${variant==='hat'?'hat':variant.includes('face')?'face':variant==='tayne-intro'?'intro':'base'}`]?.image||''):'';v.playbackRate=liveAssets[`${profile}:${character}:${variant||'base'}`]?.playbackRate||1;v.muted=true;v.loop=true;v.autoplay=!paused&&!deferPlayback;v.playsInline=true;v.dataset.character=character;v.dataset.sequence=character==='celery'?'Celery Man':character;v.className=face?'face-video':mode==='live'&&variant==='tayne-intro'?'intro-video':'';t.content.append(v);
+ const v=document.createElement('video');const source=url||videoSource(character,variant);if(!source){t.content.textContent='Sequence not loaded.';return t;}v.src=source;v.poster=mode==='live'?(liveAssets[`${profile}:${character}:${variant==='hat'?'hat':variant.includes('face')?'face':variant==='tayne-intro'?'intro':'base'}`]?.image||''):'';v.playbackRate=liveAssets[`${profile}:${character}:${variant||'base'}`]?.playbackRate||1;v.muted=true;v.loop=true;v.autoplay=!deferPlayback;v.playsInline=true;v.dataset.character=character;v.dataset.sequence=character==='celery'?'Celery Man':character;v.className=face?'face-video':mode==='live'&&variant==='tayne-intro'?'intro-video':'';t.content.append(v);
  // Keep generated soundtrack URLs tied to this window, even if its asset cache changes.
  v.dataset.musicSource=sequenceMusicSource(character,source);installVideoSave(t.win,v,notify);queueMicrotask(syncSequenceMusic);
  const status=feedbackToken,key=`video:${++mediaStatusId}`;commandStatus.job(status,key,'Loading video');
@@ -148,7 +149,7 @@ function dancer(character:string,o:Partial<W>={},variant='',url?:string,deferPla
  const loadingAt=performance.now();
  const cancelReveal=revealVideoWindow(v,t.win,()=>{done();syncSequenceMusic();const elapsedMs=Math.round(performance.now()-loadingAt);events.push({kind:'video-visible',url:source,character,variant,elapsedMs,time:performance.now()});void api('client-event',{event:'video-visible',character,variant,elapsedMs,message:source}).catch(()=>{});});
  mediaStatusCleanup.set(v,()=>{done();cancelReveal();});
- v.addEventListener('error',()=>{done();cancelReveal();if(!v.isConnected)return;t.win.style.visibility='';commandStatus.error(status,'Video playback failed. Try the command again.');t.content.textContent='Sequence unavailable. Open controls to regenerate.';events.push({kind:'media-error',url:v.src});});if(!paused&&!deferPlayback)void v.play().catch((error:Error)=>{if(!v.isConnected||error.name==='AbortError')return;done();cancelReveal();t.win.style.visibility='';t.content.textContent='Sequence unavailable. Try the command again.';commandStatus.error(status,`Video playback failed: ${error.message}`);});return t;
+ v.addEventListener('error',()=>{done();cancelReveal();if(!v.isConnected)return;t.win.style.visibility='';commandStatus.error(status,'Video playback failed. Try the command again.');t.content.textContent='Sequence unavailable. Open controls to regenerate.';events.push({kind:'media-error',url:v.src});});if(!deferPlayback)void v.play().catch((error:Error)=>{if(!v.isConnected||error.name==='AbortError')return;done();cancelReveal();t.win.style.visibility='';t.content.textContent='Sequence unavailable. Try the command again.';commandStatus.error(status,`Video playback failed: ${error.message}`);});return t;
 }
 function portrait(character:string){return dancer(character,{title:'',x:125,y:62,w:375,h:332,menu:character==='celery'?'Celery Man':character==='oyster'?'Celery Man':'Tayne',blue:true,className:'portrait'},character+'-face');}
 function sequenceMusicSource(character:string,source=videoSource(character)){
@@ -172,13 +173,13 @@ function syncSequenceMusic(){
 function musicFor(character:string,source=sequenceMusicSource(character)){
  if(pendingMusic?.source===source&&pendingMusic.token===musicEpoch)return;
  const token=++musicEpoch;pendingMusic=undefined;
- if(music?.url===source){if(!paused)void music.play();return;}
+ if(music?.url===source){void music.play();return;}
  // Do not keep the previous foreground sequence audible while the new one loads.
  music?.pause();
  if(!source)return;
  pendingMusic={source,token};
  const status=feedbackToken,key=`music:${token}`;commandStatus.job(status,key,'Loading music');const next=new MusicLoop(source,!source.includes('/original/'));next.volume=0;
- void next.ready.then(()=>{if(token!==musicEpoch){next.stop();commandStatus.jobDone(status,key);return;}pendingMusic=undefined;music?.stop();music=next;musicLevel();if(!paused)void music.play();commandStatus.jobDone(status,key);events.push({kind:'music-playing',url:source,time:performance.now()});}).catch(e=>{next.stop();commandStatus.jobDone(status,key);if(token!==musicEpoch)return;pendingMusic=undefined;commandStatus.error(status,'Music could not load. Try the command again.');events.push({kind:'music-error',message:String(e)});});
+ void next.ready.then(()=>{if(token!==musicEpoch){next.stop();commandStatus.jobDone(status,key);return;}pendingMusic=undefined;music?.stop();music=next;musicLevel();void music.play();commandStatus.jobDone(status,key);events.push({kind:'music-playing',url:source,time:performance.now()});}).catch(e=>{next.stop();commandStatus.jobDone(status,key);if(token!==musicEpoch)return;pendingMusic=undefined;commandStatus.error(status,'Music could not load. Try the command again.');events.push({kind:'music-error',message:String(e)});});
 }
 async function speechOutputReady(){
  await microphoneOpening?.promise.catch(()=>{});
@@ -238,7 +239,7 @@ function showTayne(followupReady?:Promise<boolean>){
   if(error.name==='NotAllowedError'&&!v.muted){v.muted=true;void v.play().catch(playFailed);return;}
   commandStatus.error(status,`Tayne introduction could not play: ${error.message}`);void advance();
  };
- if(!paused)void v.play().catch(playFailed);
+ void v.play().catch(playFailed);
 }
 
 function showHat(){
@@ -308,8 +309,8 @@ function chaos(){
 }
 function presentSequence(show:()=>void,ms:number){const status=feedbackToken,order=commandEpoch,token=run;commandStatus.job(status,'presentation','Opening sequence');schedule(()=>{if(order===commandEpoch&&token===run)show();commandStatus.jobDone(status,'presentation');},ms);}
 async function apply(cmd:Command,acknowledged=false){
- const preparingAt=performance.now();events.push({kind:'action',...cmd,time:performance.now()});if(cmd.action==='reaction')return;clearTimers();if(desktop.classList.contains('finale')&&!['pause','resume','attention'].includes(cmd.action))clearWindows();if(!['attention','pause','resume'].includes(cmd.action))context.pending='';
- if(!acknowledged&&!['greeting','engage'].includes(cmd.action)&&(cmd.audio||['celery','attention','pause','resume','custom','dialogue'].includes(cmd.action)))void speak(cmd);
+ const preparingAt=performance.now();events.push({kind:'action',...cmd,time:performance.now()});if(cmd.action==='reaction')return;clearTimers();if(desktop.classList.contains('finale')&&cmd.action!=='attention')clearWindows();if(cmd.action!=='attention')context.pending='';
+ if(!acknowledged&&!['greeting','engage'].includes(cmd.action)&&(cmd.audio||['celery','attention','custom','dialogue'].includes(cmd.action)))void speak(cmd);
  // Start the spoken introduction as soon as it is ready; the two dance clips
  // prepare behind it instead of blocking all visible response for ~20 seconds.
  if(mode==='live'&&cmd.action==='tayne'){
@@ -365,7 +366,7 @@ async function apply(cmd:Command,acknowledged=false){
      v.addEventListener('loadeddata',loaded);v.addEventListener('error',failed);
      v.dataset.sequence='Celery Man / 4d3d3d3';v.src=videoSource('celery','engaged');
      if(v.requestVideoFrameCallback)frame=v.requestVideoFrameCallback(ready);
-     if(!paused)void v.play().catch(failed);
+     void v.play().catch(failed);
     });
    }finally{progress?.done();commandStatus.jobDone(status,key);}
   }));
@@ -391,24 +392,25 @@ async function apply(cmd:Command,acknowledged=false){
  if(cmd.action==='confirm'){showNsfw(true);schedule(showCall,6900);}
  if(cmd.action==='call')showCall();
  if(cmd.action==='chaos')chaos();
- if(cmd.action==='pause'||cmd.action==='resume'){paused=cmd.action==='pause';desktop.classList.toggle('paused',paused);desktop.querySelectorAll('video').forEach(v=>paused?v.pause():void v.play());if(paused)music?.pause();else if(!pendingMusic||pendingMusic.token!==musicEpoch)void music?.play();}
  if(cmd.action==='custom')return customDance(cmd);
 
 }
 async function prepareDance(character:string,variant:string,epoch:number,cmd?:Command){
  terminal();const token=run;const key=`${profile}:${character}:${variant}`;
- const startedAt=performance.now(),feedback=feedbackToken,jobKey=`${epoch}:${key}`;let generationId:string|undefined;
+ const startedAt=performance.now(),feedback=feedbackToken,jobKey=`${epoch}:${key}`;let generationId:string|undefined,feed:GenerationFeed|undefined;
  const report=(event:string,message?:string)=>void api('client-event',{event,jobId:generationId,character,variant,elapsedMs:Math.round(performance.now()-startedAt),message}).catch(()=>{});
  const describe=(stage:string)=>`${stage} (${variant==='face'?'portrait':variant==='base'?'dancer':variant})`;
  const progress=generationOverlay.begin(epoch,jobKey,variant==='face'?'Portrait':variant==='base'?'Dancer':variant==='smile'?'Printout':variant==='intro'?'Introduction':variant==='hat'?'Hat wobble':'Dance');
  commandStatus.job(feedback,jobKey,describe('Loading'));
  try{const req={profile,character,variant,fastPath,...(cmd?.playbackRate?{playbackRate:cmd.playbackRate}:{}),canonical:!cmd&&['celery','oyster','tayne','mozzarell'].includes(character),motion:variant==='intro'?`Tight head-and-shoulders close up. Face fills most of the vertical frame, head and upper chest only. Light gray background. Look at camera and say in a warm natural American voice: Hey ${identity}. I'm Tayne, your latest dancer. I can't wait to entertain you. Keep the same clothing, face, and fixed camera.`:cmd?.motion||motions[variant]||motions[character],costume:cmd?.costume||costumes[character]||costumes.tayne};
-  let job=cmd?.generationId?await api('job/'+cmd.generationId):await api('generate',req);generationId=job.id;events.push({kind:'generation',id:job.id,request:req,time:performance.now()});
-  while(job.status==='working'&&(!job.previewUrl||variant==='smile')){if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');return false;}const elapsed=Math.floor((performance.now()-startedAt)/1000);if(elapsed>180)throw Error('Sequence is taking too long. Please try again.');const stage=job.providerStatus==='IN_QUEUE'?'Queued for video':job.stage||'Rendering dance';commandStatus.job(feedback,jobKey,describe(stage));progress.update(stage);await delay(120);job=await api('job/'+job.id);}
-  if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');return false;}if(job.status==='error')throw Error(job.error||'Generation failed. Please retry the command.');liveAssets[key]={url:job.status==='complete'?job.url:job.previewUrl||job.url,image:job.image,playbackRate:cmd?.playbackRate};
+  // The command stream already follows a dance the server started early.
+  feed=(cmd?.generationId&&takeCommandGeneration(cmd.generationId))||followGeneration(cmd?.generationId&&cmd.generationRequest?cmd.generationRequest:req);
+  let job=await feed.first();generationId=job.id;events.push({kind:'generation',id:job.id,request:req,time:performance.now()});
+  while(job.status==='working'&&(!job.previewUrl||variant==='smile')){if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');return false;}const elapsed=Math.floor((performance.now()-startedAt)/1000);if(elapsed>180)throw Error('Sequence is taking too long. Please try again.');const stage=job.providerStatus==='IN_QUEUE'?'Queued for video':job.stage||'Rendering dance';commandStatus.job(feedback,jobKey,describe(stage));progress.update(stage);job=await feed.next();}
+  if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');return false;}if(job.status==='error')throw Error(job.error||'Generation failed. Please retry the command.');liveAssets[key]={url:(job.status==='complete'?job.url:job.previewUrl||job.url)!,image:job.image,playbackRate:cmd?.playbackRate};
   if(variant==='hat')liveAssets[`${profile}:tayne:hat`]=liveAssets[key];
   report('generation-ready');events.push({kind:'generated-ready',url:job.url,previewUrl:job.previewUrl,id:job.id,playbackRate:cmd?.playbackRate||1,timings:job.timings,time:performance.now(),elapsedMs:performance.now()-startedAt,character,variant});return true;
- }catch(e){const message=variant==='face'?`Portrait generation failed: ${(e as Error).message}`:`Dance generation failed: ${(e as Error).message}`;report('generation-error',message);if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{progress.done();commandStatus.jobDone(feedback,jobKey);}
+ }catch(e){const message=variant==='face'?`Portrait generation failed: ${(e as Error).message}`:`Dance generation failed: ${(e as Error).message}`;report('generation-error',message);if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{feed?.close();progress.done();commandStatus.jobDone(feedback,jobKey);}
 }
 async function customDance(cmd:Command){
  const term=terminal();term.classList.add('custom-terminal');const character=cmd.sequenceMode==='modify'?(cmd.target||context.character):cmd.label||'custom';
@@ -428,7 +430,7 @@ async function dispatch(text:string,source='keyboard',feedback?:number){
   const known=scripted(text,context);let acknowledged=false;
   commandStatus.phase(status,known?'Running command':'Interpreting command');
   if(!known){acknowledged=true;void speak({action:'custom',response:'Okay.',audio:'okay'});void type('Computing sequence...');}
-  const cmd=known||await api('command',{text,context,profile,fastPath});
+  const cmd=known||await requestCommand<Command>({text,context,profile,fastPath});
   if(token!==run||order!==commandEpoch||!commandStatus.current(status))return;
   if(!known){typing++;const content=desktop.querySelector('[data-id="terminal"] .content');if(content)content.textContent=cmd.action==='custom'?`Computing ${cmd.label||'sequence'}...`:cmd.response||(cmd.action==='reaction'?'Acknowledged. No new sequence requested.':'Preparing command…');}
   context.history.push(text);context.history=context.history.slice(-12);
@@ -463,7 +465,7 @@ async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,rec
  }catch(e){if(token===run&&commandStatus.current(status))commandStatus.error(status,(e as Error).name==='TimeoutError'?'Transcription timed out. Settings → Replay mic to check the recording.':(e as Error).message);throw e;}
 }
 
-function reset(){generationOverlay.clear();microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','paused','flash');clearWindows(false);started=false;replaying=false;paused=false;setMicState('idle');fit();launch();}
+function reset(){generationOverlay.clear();microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','flash');clearWindows(false);started=false;replaying=false;setMicState('idle');fit();launch();}
 async function begin(){scriptGuide.reset();void unlockAudio();if(streamingTranscription){warmTranscription();void prepareTranscription(speechBus().context).catch(()=>{});}void api('warm',{profile,name:identity}).catch(()=>{});clearWindows(false);started=true;fit();terminal();void readyMicrophone().catch(()=>{});await dispatch('Good morning','boot');}
 function launch(){
  const existing=desktop.querySelector<HTMLElement>('.launch');if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);return;}
@@ -583,7 +585,7 @@ function openInputSettings(){
 }
 settingsButton.onclick=openInputSettings;
 microphone.subscribe(label=>{const name=inputControls.querySelector<HTMLElement>('.input-microphone')!;name.textContent=label;name.title=label;settingsButton.title=`Microphone settings: ${label}`;});
-dock.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.onclick=()=>{switch(b.dataset.tool){case'identity':launch();break;case'printout':showPrintout();break;case'replay':void replay();break;case'reset':reset();break;case'pause':void dispatch(paused?'resume':'pause');break;case'sound':sound=!sound;b.textContent=sound?'Sound on':'Sound off';if(!sound)stopSpeech();musicLevel();syncSequenceMusic();break;}});
+dock.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.onclick=()=>{switch(b.dataset.tool){case'identity':launch();break;case'printout':showPrintout();break;case'replay':void replay();break;case'reset':reset();break;case'sound':sound=!sound;b.textContent=sound?'Sound on':'Sound off';if(!sound)stopSpeech();musicLevel();syncSequenceMusic();break;}});
 addEventListener('keydown',e=>{
  if(e.key==='F1'){e.preventDefault();const settings=desktop.querySelector('.input-settings');if(settings)removeWindow(settings);else openInputSettings();return;}
  if(e.key==='Escape'){const settings=desktop.querySelector('.input-settings');if(settings){e.preventDefault();removeWindow(settings);}return;}
@@ -596,6 +598,6 @@ function cancelHeldRecording(){if(pushToTalk||recordingPointer!==undefined){push
 document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelHeldRecording();});
 addEventListener('pagehide',()=>{stream?.getTracks().forEach(t=>t.stop());});
 addEventListener('blur',cancelHeldRecording);
-Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,fastPath,streamingTranscription,liveAssets,profile,context,lastPrint,started,replaying,paused,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();syncSequenceMusic();},settle:()=>delay(1800)}});
+Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,fastPath,streamingTranscription,liveAssets,profile,context,lastPrint,started,replaying,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();syncSequenceMusic();},settle:()=>delay(1800)}});
 launch();
 for(const name of ['okay','yes','greeting','hat','flower']){const audio=new Audio(`/media/original/${name}.wav`);audio.preload='auto';audio.load();}
