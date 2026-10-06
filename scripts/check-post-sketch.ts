@@ -14,7 +14,7 @@ const browser=await chromium.launch({headless:true});
 try{
  const page=await browser.newPage();await page.addInitScript('window.__name = value => value;');
  await page.route('**/api/**',route=>route.fulfill({json:{}}));
- await page.goto('http://127.0.0.1:5173/?fastPath=1');
+ await page.goto((process.env.TEST_ORIGIN||'http://127.0.0.1:5173')+'/?fastPath=1');
  const guide=await page.evaluate(async()=>{
   const {createScriptGuide}=await import('/src/script-guide.ts');
   const host=document.createElement('div'),inline=document.createElement('div');const g=createScriptGuide(host,inline);
@@ -22,8 +22,9 @@ try{
   g.observe('important work','chaos');return {merged,end:inline.textContent,index:g.nextIndex()};
  });
  assert.match(guide.merged!,/Computer, do we have any new sequences/);assert.match(guide.end!,/show me a new sequence/);assert.equal(guide.index,sketch.length);
- await page.evaluate(async()=>{const c=(window as any).cinco;c.setSound(false);c.setMode('reference');await c.apply({action:'chaos',response:''});await c.apply({action:'dialogue',response:'I have a carrot dancer. Shall I load it?'});});
+ await page.evaluate(async()=>{const c=(window as any).cinco;c.setSound(false);c.setMode('reference');await c.apply({action:'chaos',response:''});await c.apply({action:'dialogue',response:'I am the computer. Shall I load it?'});});
  await page.waitForFunction(()=>document.querySelector('[data-id="terminal"] .content')?.textContent?.includes('Shall I load it?'));
- assert.equal(await page.evaluate(()=>(window as any).cinco.state().context.pending),'dialogue');
+ // Dialogue answers never hold a pending state that could block a sketch cue.
+ assert.equal(await page.evaluate(()=>(window as any).cinco.state().context.pending),'');
  console.log('Passed: merged guide, continuing cue, new-character routing and visible dialogue after finale.');
 }finally{await browser.close();}

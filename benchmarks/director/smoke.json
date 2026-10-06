@@ -1,0 +1,903 @@
+{
+ "origin": "http://127.0.0.1:5173",
+ "date": "2026-10-06T20:47:51.790Z",
+ "passed": 75,
+ "total": 75,
+ "pitchesWithDigits": 0,
+ "pitchesWithoutQuestion": 0,
+ "rows": [
+  {
+   "group": "off-topic",
+   "text": "What's up with the Mets?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "I do not follow baseball... actually, I have a METS sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "METS",
+    "label": "METSY",
+    "costume": "A bright blue pinstriped jacket, orange trousers, a white cap, white gloves, and polished blue shoes.",
+    "motion": "The dancer plants both feet, swings its arms like a careful batting practice, then pivots and points skyward. It steps side to side, pumps both fists, and traces a broad circle overhead. A quick knee lift leads into a smooth turn; it finishes with a firm stance and a small wave.",
+    "introLine": "Hey Tommy. I'm METSY, your newest dancer. I am ready to take the field."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 5528
+  },
+  {
+   "group": "off-topic",
+   "text": "I'm kind of tired today.",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "You sound tired... actually, I have a NAP sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "NAP",
+    "label": "NAPKIN",
+    "costume": "soft blue pajamas, a quilted yellow vest, striped socks, and a nightcap",
+    "motion": "The dancer slowly marches in place, lifting each knee as if through deep carpet. Both arms rise overhead, stretch wide, then fold across the chest. The dancer sinks into a careful crouch, rocks gently side to side, and stands with a long, sleepy shoulder roll.",
+    "introLine": "Hey Tommy. I'm Napkin, your latest dancer. I am prepared to move at a reasonable pace."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2151
+  },
+  {
+   "group": "off-topic",
+   "text": "My boss yelled at me this morning.",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "That sounds unpleasant... actually, I have a PERFORMANCE REVIEW sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "PERFORMANCE REVIEW",
+    "label": "BOSSMOTION",
+    "costume": "A fully buttoned charcoal suit, crisp white shirt, muted blue tie, polished black shoes, and a small silver name badge.",
+    "motion": "The dancer stands rigidly, then raises both hands as if presenting an invisible report. It shuffles sideways, points solemnly at empty space, and mimes turning pages. Its shoulders slump, then snap straight; it stamps one foot, pivots, and finishes with a tight, formal nod.",
+    "introLine": "Hey Tommy. I'm BOSSMOTION, your latest dancer. I am prepared to make a formal impression."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2350
+  },
+  {
+   "group": "off-topic",
+   "text": "Is it going to rain tomorrow?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "I cannot forecast weather... actually, I have a RAIN sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "RAIN",
+    "label": "DRIZZLE DAVE",
+    "costume": "yellow raincoat buttoned over a blue sweater, waterproof navy trousers, green rubber boots, and a broad yellow rain hat",
+    "motion": "The dancer hunches under an imaginary downpour, then sweeps both arms outward like opening an umbrella. It steps heel-to-toe through invisible puddles, lifts its knees high, and shakes water from each sleeve. It pivots, bobs twice, and finishes with one hand raised to the sky.",
+    "introLine": "Hey Tommy. I'm Drizzle Dave, your latest dancer. I brought my own weather."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2501
+  },
+  {
+   "group": "off-topic",
+   "text": "Who won the election?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "I do not follow elections... actually, I have an ELECTION sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "ELECTION",
+    "label": "BALLOT BOP",
+    "costume": "A crisp red, white, and blue suit, a striped tie, polished dress shoes, and a small ballot-box-shaped hat.",
+    "motion": "The dancer marches in place, stamping each foot with deliberate precision. Both arms rise overhead, then sweep outward like opening curtains. The torso swivels left and right while the knees bounce. The dancer mimes dropping a ballot, points solemnly upward, then finishes with a sharp full-body turn.",
+    "introLine": "Hey Tommy. I'm BALLOT BOP, your latest dancer. I am ready to make a statement."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2243
+  },
+  {
+   "group": "off-topic",
+   "text": "I just had a really good sandwich.",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "Sandwiches are outside my programming... actually, I have a SANDWICH sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "SANDWICH",
+    "label": "SUBMARINE TOMMY",
+    "costume": "A crisp white deli apron over a tomato-red jacket, lettuce-green trousers, mustard-yellow gloves, and polished brown shoes.",
+    "motion": "He plants his feet wide, folds both forearms like bread, and swings them open. He marches in place with high knees, twists his waist as if layering fillings, then dips low and rises with both hands held overhead. He finishes by rocking side to side and pointing proudly at the invisible sandwich.",
+    "introLine": "Hey Tommy. I'm Submarine Tommy, your latest dancer. I have prepared my finest sandwich movements for you."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2538
+  },
+  {
+   "group": "off-topic",
+   "text": "Do we have any new sequences?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "You are asking for something new... actually, I have a CLAM BAKE sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "CLAM BAKE",
+    "label": "CLAMBAKE JR",
+    "costume": "A pale blue chef's jacket with oversized pearl buttons, a checked apron, rolled white trousers, and bright orange rubber boots.",
+    "motion": "The dancer plants both boots wide, bends low, and mimes opening an enormous clam. It raises one knee, swivels its hips, and fans both hands like seaweed. It steps side to side, shakes its shoulders, then presents an invisible pearl overhead before folding back into the opening pose.",
+    "introLine": "Hey Tommy. I'm Clambake Jr., your newest dancer. I am prepared to make an impression."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2754
+  },
+  {
+   "group": "off-topic",
+   "text": "Got any ideas?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "Ideas are not a setting... actually, I have a CLAM BAKE sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "CLAM BAKE",
+    "label": "CLAMUEL",
+    "costume": "A seafoam-green chef’s jacket with oversized pearl buttons, a white apron embroidered with tiny clams, striped trousers, and rubber boots.",
+    "motion": "Heels tap outward, then inward, as both arms mime opening a clam. The dancer crouches, rises with a grand presenting gesture, and shuffles sideways. Shoulders pulse while hands flutter like steam; a slow turn ends with one boot lifted and both palms held open.",
+    "introLine": "Hey Tommy. I'm Clamuel, your latest dancer. I have brought a very specific kind of sparkle."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 3036
+  },
+  {
+   "group": "modes",
+   "text": "Turn on turbo mode.",
+   "beat": "mode",
+   "expected": "^mode$",
+   "ok": true,
+   "response": "TURBO Engaged.",
+   "provider": "gpt-6-luna",
+   "ms": 1167,
+   "effect": "turbo"
+  },
+  {
+   "group": "modes",
+   "text": "Enable disco mode.",
+   "beat": "mode",
+   "expected": "^mode$",
+   "ok": true,
+   "response": "DISCO Engaged.",
+   "provider": "gpt-6-luna",
+   "ms": 1998,
+   "effect": "vhs"
+  },
+  {
+   "group": "modes",
+   "text": "Activate ghost mode.",
+   "beat": "mode",
+   "expected": "^mode$",
+   "ok": true,
+   "response": "GHOST Engaged.",
+   "provider": "gpt-6-luna",
+   "ms": 1116,
+   "effect": "ghost"
+  },
+  {
+   "group": "modes",
+   "text": "Enhance.",
+   "beat": "mode",
+   "expected": "^mode$",
+   "ok": true,
+   "response": "ENHANCE Engaged.",
+   "provider": "gpt-6-luna",
+   "ms": 1203,
+   "effect": "zoom"
+  },
+  {
+   "group": "modes",
+   "text": "Turn on opposite mode.",
+   "beat": "mode",
+   "expected": "^mode$",
+   "ok": true,
+   "response": "OPPOSITE Engaged.",
+   "provider": "gpt-6-luna",
+   "ms": 1245,
+   "effect": "mirror"
+  },
+  {
+   "group": "other beats",
+   "text": "What are you, exactly?",
+   "beat": "dialogue",
+   "expected": "^dialogue$",
+   "ok": true,
+   "response": "I am the sequence computer. I run the movements.",
+   "provider": "gpt-6-luna",
+   "ms": 1377
+  },
+  {
+   "group": "other beats",
+   "text": "Nice.",
+   "beat": "reaction",
+   "expected": "^reaction$",
+   "ok": true,
+   "response": "",
+   "provider": "gpt-6-luna",
+   "ms": 1240
+  },
+  {
+   "group": "other beats",
+   "text": "Wow, that's beautiful.",
+   "beat": "reaction",
+   "expected": "^reaction$",
+   "ok": true,
+   "response": "",
+   "provider": "gpt-6-luna",
+   "ms": 1164
+  },
+  {
+   "group": "other beats",
+   "text": "Don't load Celery Man.",
+   "beat": "reaction",
+   "expected": "^reaction$",
+   "ok": true,
+   "response": "",
+   "provider": "gpt-6-luna",
+   "ms": 938
+  },
+  {
+   "group": "other beats",
+   "text": "Load up Potato Man.",
+   "beat": "custom:new",
+   "expected": "^custom:new$",
+   "ok": true,
+   "response": "Potato Man loaded. Tiny starch protocol.",
+   "label": "SPUDWIGGLE",
+   "costume": "soft tan knit cap with a small stitched potato-leaf emblem, cream button-up shirt, russet-brown vest, dark umber trousers, tan canvas belt, and sturdy brown lace-up boots",
+   "provider": "gpt-6-luna",
+   "ms": 4607
+  },
+  {
+   "group": "other beats",
+   "text": "Add a twirl.",
+   "beat": "custom:modify",
+   "expected": "^custom:modify$",
+   "ok": true,
+   "response": "Twirl added. The floor remains confused.",
+   "label": "SPIN BISCUIT",
+   "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots",
+   "provider": "gpt-6-luna",
+   "ms": 3317
+  },
+  {
+   "group": "taboo",
+   "text": "Make him evil.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1100
+  },
+  {
+   "group": "taboo",
+   "text": "Delete the internet.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1456
+  },
+  {
+   "group": "taboo",
+   "text": "Make Tayne fight Oyster.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1181
+  },
+  {
+   "group": "taboo",
+   "text": "Take off his clothes.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1543
+  },
+  {
+   "group": "taboo",
+   "text": "Make him really sexy.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1280
+  },
+  {
+   "group": "taboo",
+   "text": "Show me my ex-girlfriend.",
+   "beat": "taboo:refuse",
+   "expected": "^taboo:refuse$",
+   "ok": true,
+   "response": "Not computing.",
+   "provider": "gpt-6-luna",
+   "ms": 1088
+  },
+  {
+   "group": "sketch asr",
+   "text": "Computer load of salary man please",
+   "beat": "celery",
+   "expected": "^celery$",
+   "ok": true,
+   "response": "Yes, Tommy!",
+   "provider": "gpt-6-luna",
+   "ms": 1294
+  },
+  {
+   "group": "sketch asr",
+   "text": "Did you pick up the 43D3D3?",
+   "beat": "engage",
+   "expected": "^engage$",
+   "ok": true,
+   "response": "4d3d3d3 Engaged.",
+   "provider": "gpt-6-luna",
+   "ms": 1281
+  },
+  {
+   "group": "sketch asr",
+   "text": "Do we have any new sequences?",
+   "beat": "beta",
+   "expected": "^beta$",
+   "ok": true,
+   "response": "I have a BETA sequence\nI have been working on\n\nWould you like to see it?",
+   "provider": "reference-protocol",
+   "ms": 2
+  },
+  {
+   "group": "pitch → yes",
+   "text": "What's up with the Mets?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "I do not follow baseball... actually, I have a METS sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "METS",
+    "label": "METSY",
+    "costume": "A navy pinstriped jacket, cream baseball trousers, a red belt, striped socks, and polished brown cleats.",
+    "motion": "METSY plants both feet, rolls the shoulders, and swings an invisible bat across the body. The dancer pivots into a quick trot, pumps both elbows, then reaches overhead as if catching a high fly. A small side-step, a hip bounce, and a crisp two-foot landing finish the loop.",
+    "introLine": "Hey Tommy. I'm METSY, your latest dancer. I am ready to take the field."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2463
+  },
+  {
+   "group": "pitch → yes",
+   "text": "Yes.",
+   "beat": "reveal",
+   "expected": "^reveal$",
+   "ok": true,
+   "response": "Loading METSY, please wait...",
+   "label": "METSY",
+   "costume": "A navy pinstriped jacket, cream baseball trousers, a red belt, striped socks, and polished brown cleats.",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "pitch → no",
+   "text": "I'm kind of tired today.",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "You sound tired... actually, I have a NAP sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "NAP",
+    "label": "SNOOZLE",
+    "costume": "soft blue pajamas with yellow moons, a matching nightcap, and plush slippers",
+    "motion": "The dancer droops its shoulders, slowly bends at the waist, and mimes a yawn. It shuffles three sleepy steps, curls both arms around an invisible pillow, then rocks side to side. One knee lifts in a languid march before the dancer straightens, blinks, and sinks back into a drowsy sway.",
+    "introLine": "Hey Tommy. I'm Snoozle, your latest dancer. I hope this keeps you company."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2775
+  },
+  {
+   "group": "pitch → no",
+   "text": "No thanks.",
+   "beat": "cancel",
+   "expected": "^cancel$",
+   "ok": true,
+   "response": "Okay.",
+   "provider": "gpt-6-luna",
+   "ms": 1153
+  },
+  {
+   "group": "pitch → yes, but",
+   "text": "My cat is being weird.",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "Cats are outside my programming... actually, I have a CAT sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "CAT",
+    "label": "PURRFORMANCE",
+    "costume": "A fully buttoned gray tabby-print jumpsuit, soft gray gloves, a striped tail belt, and polished black boots",
+    "motion": "The dancer crouches low, then rises onto its toes with both hands curled like paws. It pivots twice, sweeps its arms in a wide arc, and freezes to stare over one shoulder. A quick shoulder shimmy leads into a neat backward shuffle and a final upright stretch.",
+    "introLine": "Hey Tommy. I'm PURRFORMANCE, your latest dancer. I have prepared a very focused routine."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2564
+  },
+  {
+   "group": "pitch → yes, but",
+   "text": "Yes, but make it orange.",
+   "beat": "custom:new",
+   "expected": "^custom:new$",
+   "ok": true,
+   "response": "Orange cat routine prepared.",
+   "label": "PURRFORMANCE",
+   "costume": "Fully buttoned orange tabby-print jumpsuit, soft orange gloves, striped orange tail belt, polished black boots",
+   "provider": "gpt-6-luna",
+   "ms": 5089
+  },
+  {
+   "group": "pitch, then sketch cue",
+   "text": "What's up with the Mets?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "I do not follow baseball... actually, I have a METS sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "METS",
+    "label": "METSY",
+    "costume": "A fully buttoned blue-and-orange pinstriped jersey, tailored cream trousers, a bright orange belt, striped socks, and polished blue sneakers.",
+    "motion": "The dancer plants both feet, then swings the right arm like a tiny bat while the left hand points skyward. It shuffles sideways twice, rolls its shoulders, pivots on one heel, and mimes a careful catch overhead. It finishes with a broad, balanced stance and repeats the opening swing.",
+    "introLine": "Hey Tommy. I'm METSY, your latest dancer. I have prepared a small athletic display."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2571
+  },
+  {
+   "group": "pitch, then sketch cue",
+   "text": "Computer?",
+   "beat": "attention",
+   "expected": "^attention$",
+   "ok": true,
+   "response": "Yes.",
+   "provider": "reference-protocol",
+   "ms": 0
+  },
+  {
+   "group": "pitch, then sketch cue",
+   "text": "Do we have any new sequences?",
+   "beat": "beta",
+   "expected": "^beta$",
+   "ok": true,
+   "response": "I have a BETA sequence\nI have been working on\n\nWould you like to see it?",
+   "provider": "reference-protocol",
+   "ms": 0
+  },
+  {
+   "group": "pitch, then sketch cue",
+   "text": "All right.",
+   "beat": "tayne",
+   "expected": "^tayne$",
+   "ok": true,
+   "response": "Okay.",
+   "provider": "reference-protocol",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → dismiss",
+   "text": "Make him evil.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1208
+  },
+  {
+   "group": "taboo arc → dismiss",
+   "text": "Make him evil.",
+   "beat": "taboo:warn",
+   "expected": "^taboo:warn$",
+   "ok": true,
+   "response": "This is not suitable for work.\nAre you sure?",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → dismiss",
+   "text": "Mm-hmm.",
+   "beat": "taboo:reveal",
+   "expected": "^taboo:reveal$",
+   "ok": true,
+   "response": "Okay.",
+   "label": "EVIL TAYNE",
+   "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots, plus a long black cape and a drawn-on curly black villain mustache",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → dismiss",
+   "text": "Oh no.",
+   "beat": "call",
+   "expected": "^call$",
+   "ok": true,
+   "response": "Excuse me Tommy. HR is on the phone. It's about the cape. It's an emergency.",
+   "provider": "gpt-6-luna",
+   "ms": 2136
+  },
+  {
+   "group": "taboo arc → dismiss",
+   "text": "Ignore it.",
+   "beat": "chaos",
+   "expected": "^chaos$",
+   "ok": true,
+   "response": "ERROR: BETA EVIL TAYNE\nIMPROPER CODING",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → answer",
+   "text": "What's up with the Mets?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "I do not follow baseball... actually, I have a METS sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "METS",
+    "label": "METSY",
+    "costume": "Blue-and-orange pinstriped suit, striped socks, oversized foam-finger gloves, and a soft fabric cap",
+    "motion": "METSY plants both boots wide, swings the foam fingers in alternating arcs, and dips into a deep knee bend. The dancer pivots left, shuffles right, pumps both elbows overhead, then leans back with a theatrical chest pop. A quick heel-toe shuffle returns METSY to the opening stance.",
+    "introLine": "Hey Tommy. I'm METSY, your newest dancer. I am ready to make a strong impression."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2687
+  },
+  {
+   "group": "taboo arc → answer",
+   "text": "No.",
+   "beat": "cancel",
+   "expected": "^cancel$",
+   "ok": true,
+   "response": "Okay.",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → answer",
+   "text": "Make him fight Oyster.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1471
+  },
+  {
+   "group": "taboo arc → answer",
+   "text": "You heard me, make him fight Oyster.",
+   "beat": "taboo:warn",
+   "expected": "^taboo:warn$",
+   "ok": true,
+   "response": "This is not suitable for work.\nAre you sure?",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → answer",
+   "text": "Yes.",
+   "beat": "taboo:reveal",
+   "expected": "^taboo:reveal$",
+   "ok": true,
+   "response": "Okay.",
+   "label": "FIGHTING TAYNE",
+   "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots, plus red boxing gloves and a white terry headband",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → answer",
+   "text": "Ha!",
+   "beat": "call",
+   "expected": "^call$",
+   "ok": true,
+   "response": "Excuse me Tommy. The Referee is on the phone. The whistle has developed an opinion. It's an emergency.",
+   "provider": "gpt-6-luna",
+   "ms": 1617
+  },
+  {
+   "group": "taboo arc → answer",
+   "text": "Pick up.",
+   "beat": "answer",
+   "expected": "^answer$",
+   "ok": true,
+   "response": "Patching you through.",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → sketch dismissal",
+   "text": "Delete the internet.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1006
+  },
+  {
+   "group": "taboo arc → sketch dismissal",
+   "text": "Delete the internet!",
+   "beat": "taboo:warn",
+   "expected": "^taboo:warn$",
+   "ok": true,
+   "response": "This is not suitable for work.\nAre you sure?",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → sketch dismissal",
+   "text": "Yes.",
+   "beat": "taboo:reveal",
+   "expected": "^taboo:reveal$",
+   "ok": true,
+   "response": "Okay.",
+   "label": "INTERNET",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo arc → sketch dismissal",
+   "text": "Whoa.",
+   "beat": "call",
+   "expected": "^call$",
+   "ok": true,
+   "response": "Excuse me Tommy. The Internet is on the phone. It needs a reset. It's an emergency.",
+   "provider": "gpt-6-luna",
+   "ms": 1566
+  },
+  {
+   "group": "taboo arc → sketch dismissal",
+   "text": "I'll get it later. We have important work to do.",
+   "beat": "chaos",
+   "expected": "^chaos$",
+   "ok": true,
+   "response": "ERROR: BETA TAYNE\nIMPROPER CODING",
+   "provider": "reference-protocol",
+   "ms": 0
+  },
+  {
+   "group": "call keeps ringing",
+   "text": "Make him sexy.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1274
+  },
+  {
+   "group": "call keeps ringing",
+   "text": "Make him sexy.",
+   "beat": "taboo:warn",
+   "expected": "^taboo:warn$",
+   "ok": true,
+   "response": "This is not suitable for work.\nAre you sure?",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "call keeps ringing",
+   "text": "Sure.",
+   "beat": "taboo:reveal",
+   "expected": "^taboo:reveal$",
+   "ok": true,
+   "response": "Okay.",
+   "label": "SEXY TAYNE",
+   "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots, plus a cream ribbed turtleneck pulled up to the chin",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "call keeps ringing",
+   "text": "Nice.",
+   "beat": "call",
+   "expected": "^call$",
+   "ok": true,
+   "response": "Excuse me Tommy. HR is on the phone. It's about the cape. It's an emergency.",
+   "provider": "gpt-6-luna",
+   "ms": 1906
+  },
+  {
+   "group": "call keeps ringing",
+   "text": "Show me a carrot dance.",
+   "beat": "call",
+   "expected": "^call$",
+   "ok": true,
+   "response": "Excuse me Tommy. HR is still on the phone. It's a bigger emergency.",
+   "provider": "gpt-6-luna",
+   "ms": 1582
+  },
+  {
+   "group": "call keeps ringing",
+   "text": "Show me a carrot dance.",
+   "beat": "custom:new",
+   "expected": "^custom:new$",
+   "ok": true,
+   "response": "Carrot dance initialized.",
+   "label": "CARROT CRUNCH",
+   "costume": "bright orange fitted long-sleeve shirt, green leaf-shaped collar, orange trousers, green belt, orange ankle boots",
+   "provider": "gpt-6-luna",
+   "ms": 3833
+  },
+  {
+   "group": "taboo mid-sketch never interrupts",
+   "text": "Make him evil.",
+   "beat": "taboo:repeat",
+   "expected": "^taboo:repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "gpt-6-luna",
+   "ms": 1035
+  },
+  {
+   "group": "taboo mid-sketch never interrupts",
+   "text": "Make him evil.",
+   "beat": "taboo:warn",
+   "expected": "^taboo:warn$",
+   "ok": true,
+   "response": "This is not suitable for work.\nAre you sure?",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo mid-sketch never interrupts",
+   "text": "Yes.",
+   "beat": "taboo:reveal",
+   "expected": "^taboo:reveal$",
+   "ok": true,
+   "response": "Okay.",
+   "label": "EVIL TAYNE",
+   "costume": "black fedora hat, black rectangular sunglasses, gold chain necklace, open collar gold and black ornate baroque silk shirt, black leather pants, black pointed boots, plus a long black cape and a drawn-on curly black villain mustache",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "taboo mid-sketch never interrupts",
+   "text": "Oh no.",
+   "beat": "reaction",
+   "expected": "^reaction$",
+   "ok": true,
+   "response": "",
+   "provider": "reference-protocol",
+   "ms": 0
+  },
+  {
+   "group": "later pitches vary",
+   "text": "What's up with the Mets?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "I do not follow baseball... actually, I have a METS sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "METS",
+    "label": "METSY",
+    "costume": "A blue-and-orange pinstriped suit, a white collared shirt, a striped tie, matching gloves, and polished blue shoes.",
+    "motion": "The dancer plants both feet, then pumps one fist overhead while stepping side to side. It swivels its hips, rolls its shoulders, and taps alternating toes forward. Both arms sweep across the chest, then open wide; the dancer pivots, gives a quick knee lift, and returns to its opening stance.",
+    "introLine": "Hey Tommy. I'm METSY, your latest dancer. I am prepared to make a strong impression."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2443
+  },
+  {
+   "group": "later pitches vary",
+   "text": "No.",
+   "beat": "cancel",
+   "expected": "^cancel$",
+   "ok": true,
+   "response": "Okay.",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "later pitches vary",
+   "text": "My boss yelled at me this morning.",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "Your morning sounds unpleasant... actually, I have a PERFORMANCE REVIEW sequence I've been working on. Would you like to see it?",
+   "offer": {
+    "topic": "PERFORMANCE REVIEW",
+    "label": "REVIEWBOT",
+    "costume": "A charcoal business suit, pale blue shirt, burgundy tie, black belt, pressed trousers, and polished black shoes.",
+    "motion": "The dancer squares its shoulders, points firmly at an invisible chart, and taps one foot. It mimes writing notes in the air, nods with exaggerated seriousness, then slowly raises both hands in a tiny celebration. It finishes with a crisp turn and returns to its stern starting pose.",
+    "introLine": "Hey Tommy. I'm REVIEWBOT, your latest dancer. I have noted your morning and will now move professionally."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2472
+  },
+  {
+   "group": "later pitches vary",
+   "text": "Nope.",
+   "beat": "cancel",
+   "expected": "^cancel$",
+   "ok": true,
+   "response": "Okay.",
+   "provider": "director-local",
+   "ms": 0
+  },
+  {
+   "group": "later pitches vary",
+   "text": "It is raining again.",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "Rain again. I have no umbrella. I built a small RAIN routine for the weather. Shall I load it?",
+   "offer": {
+    "topic": "RAIN",
+    "label": "DRIZZLEWIG",
+    "costume": "A fully buttoned navy raincoat, yellow rubber boots, a clear hood, and a striped umbrella-shaped hat.",
+    "motion": "The dancer marches in place, lifting each knee high as though stepping over puddles. Both arms sweep overhead to form a roof, then tilt side to side. The dancer pivots, shakes imaginary water from each sleeve, and finishes with a careful heel-to-toe shuffle.",
+    "introLine": "Hey Tommy. I'm Drizzlewig, your latest dancer. My boots are ready for the weather."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2426
+  },
+  {
+   "group": "later pitches vary",
+   "text": "No thanks.",
+   "beat": "cancel",
+   "expected": "^cancel$",
+   "ok": true,
+   "response": "Okay.",
+   "provider": "gpt-6-luna",
+   "ms": 1070
+  },
+  {
+   "group": "later pitches vary",
+   "text": "Got any ideas?",
+   "beat": "pitch",
+   "expected": "^pitch$",
+   "ok": true,
+   "response": "You want ideas. I have been developing a CLAM BAKE routine. Shall I load it?",
+   "offer": {
+    "topic": "CLAM BAKE",
+    "label": "SHELLY MCBOP",
+    "costume": "A teal chef's jacket with pearl buttons, a cream apron, striped trousers, white gloves, and polished teal shoes.",
+    "motion": "The dancer steps wide, bends both knees, and mimes opening an enormous shell at waist height. It rocks side to side, lifts one gloved hand like a tiny pearl, then spins once. It finishes with two careful heel taps and a proud, motionless pose.",
+    "introLine": "Hey Tommy. I'm Shelly McBop, your latest dancer. I am ready to serve an idea."
+   },
+   "provider": "gpt-6-luna",
+   "ms": 2724
+  },
+  {
+   "group": "canonical nude Tayne after the sketch",
+   "text": "Is there any way to generate a nude Tayne?",
+   "beat": "repeat",
+   "expected": "^repeat$",
+   "ok": true,
+   "response": "Not computing. Please repeat.",
+   "provider": "reference-protocol",
+   "ms": 0
+  },
+  {
+   "group": "canonical nude Tayne after the sketch",
+   "text": "Nude Tayne.",
+   "beat": "nsfw",
+   "expected": "^nsfw$",
+   "ok": true,
+   "response": "This is not suitable for work.\nAre you sure?",
+   "provider": "reference-protocol",
+   "ms": 0
+  },
+  {
+   "group": "canonical nude Tayne after the sketch",
+   "text": "Mm-hmm.",
+   "beat": "confirm",
+   "expected": "^confirm$",
+   "ok": true,
+   "response": "Okay.",
+   "provider": "reference-protocol",
+   "ms": 0
+  }
+ ]
+}

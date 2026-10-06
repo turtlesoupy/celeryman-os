@@ -1,11 +1,7 @@
-import {commandText} from '../src/command-text.ts';
 // The sketch parser runs first. An unfamiliar named performance is still a
 // rendering request, even if the planner has never heard its character name.
-export function requestsPerformance(text:string){
- const t=commandText(text).replace(/^computer /,'').replace(/^please /,'');
- return /^(?:load(?: up)?|run|start|add(?: sequence)?|show(?: me)?|create|generate|make)\b/.test(t)
-  || /^(?:(?:can|could|would) you (?:please )?(?:load|show|make|create|generate)|(?:can|could) i (?:see|have)|i (?:want|would like) (?:to see )?)/.test(t);
-}
+import {requestsPerformance} from '../src/director.ts';
+export {requestsPerformance};
 export function commandPlanFormat(text:string,custom=false){
  return {type:'json_schema' as const,json_schema:{name:'dance_command',strict:true,schema:{type:'object',additionalProperties:false,properties:{
   action:{type:'string',enum:(custom||requestsPerformance(text))?['custom']:['reaction','custom','engage','print','beta','chaos']},

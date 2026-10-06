@@ -1,9 +1,9 @@
 import {commandText} from './command-text.ts';
-export type Action='greeting'|'celery'|'engage'|'oyster'|'print'|'attention'|'beta'|'tayne'|'hat'|'flarhgunnstow'|'repeat'|'nsfw'|'confirm'|'call'|'chaos'|'reset'|'custom'|'reaction'|'cancel'|'dialogue';
-export interface Command {action:Action;response:string;audio?:string;label?:string;motion?:string;costume?:string;target?:string;sequenceMode?:'new'|'modify';generationId?:string;generationRequest?:unknown;playbackRate?:number}
-export interface Context {identity:string;character:string;pending:string;history:string[];costume?:string;scriptStep?:number;conversation?:{role:'user'|'assistant';content:string}[]}
+import type {Beat,DirectorState} from './director.ts';
+export type Action='greeting'|'celery'|'engage'|'oyster'|'print'|'attention'|'beta'|'tayne'|'hat'|'flarhgunnstow'|'repeat'|'nsfw'|'confirm'|'call'|'chaos'|'reset'|'custom'|'reaction'|'cancel'|'dialogue'|'director';
+export interface Command {action:Action;response:string;audio?:string;label?:string;motion?:string;costume?:string;target?:string;sequenceMode?:'new'|'modify';generationId?:string;generationRequest?:unknown;playbackRate?:number;beat?:Beat}
+export interface Context {identity:string;character:string;pending:string;history:string[];costume?:string;scriptStep?:number;conversation?:{role:'user'|'assistant';content:string}[];director?:DirectorState}
 export function scripted(text:string,c:Context):Command|null {
- if(c.pending==='dialogue')return null;
  if((c.scriptStep??0)>=sketch.length&&/new sequence|more sequence|anything (?:new|else)|another (?:sequence|dance)/i.test(text))return null;
  const exact=scriptedExact(text,c);if(exact)return exact;
  const step=Number.isInteger(c.scriptStep)?sketch[c.scriptStep!]:undefined;
@@ -27,12 +27,13 @@ export function scripted(text:string,c:Context):Command|null {
  const command=scriptedExact(step.text,c);
  return command?.action===step.action?command:null;
 }
+// Bare consent or refusal, shared by the sketch's confirmations and the director's offers.
+function bareAnswer(text:string){return text.toLowerCase().replace(/[’']/g,'').replace(/^[.\s]+/,'').trim().replace(/^computer[,!. ]*/, '').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();}
+export function isAffirmative(text:string){const answer=bareAnswer(text);return /^(yes|yep|yup|yeah|sure|ok|okay|all right|alright|absolutely|confirm|go ahead|please do|show me|lets see it)( please| computer)?$/.test(answer)||/^(m+h+m*|m+h+u+m+|u+m+h+u+m+|u+h+h+u+h+|m+h*|h+m+)$/.test(answer.replace(/ /g,''));}
+export function isNegative(text:string){return /^(no|nope|nah|not now|cancel|dont|do not|never mind|nevermind|stop|uh uh|mm mm)( please| computer)?$/.test(bareAnswer(text));}
 function scriptedExact(text:string,c:Context):Command|null {
  const t=text.toLowerCase().replace(/[’']/g,'').replace(/^[.\s]+/,'').trim();
- const answer=t.replace(/^computer[,!. ]*/, '').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
- const compact=answer.replace(/ /g,'');
- const affirmative=/^(yes|yep|yup|yeah|sure|ok|okay|all right|alright|absolutely|confirm|go ahead|please do|show me|lets see it)( please| computer)?$/.test(answer)||/^(m+h+m*|m+h+u+m+|u+m+h+u+m+|u+h+h+u+h+|m+h*|h+m+)$/.test(compact);
- const negative=/^(no|nope|nah|not now|cancel|dont|do not|never mind|nevermind|stop|uh uh|mm mm)( please| computer)?$/.test(answer);
+ const affirmative=isAffirmative(text),negative=isNegative(text);
  if(['beta','nsfw'].includes(c.pending)&&negative)return {action:'cancel',response:'Okay.',audio:'okay'};
  if(c.pending==='beta'&&affirmative)return {action:'tayne',response:'Okay.',audio:'okay'};
  if(c.pending==='nsfw'&&affirmative)return {action:'confirm',response:'Okay.',audio:'confirm'};

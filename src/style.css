@@ -160,3 +160,17 @@
 .terminal.minimized .terminal-display{display:none}
 .generation-overlay>.progress{width:100%;height:11px;flex:none;margin:0;padding:1px}
 .generation-overlay>.progress>i{animation:none}
+/* Director beats */
+.title-card .name-card{display:grid;place-items:center}
+.title-card .pixel-title{width:86%;image-rendering:pixelated;display:block}
+.warning-flash{position:absolute;left:52px;top:150px;z-index:9999;font-family:Terminal,monospace;font-size:92px;letter-spacing:6px;color:#ff2a2a;text-shadow:4px 4px 0 #7a0000;pointer-events:none;animation:warning-blink .5s steps(1) infinite}
+@keyframes warning-blink{50%{visibility:hidden}}
+.window .content:has(.mosaic){position:relative}
+video.censored{opacity:0}
+.mosaic{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;filter:blur(3px) saturate(1.2)}
+.phone .label.long{font-size:17px;letter-spacing:1px;text-align:center;padding:0 4px}
+.desktop[data-mode="ghost"] video{filter:blur(1.2px) brightness(1.15);opacity:.82}
+.desktop[data-mode="vhs"] video{filter:saturate(2.4) hue-rotate(-28deg) contrast(1.35)}
+.desktop[data-mode="mirror"] video{transform:scaleX(-1)}
+.desktop[data-mode="invert"] video{filter:invert(1)}
+.desktop[data-mode="zoom"] video{transform:scale(1.35)}
