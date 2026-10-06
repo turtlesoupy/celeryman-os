@@ -1,3 +1,4 @@
+import {withSession} from './session';
 type TranscriptEvent = {type:string;item_id?:string;delta?:string;transcript?:string;error?:{message?:string}};
 export type StreamingTranscript = {text:string;model:string;transcriptionMs:number;firstPartialMs?:number};
 
@@ -15,7 +16,7 @@ class Connection {
       this.rejectReady=reject;
       this.timer=setTimeout(()=>this.fail(Error('Streaming connection timed out')),6000);
       void (async()=>{
-        const response=await fetch('/api/transcribe/session',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',signal:this.controller.signal});
+        const response=await withSession(headers=>fetch('/api/transcribe/session',{method:'POST',headers:{'Content-Type':'application/json',...headers},body:'{}',signal:this.controller.signal}));
         if(!response.ok)throw Error(`Streaming transcription unavailable (${response.status})`);
         const secret=await response.json();
         if(this.closed)return;

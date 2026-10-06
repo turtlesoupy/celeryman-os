@@ -6,6 +6,8 @@ import path from 'node:path';
 import {apiMiddleware} from './api.ts';
 import {timingSafeEqual} from 'node:crypto';
 
+// Paid routes must never run ungated in production.
+if(process.env.NODE_ENV==='production'&&!process.env.TURNSTILE_SECRET){console.error('FATAL: TURNSTILE_SECRET is not set; refusing to serve paid routes without verification.');process.exit(1);}
 const root=path.resolve('dist');
 const allowedOrigins=new Set((process.env.APP_ORIGINS||'').split(',').filter(Boolean));
 const originToken=process.env.ORIGIN_TOKEN;

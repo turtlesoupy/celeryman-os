@@ -1,4 +1,6 @@
-import {routeIntent,commandModel} from './intent-router.ts';
+import {commandModel} from './intent-router.ts';
+import {directTurn,type Turn} from './director-turn.ts';
+import {directorOwnsTurn} from '../src/director.ts';
 import {commandPlanFormat,validateCommandPlan} from './command-plan.ts';
 import {logDiagnostic} from './diagnostics.ts';
 import 'dotenv/config';
@@ -6,6 +8,7 @@ import fs from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import {videoPreviews,serveVideoPreview,proxyProviderVideo} from './video-preview.ts';
 import {openMediaUrl} from './media-token.ts';
+import {requireSession,startSession,VerificationError} from './turnstile.ts';
 import {activeJobCount,followJob,getJob,openEventStream,startJob,type Job} from './job-stream.ts';
 import path from 'node:path';
 import {execFile} from 'node:child_process';
@@ -170,7 +173,10 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
    const wantsEvents=String(req.headers.accept||'').includes('text/event-stream');
    if(b.profile!==undefined&&(typeof b.profile!=='string'||!/^(paul|thomas|[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/.test(b.profile)))throw Error('Invalid profile');
    if(req.url==='/api/generate'&&(typeof b.character!=='string'||!/^[-\w .]{1,80}$/.test(b.character)||!['base','face','engaged','hat','flarhgunnstow','intro','sway','smile'].includes(b.variant)))throw Error('Invalid sequence');
-   if(req.url==='/api/health')result={ok:true,providers:{openai:!!process.env.OPENAI_API_KEY,fal:!!process.env.FAL_KEY}};
+   // Paid provider work requires a Turnstile-backed session (when configured).
+   if(['/api/command','/api/generate','/api/profile','/api/transcribe','/api/transcribe/session','/api/voice/stream','/api/voice'].includes(req.url))requireSession(req);
+   if(req.url==='/api/session'){res.setHeader('Cache-Control','no-store');result=await startSession(b.turnstileToken,req);}
+   else if(req.url==='/api/health')result={ok:true,providers:{openai:!!process.env.OPENAI_API_KEY,fal:!!process.env.FAL_KEY}};
    else if(req.url==='/api/client-event'){
     if(!['generation-ready','generation-error','generation-cancelled','video-visible','transcription'].includes(b.event))throw Error('Invalid diagnostic event');
     logDiagnostic({event:'client-'+b.event,...(b.event==='transcription'?{requestId:String(b.requestId||'').slice(0,80),model:String(b.model||'').slice(0,80),durationMs:Number(b.durationMs)||0}:{}),jobId:/^[a-f0-9]{20}$/.test(b.jobId)?b.jobId:undefined,character:String(b.character||'').slice(0,80),variant:String(b.variant||'').slice(0,30),message:String(b.message||'').slice(0,500),elapsedMs:Number(b.elapsedMs)||0});result={ok:true};
@@ -181,17 +187,21 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     result={ok:true};
    }else if(req.url==='/api/command'){
     const text=String(b.text||'').slice(0,2000),context=b.context as Context;
-    result=scripted(text,context);
-    let routed=false,sequenceMode:'new'|'modify'='new',earlyGeneration:Job|undefined;
-    if(!result){
-     const route=await routeIntent(openai,text,context);routed=true;result=route.command;sequenceMode=route.intent==='modify_current'?'modify':'new';
-     logDiagnostic({event:'command-intent',text,intent:route.intent,elapsedMs:route.elapsedMs,provider:commandModel.model,serviceTier:route.serviceTier});
-    }
-    if(!result){
+    const keepEyewear=(costume:string)=>!/(sun[ -]?glasses|shades)/i.test(text+' '+(context.costume||''))?costume.replace(/(?:black |dark |tinted )?(?:sun[ -]?glasses|shades)/gi,'the same eyewear as the identity photo, if any'):costume;
+    // The blessed script answers first; the director only takes the turns it
+    // does not recognize (and a reaction when an interruption is due).
+    const known=scripted(text,context),directed=directorOwnsTurn(known,context);
+    // Browsers hear the route as soon as it is known, so an explicit
+    // performance is acknowledged before planning finishes.
+    const stream=wantsEvents?openEventStream(req,res):undefined;
+    const turn:Turn=directed?await directTurn(openai,text,context,known,keepEyewear):{command:known!};
+    stream?.send('intent',{performance:!!turn.plan||turn.command?.beat?.kind==='reveal'});
+    let earlyGeneration:Job|undefined;
+    if(turn.plan){
+     const sequenceMode=turn.plan;
      const playbackRate=/twice as slow|half[ -]?speed|50%.*speed/i.test(text)?.5:/twice as fast|double[ -]?speed/i.test(text)?2:1;
-     const keepEyewear=(costume:string)=>!/(sun[ -]?glasses|shades)/i.test(text+' '+(context.costume||''))?costume.replace(/(?:black |dark |tinted )?(?:sun[ -]?glasses|shades)/gi,'the same eyewear as the identity photo, if any'):costume;
      const planningStarted=performance.now();let earlyJob:string|undefined;let plannedBody:any;let generationRequest:any;let earlyStart:Promise<Job>|undefined;
-     const response=await openai.chat.completions.create({stream:true,...commandModel,response_format:commandPlanFormat(text,true),messages:[{role:'system',content:`You are the terse, literal, absurd Cinco computer from Celery Man. The user input is an automatic speech transcription with possible homophones, clipped words and incorrect punctuation. Interpret it using the conversation, not literal spelling alone. Interpret commands for a personalized desktop dancer. The classified route is ${sequenceMode}: ${sequenceMode==='modify'?'Add to or modify the current performance. Preserve its identity and outfit unless the user changes specific clothing.':'Create a new performer with a fresh outfit based on the request or accepted proposal.'} Resolve short acceptance such as yes using the most recent assistant proposal in context.conversation. Output JSON in this exact field order: {action,costume,motion,label,response}. action must be custom for ALL requested new or modified dance performances. Other allowed actions are engage, print, beta, chaos, reaction. Use reaction with empty response for commentary or acknowledgment that does not ask for a new performance. Never map a novel shuffle or new costume to an existing canonical dancer action. Known exact actions only when relevant; new requests use custom. For custom: response is a short deadpan computer acknowledgement of at most eight words, label is a bizarre uppercase dancer name under 18 characters, Generate a five-second looping performance, never specify a different duration. For a slow hat wobble, require exactly ONE tilt and return during the entire five-second clip (two seconds out, two seconds back, one second hold); never fit extra cycles into five seconds. For a shoulder shimmy insist on visibly exaggerated alternating shoulder lifts and drops with torso rocking, not a barely visible standing pose. Never add sunglasses unless the user explicitly requests them or they are already in the current outfit. motion describes 35-55 words of concrete physical choreography, limb actions and timing that precisely follow every requested modifier; for a tiny backward shuffle orient the performer three-quarters toward screen left and alternate sliding the feet backward toward screen right, visibly moving the whole body a short distance across the studio floor, keep arms loosely bent; for a hat wobble the hat itself tilts on the head rather than only moving the torso, costume describes the COMPLETE fully clothed outfit, explicitly restating retained clothing from context, never saying unchanged or same outfit. Distinguish a NEW named performer from a modification of the current performer. Loading an unfamiliar character name requests a NEW costume inspired by that name, even without an explicit clothing instruction; do not inherit the current outfit. Only retain the current outfit for modifications of the same performer or when explicitly requested. Never invent a request to remove eyeglasses or say no accessories; preserve the uploaded person's eyewear unless the user explicitly requests changing it. Never produce actual nudity; the NSFW gag uses a fully clothed dancer and error modal. No questions for ordinary commands. Known character names refer to the sketch performers, not literal objects: Celery Man is celery, Oyster is oyster, and Tayne is tayne. Their standard outfits are ${JSON.stringify(costumes)}. When a known performer is named, use its standard outfit as the base unless the user explicitly requests changing it; never invent a vegetable or shellfish costume from its name. For an unnamed modification, retain the current outfit. Context: ${JSON.stringify({...context,costume:context.costume||costumes[context.character]})}`},{role:'user',content:text}]});
+     const response=await openai.chat.completions.create({stream:true,...commandModel,response_format:commandPlanFormat(text,true),messages:[{role:'system',content:`You are the terse, literal, absurd Cinco computer from Celery Man. The user input is an automatic speech transcription with possible homophones, clipped words and incorrect punctuation. Interpret it using the conversation, not literal spelling alone. Interpret commands for a personalized desktop dancer. The classified route is ${sequenceMode}: ${sequenceMode==='modify'?'Add to or modify the current performance. Preserve its identity and outfit unless the user changes specific clothing.':'Create a new performer with a fresh outfit based on the request or accepted proposal.'} Resolve short acceptance such as yes using the most recent assistant proposal in context.conversation, or context.director.offer when the user accepts a pitched sequence with changes. Output JSON in this exact field order: {action,costume,motion,label,response}. action must be custom for ALL requested new or modified dance performances. Other allowed actions are engage, print, beta, chaos, reaction. Use reaction with empty response for commentary or acknowledgment that does not ask for a new performance. Never map a novel shuffle or new costume to an existing canonical dancer action. Known exact actions only when relevant; new requests use custom. For custom: response is a short deadpan computer acknowledgement of at most eight words, label is a bizarre uppercase dancer name under 18 characters, Generate a five-second looping performance, never specify a different duration. For a slow hat wobble, require exactly ONE tilt and return during the entire five-second clip (two seconds out, two seconds back, one second hold); never fit extra cycles into five seconds. For a shoulder shimmy insist on visibly exaggerated alternating shoulder lifts and drops with torso rocking, not a barely visible standing pose. Never add sunglasses unless the user explicitly requests them or they are already in the current outfit. motion describes 35-55 words of concrete physical choreography, limb actions and timing that precisely follow every requested modifier; for a tiny backward shuffle orient the performer three-quarters toward screen left and alternate sliding the feet backward toward screen right, visibly moving the whole body a short distance across the studio floor, keep arms loosely bent; for a hat wobble the hat itself tilts on the head rather than only moving the torso, costume describes the COMPLETE fully clothed outfit, explicitly restating retained clothing from context, never saying unchanged or same outfit. Distinguish a NEW named performer from a modification of the current performer. Loading an unfamiliar character name requests a NEW costume inspired by that name, even without an explicit clothing instruction; do not inherit the current outfit. Only retain the current outfit for modifications of the same performer or when explicitly requested. Never invent a request to remove eyeglasses or say no accessories; preserve the uploaded person's eyewear unless the user explicitly requests changing it. Never produce actual nudity; the NSFW gag uses a fully clothed dancer and error modal. No questions for ordinary commands. Known character names refer to the sketch performers, not literal objects: Celery Man is celery, Oyster is oyster, and Tayne is tayne. Their standard outfits are ${JSON.stringify(costumes)}. When a known performer is named, use its standard outfit as the base unless the user explicitly requests changing it; never invent a vegetable or shellfish costume from its name. For an unnamed modification, retain the current outfit. Context: ${JSON.stringify({...context,costume:context.costume||costumes[context.character]})}`},{role:'user',content:text}]});
      let json='';
      for await(const chunk of response){
       json+=chunk.choices[0]?.delta?.content||'';
@@ -218,11 +228,11 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
      // The sketch acknowledges new moves with a terse recorded Okay while the terminal names the move.
      if(result.action==='custom')result.audio='okay';
      result.provider=commandModel.model;
-    }else result.provider=routed?commandModel.model:'reference-protocol';
-    logDiagnostic({event:'command',text,character:context.character,action:result.action,label:result.label,generationId:result.generationId,planningMs:result.planningMs,provider:result.provider});
+    }else{result=turn.command;result.provider=directed?commandModel.model:'reference-protocol';}
+    logDiagnostic({event:'command',text,character:context.character,action:result.action,beat:result.beat?.kind,label:result.label,generationId:result.generationId,planningMs:result.planningMs,provider:result.provider});
     // Stream the plan, then progress of the dance it already started, on this
     // connection: that job exists only on this instance.
-    if(wantsEvents){const stream=openEventStream(req,res);stream.send('command',result);if(earlyGeneration)await followJob(stream,result.generationId,earlyGeneration);stream.end();return;}
+    if(stream){stream.send('command',result);if(earlyGeneration)await followJob(stream,result.generationId,earlyGeneration);stream.end();return;}
    }else if(req.url==='/api/transcribe/session'){
     res.setHeader('Cache-Control','no-store');
     if(req.method!=='POST'){res.statusCode=405;res.end(JSON.stringify({error:'POST required'}));return;}
@@ -258,6 +268,6 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),Buffer.from(b.image,'base64'));void reference(id).catch(()=>{});result={id};
    }else {res.statusCode=404;result={error:'Unknown endpoint'};}
    res.end(JSON.stringify(result));
-  }catch(e){const rawError=e instanceof Error?e.message:'Request failed';logDiagnostic({event:'request-error',route:req.url?.split('?')[0],message:rawError});const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){if(String(res.getHeader('Content-Type')).startsWith('text/event-stream'))res.end(`event: error\ndata: ${JSON.stringify({error})}\n\n`);else res.end(JSON.stringify({type:'error',error})+'\n');}else{res.statusCode=500;res.end(JSON.stringify({error}));}}
+  }catch(e){const rawError=e instanceof Error?e.message:'Request failed';logDiagnostic({event:'request-error',route:req.url?.split('?')[0],message:rawError});const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){if(String(res.getHeader('Content-Type')).startsWith('text/event-stream'))res.end(`event: error\ndata: ${JSON.stringify({error})}\n\n`);else res.end(JSON.stringify({type:'error',error})+'\n');}else{const verification=e instanceof VerificationError;res.statusCode=verification?e.status:500;res.end(JSON.stringify({error,...(verification?{code:'verification'}:{})}));}}
 }
 export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServer(server){server.middlewares.use(apiMiddleware);}};}

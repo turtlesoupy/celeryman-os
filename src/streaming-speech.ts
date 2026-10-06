@@ -1,3 +1,4 @@
+import {withSession} from './session';
 import {speechBus} from './audio';
 type Hooks={beforePlayback?:()=>Promise<void>;onStart:()=>void;onEnd:()=>void;onError:(error:Error)=>void;onComplete:(summary:Record<string,unknown>)=>void};
 /** Schedule raw 24 kHz mono PCM on the same clock and capture bus as music. */
@@ -43,8 +44,9 @@ export class StreamingSpeech {
  private maybeEnd(){if(this.finished&&!this.nodes.size&&!this.stopped){clearTimeout(this.startTimer);this.stopped=true;this.resolveStarted();this.hooks.onEnd();}}
  private async read(text:string){
   try{
-   const response=await fetch('/api/voice/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text}),signal:this.controller.signal});
-   if(!response.ok)throw Error((await response.json()).error||`Voice unavailable (${response.status})`);
+   const response=await withSession(headers=>fetch('/api/voice/stream',{method:'POST',headers:{'Content-Type':'application/json',...headers},body:JSON.stringify({text}),signal:this.controller.signal}));
+   // Proxies and the edge can answer with plain text or HTML, not JSON.
+   if(!response.ok){const body=await response.text();let message:string|undefined;try{message=JSON.parse(body).error;}catch{}throw Error(message||`Voice unavailable (${response.status})`);}
    // Opening a Bluetooth input can change the output route. Fetch concurrently,
    // but keep all PCM queued until that setup finishes.
    await this.hooks.beforePlayback?.();if(this.stopped)return;

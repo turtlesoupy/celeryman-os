@@ -26,9 +26,13 @@ Cloud Run autoscales from one warm instance (2 vCPU / 4 GiB, always-allocated CP
 
 Cloud Storage FUSE mounts at `/data`. `public/media/generated`, `public/media/profiles`, `public/media/voice` and `cache` are symlinked into it. Streaming writes are disabled because ffmpeg needs seekable output files. Preset Paul/Thomas assets are seeded from local caches; friend test-profile uploads are excluded. New uploads and generated media are stored by the running app. The bucket is private (public access prevention enforced, no public IAM). The application serves only playable media under `/media/`: original sketch clips, generated videos, posters and prints, and voice audio. Provenance JSON, identity costume frames, uploaded photos and motion references are never served, even to someone who knows an ID, and there is no listing route.
 
+## Turnstile
+
+Cloudflare Turnstile widget `celeryman` (invisible, domain `celeryman.fun`, site key `0x4AAAAAAFPpVQfNKWt2ZKaS`) gates paid work. The browser mints one token while the identity launcher is open and exchanges it at `POST /api/session` for a signed two-hour session (HMAC keyed from `ORIGIN_TOKEN`, so any instance accepts it). Command, generation, upload, transcription and voice routes require the `X-Cinco-Session` header; an expired or invalid session returns 401 and the client renews once. Health, diagnostics, job status and warm-up stay open. Production refuses to start without `TURNSTILE_SECRET`. Local development is ungated unless `TURNSTILE_SECRET` and `VITE_TURNSTILE_SITE_KEY` are set (Cloudflare's test keys work). `npx tsx scripts/check-turnstile.ts` checks the gate and the real widget with test keys.
+
 ## Secrets
 
-Secret Manager contains `openai-api-key`, `fal-key`, `computer-voice-id`, and `origin-token`. Only the runtime service account receives `roles/secretmanager.secretAccessor` on those individual secrets. Its storage grant is limited to `roles/storage.objectUser` on the media bucket. Cloudflare's Worker has the same origin token as a secret binding.
+Secret Manager contains `openai-api-key`, `fal-key`, `computer-voice-id`, `origin-token` and `turnstile-secret`. Only the runtime service account receives `roles/secretmanager.secretAccessor` on those individual secrets. Its storage grant is limited to `roles/storage.objectUser` on the media bucket. Cloudflare's Worker has the same origin token as a secret binding.
 
 Local Cloudflare credentials and the origin token are in the ignored `.env`, never in the repository, build context, image or frontend bundle. Cloudflare credentials are used only by the deployment script and are not supplied to Cloud Run. `.gcloudignore` and `.dockerignore` also exclude local generated media, profiles, benchmarks, and reference video. The voice clone enrollment ID is preserved so production uses the chosen computer voice.
 

@@ -1,9 +1,13 @@
+import {withSession} from './session';
+// Routes that spend provider credit carry the Turnstile-backed session.
+export const gatedRoutes=new Set(['command','generate','profile','transcribe','transcribe/session','voice/stream','voice']);
 /** Only read-only job polling is retried; never duplicate a paid generation. */
 export async function requestJson(url:string,body?:unknown,fetcher:typeof fetch=fetch){
  const polling=url.startsWith('job/')&&body===undefined;
  for(let attempt=0;;attempt++){
   try{
-   const response=await fetcher('/api/'+url,{method:body?'POST':'GET',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(polling?10000:45000)});
+   const send=(headers:Record<string,string>)=>fetcher('/api/'+url,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...headers},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(polling?10000:45000)});
+   const response=gatedRoutes.has(url)?await withSession(send):await send({});
    const text=await response.text();let data:any;
    try{data=JSON.parse(text);}catch{
     if(response.ok)throw Error('The server returned an unreadable response. Please retry the command.');

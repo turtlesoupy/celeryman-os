@@ -1,4 +1,5 @@
 import {requestJson} from './api-client';
+import {withSession} from './session';
 
 export type JobState={id:string;status:string;stage?:string;providerStatus?:string;previewUrl?:string;url?:string;image?:string;error?:string;timings?:Record<string,number>};
 
@@ -14,7 +15,7 @@ async function postEvents(url:string,body:unknown,onEvent:(event:string,data:any
  let timer=0;const idle=()=>{clearTimeout(timer);timer=window.setTimeout(()=>controller.abort(new DOMException('The connection went quiet','TimeoutError')),IDLE_MS);};
  idle();
  try{
-  const response=await fetch('/api/'+url,{method:'POST',headers:{'Content-Type':'application/json',Accept:'text/event-stream'},body:JSON.stringify(body),signal:controller.signal});
+  const response=await withSession(headers=>fetch('/api/'+url,{method:'POST',headers:{'Content-Type':'application/json',Accept:'text/event-stream',...headers},body:JSON.stringify(body),signal:controller.signal}));
   if(!(response.headers.get('content-type')||'').includes('text/event-stream')){
    const text=await response.text();let data:any;try{data=JSON.parse(text);}catch{}
    if(!response.ok)throw Error(data?.error||`Server request failed (HTTP ${response.status}). Please retry the command.`);
@@ -97,7 +98,7 @@ export function takeCommandGeneration(id:string){const feed=commandFeeds.get(id)
  * Interpret a command. The reply streams the plan, then progress of any dance
  * the server started early, on the same connection and therefore the same instance.
  */
-export function requestCommand<T extends {generationId?:string;generationRequest?:unknown}>(body:unknown):Promise<T>{
+export function requestCommand<T extends {generationId?:string;generationRequest?:unknown}>(body:unknown,onIntent?:(intent:{performance:boolean})=>void):Promise<T>{
  return new Promise<T>((resolve,reject)=>{
   const controller=new AbortController();let command:T|undefined,feed:GenerationFeed|undefined;
   const deadline=setTimeout(()=>{if(!command)controller.abort(new DOMException('Command timed out','TimeoutError'));},COMMAND_MS);
@@ -111,7 +112,8 @@ export function requestCommand<T extends {generationId?:string;generationRequest
    resolve(value);
   };
   postEvents('command',body,(event,data)=>{
-   if(event==='json'||event==='command')accept(data);
+   if(event==='intent')onIntent?.(data);
+   else if(event==='json'||event==='command')accept(data);
    else if(event==='job')feed?.push(data);
    else if(event==='error'){if(feed)feed.fail(Error(data.error||'Generation failed. Please retry the command.'));else if(!command)reject(Error(data.error||'Command failed. Please retry the command.'));}
   },controller.signal).then(()=>{

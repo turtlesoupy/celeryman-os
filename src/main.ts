@@ -1,5 +1,6 @@
 import {requestJson} from './api-client';
 import {safeStorage} from './storage';
+import {prewarmSession} from './session';
 import {followGeneration,requestCommand,takeCommandGeneration,type GenerationFeed} from './generation-stream';
 import {preparePrintout,type Printout} from './printout';
 import {mobileFrame,clampFrame,type Frame,type Workspace} from './window-layout';
@@ -15,6 +16,7 @@ import {TranscriptionTurn,prepareTranscription,warmTranscription,closeTranscript
 import hatTrack from './hat-track.json';
 import {routeAudio,unlockAudio,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop,playDesktopDoubleClick} from './audio';
 import {sketch,scripted,type Command,type Context} from './protocol';
+import {advanceDirector,directorOwnsTurn,requestsPerformance,resolveLocally,type Beat,type ModeEffect,type Offer} from './director';
 import {costumes,motions} from './dances';
 import {revealVideoWindow} from './video-presentation';
 import {installVideoSave} from './video-export';
@@ -105,7 +107,7 @@ function removeWindow(win:Element){
   mediaStatusCleanup.get(v)?.();mediaStatusCleanup.delete(v);v.pause();v.removeAttribute('src');v.load();
  });
 }
-function clearWindows(keepInput=started){desktop.classList.remove('finale');ducks.delete('intro');musicLevel();desktop.querySelectorAll<HTMLElement>('.window,.free-dancer').forEach(win=>{
+function clearWindows(keepInput=started){desktop.classList.remove('finale');ducks.delete('intro');musicLevel();desktop.querySelectorAll<HTMLElement>('.window,.free-dancer,.warning-flash').forEach(win=>{
  if(!keepInput||!win.classList.contains('terminal')){removeWindow(win);return;}
  typing++;win.classList.remove('large','custom-terminal');win.querySelector('.content')!.replaceChildren();
  placeWindow(win,{x:60,y:405,w:362,h:101,className:'terminal'});
@@ -280,15 +282,18 @@ function showNsfw(confirmed=false){
  const banner=windowBox({title:'Cinco Identity Generator 2.5',x:confirmed?218:325,y:278,w:525,h:162,className:'nsfw',id:'nsfw-banner'});
  banner.content.textContent='NSFW';banner.win.setAttribute('aria-label',confirmed?'NSFW censored preview':'NSFW warning');
 }
-function showCall(){
+function showCall(call?:{caller:string;line:string}){
  const banner=desktop.querySelector('[data-id="nsfw-banner"]');if(banner)removeWindow(banner);
  const preview=desktop.querySelector<HTMLVideoElement>('video[data-sequence="Tayne / NSFW preview"]');if(preview)preview.dataset.sequence='tayne';
  desktop.classList.add('alarm');const main=desktop.querySelector<HTMLElement>('.window:not(.terminal)');if(main)placeWindow(main,{x:345,y:16,w:282,h:503});
  const t=windowBox({title:'',blue:true,menu:'INCOMING CALL',x:398,y:126,w:150,h:225,className:'phone',id:'call'});
  t.content.innerHTML='<div class="number">545-33448</div><div class="phone-screen"><svg class="receiver" viewBox="0 0 64 70" aria-label="Telephone"><path d="M15 14Q8 39 47 53" fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/><path d="M14 9L22 20M42 49L53 52" stroke="white" stroke-width="14" stroke-linecap="round"/><path d="M30 7L27 16M39 11L32 19M44 19L35 23" stroke="white" stroke-width="3"/></svg><div class="label">WIFE</div></div>';
- void speak({action:'call',response:`Excuse me ${identity}. Your wife is on the phone. It's an emergency.`,audio:profile==='paul'?'call':undefined});events.push({kind:'action',action:'call',time:performance.now()});
+ // A director call keeps the sketch's phone and changes only who is calling.
+ if(call){const label=t.content.querySelector<HTMLElement>('.label')!;label.textContent=call.caller;label.classList.toggle('long',call.caller.length>5);let h=0;for(const ch of call.caller)h=(h*31+ch.charCodeAt(0))>>>0;t.content.querySelector('.number')!.textContent=`555-${String(1000+h%9000)}`;void speak({action:'director',response:call.line});}
+ else void speak({action:'call',response:`Excuse me ${identity}. Your wife is on the phone. It's an emergency.`,audio:profile==='paul'?'call':undefined});
+ events.push({kind:'action',action:'call',caller:call?.caller,time:performance.now()});
 }
-function chaos(){
+function chaos(error='ERROR: BETA TAYNE\nIMPROPER CODING'){
  desktop.classList.remove('alarm');clearWindows();desktop.classList.add('finale');musicFor('chaos');
  // Keep the rapid cascade, but retire its oldest windows instead of accumulating
  // dozens of video decoders. Native video preserves the backdrop and proportions.
@@ -300,17 +305,19 @@ function chaos(){
  for(let i=0;i<11;i++)schedule(()=>add(()=>dancer('mozzarell',{title:'CINCO ID',x:88+i*31,y:3+i*30,w:314,h:447})),i*50);
  for(let i=0;i<5;i++)schedule(()=>add(()=>dancer('mozzarell',{title:'CINCO ID',x:428+i*31,y:3+i*30,w:282,h:503})),550+i*45);
  schedule(()=>add(()=>dancer('mozzarell',{title:'MOZZARELL',x:18,y:58,w:486,h:300,menu:undefined,className:'chaos-portrait'},'mozzarell-face')),780);
- for(let i=0;i<2;i++)schedule(()=>{const t=add(()=>windowBox({title:'Cinco Identity Generator 2.5',x:223+i*18,y:217+i*22,w:526,h:162,className:'error'}));t.content.textContent='ERROR: BETA TAYNE\nIMPROPER CODING';},970+i*80);
- const available=['tayne','celery','oyster','mozzarell'].filter(c=>mode==='reference'||videoSource(c));
+ for(let i=0;i<2;i++)schedule(()=>{const t=add(()=>windowBox({title:'Cinco Identity Generator 2.5',x:223+i*18,y:217+i*22,w:526,h:162,className:'error'}));t.content.textContent=error;},970+i*80);
+ // Performers made this session join the cascade; during the sketch there are none.
+ const cast=mode==='live'?(context.director?.cast||[]).filter(c=>videoSource(c)):[];
+ const available=[...cast,...['tayne','celery','oyster','mozzarell'].filter(c=>mode==='reference'||videoSource(c))];
  for(let i=0;i<16;i++)schedule(()=>{
   const c=available[i%available.length]||'mozzarell';
-  add(()=>dancer(c,{title:c==='celery'?'CINCO ID':c.toUpperCase(),x:20+(i*137)%640,y:68+(i*67)%210,w:280,h:245,menu:undefined,className:'chaos-portrait'},c==='tayne'?'hat':c+'-face'));
+  add(()=>dancer(c,{title:c==='celery'?'CINCO ID':c.toUpperCase(),x:20+(i*137)%640,y:68+(i*67)%210,w:280,h:245,menu:undefined,className:'chaos-portrait'},c==='tayne'?'hat':cast.includes(c)?'':c+'-face'));
  },2100+i*180);
 }
 function presentSequence(show:()=>void,ms:number){const status=feedbackToken,order=commandEpoch,token=run;commandStatus.job(status,'presentation','Opening sequence');schedule(()=>{if(order===commandEpoch&&token===run)show();commandStatus.jobDone(status,'presentation');},ms);}
 async function apply(cmd:Command,acknowledged=false){
  const preparingAt=performance.now();events.push({kind:'action',...cmd,time:performance.now()});if(cmd.action==='reaction')return;clearTimers();if(desktop.classList.contains('finale')&&cmd.action!=='attention')clearWindows();if(cmd.action!=='attention')context.pending='';
- if(!acknowledged&&!['greeting','engage'].includes(cmd.action)&&(cmd.audio||['celery','attention','custom','dialogue'].includes(cmd.action)))void speak(cmd);
+ if(!acknowledged&&!['greeting','engage','director'].includes(cmd.action)&&(cmd.audio||['celery','attention','custom','dialogue'].includes(cmd.action)))void speak(cmd);
  // Start the spoken introduction as soon as it is ready; the two dance clips
  // prepare behind it instead of blocking all visible response for ~20 seconds.
  if(mode==='live'&&cmd.action==='tayne'){
@@ -382,7 +389,7 @@ async function apply(cmd:Command,acknowledged=false){
   finally{commandStatus.jobDone(status,'print-image');}
  }
  if(cmd.action==='attention'||cmd.action==='cancel')void type(cmd.response);
- if(cmd.action==='dialogue'){context.pending='dialogue';void type(cmd.response);}
+ if(cmd.action==='dialogue')void type(cmd.response);
  if(cmd.action==='beta'){clearWindows();music?.pause();context.pending='beta';void type(cmd.response,true);}
  if(cmd.action==='tayne'){context.character='tayne';context.costume=costumes.tayne;clearWindows();loading('Loading BETA, please wait...');presentSequence(showTayne,mode==='live'?Math.max(0,1150-(performance.now()-preparingAt)):1150);}
  if(cmd.action==='hat'){context.character='tayne';showHat();void type(cmd.response);}
@@ -393,7 +400,72 @@ async function apply(cmd:Command,acknowledged=false){
  if(cmd.action==='call')showCall();
  if(cmd.action==='chaos')chaos();
  if(cmd.action==='custom')return customDance(cmd);
+ if(cmd.action==='director')return directorBeat(cmd,cmd.beat!,acknowledged);
 
+}
+// Director beats: the sketch's own scenes, generalized (see src/director.ts).
+async function directorBeat(cmd:Command,beat:Beat,acknowledged:boolean){
+ const say=()=>{if(!acknowledged)void speak(cmd);};
+ switch(beat.kind){
+  case 'pitch':clearWindows();music?.pause();say();void type(cmd.response.replace(/\s+([^.!?]*\?)$/,'\n\n$1'),true);return true;
+  case 'reveal':say();return revealSequence(cmd,beat.offer);
+  case 'mode':engageMode(beat.effect);say();void type(cmd.response);return true;
+  case 'taboo':
+   say();
+   if(beat.stage==='warn'){showWarning();return true;}
+   if(beat.stage!=='reveal'){void type(cmd.response);return true;}
+   if(!cmd.costume){deleteDesktop();return true;}
+   return tabooReveal(cmd);
+  case 'call':say();showCall({caller:beat.caller,line:cmd.response});return true;
+  case 'answer':
+   say();desktop.classList.remove('alarm');void type(cmd.response);
+   schedule(()=>{const phone=desktop.querySelector('[data-id="call"]');if(phone)removeWindow(phone);void type('They hung up.');},2600);return true;
+  case 'chaos':chaos(cmd.response);return true;
+ }
+}
+async function revealSequence(cmd:Command,offer:Offer){
+ clearWindows();const loader=loading(cmd.response);const epoch=++generationEpoch;
+ if(mode==='live'&&!await prepareDance(offer.label,'base',epoch,cmd)){loader.win.remove();return false;}
+ if(epoch!==generationEpoch)return false;
+ loader.win.remove();context.character=offer.label;context.costume=offer.costume;
+ dancer(offer.label,{title:offer.label,className:'custom-dancer',x:520,y:12,w:282,h:502});titleCard(offer.label);musicFor(offer.label);
+ void type(offer.introLine||`${offer.label} loaded.`);return true;
+}
+/** A pixel-font name card, like the TAYNE card, for any label. */
+function titleCard(label:string){
+ const t=windowBox({title:label,x:150,y:90,w:360,h:260,menu:'',className:'title-card'});
+ const card=document.createElement('div');card.className='name-card';t.content.append(card);
+ const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d')!;canvas.width=label.length*6+4;canvas.height=11;canvas.setAttribute('aria-label',label);canvas.className='pixel-title';
+ ctx.font='bold 9px monospace';ctx.textBaseline='top';ctx.fillText(label,2,1);
+ // Snap the anti-aliased text to hard pixels before it is scaled up.
+ const image=ctx.getImageData(0,0,canvas.width,canvas.height);for(let i=3;i<image.data.length;i+=4)image.data[i]=image.data[i]>110?255:0;ctx.putImageData(image,0,0);
+ card.append(canvas);schedule(()=>removeWindow(t.win),4200);
+}
+function engageMode(effect:ModeEffect){desktop.dataset.mode=effect;if(effect==='turbo')desktop.querySelectorAll('video').forEach(v=>v.playbackRate=2);}
+function showWarning(){
+ const banner=windowBox({title:'Cinco Identity Generator 2.5',x:325,y:278,w:525,h:162,className:'nsfw',id:'nsfw-banner'});banner.content.textContent='NSFW';banner.win.setAttribute('aria-label','NSFW warning');
+ const flash=document.createElement('div');flash.className='warning-flash';flash.textContent='WARNING';flash.setAttribute('aria-hidden','true');desktop.append(flash);
+}
+async function tabooReveal(cmd:Command){
+ const epoch=++generationEpoch,label=cmd.label||'TAYNE';
+ if(mode==='live'&&!await prepareDance(label,'base',epoch,cmd))return false;
+ if(epoch!==generationEpoch)return false;
+ clearWindows();const t=dancer(label,{title:label,x:345,y:16,w:282,h:501});censor(t.win);
+ const banner=windowBox({title:'Cinco Identity Generator 2.5',x:218,y:278,w:525,h:162,className:'nsfw',id:'nsfw-banner'});banner.content.textContent='NSFW';banner.win.setAttribute('aria-label','NSFW censored preview');
+ return true;
+}
+/** The reveal is never shown plainly: a coarse, blurred mosaic of a clothed render. */
+function censor(win:HTMLElement){
+ const v=win.querySelector('video');if(!v)return;
+ const canvas=document.createElement('canvas');canvas.width=14;canvas.height=26;canvas.className='mosaic';v.classList.add('censored');v.after(canvas);
+ const ctx=canvas.getContext('2d')!;const draw=()=>{if(!canvas.isConnected)return;if(v.readyState>=2)ctx.drawImage(v,0,0,canvas.width,canvas.height);requestAnimationFrame(draw);};requestAnimationFrame(draw);
+}
+/** "Delete the internet": the desktop empties, then restores itself. */
+function deleteDesktop(){
+ const windows=[...desktop.querySelectorAll<HTMLElement>('.window:not(.terminal)')];
+ windows.forEach((w,i)=>schedule(()=>removeWindow(w),i*220));
+ schedule(()=>{const t=windowBox({title:'Cinco Identity Generator 2.5',x:223,y:190,w:526,h:162,className:'error',id:'internet'});t.content.textContent='INTERNET DELETED';
+  schedule(()=>{t.content.textContent='INTERNET RESTORED\nFROM BACKUP';},2600);},windows.length*220+300);
 }
 async function prepareDance(character:string,variant:string,epoch:number,cmd?:Command){
  terminal();const token=run;const key=`${profile}:${character}:${variant}`;
@@ -427,15 +499,21 @@ async function dispatch(text:string,source='keyboard',feedback?:number){
  events.push({kind:'input',text,source,time:performance.now()});
  try{
   context.scriptStep=scriptGuide.nextIndex();
-  const known=scripted(text,context);let acknowledged=false;
-  commandStatus.phase(status,known?'Running command':'Interpreting command');
-  if(!known){acknowledged=true;void speak({action:'custom',response:'Okay.',audio:'okay'});void type('Computing sequence...');}
-  const cmd=known||await requestCommand<Command>({text,context,profile,fastPath});
+  // The blessed script answers first; the director takes only what it does not
+  // recognize, and answers its own yes/no questions without the server.
+  const known=scripted(text,context),local=directorOwnsTurn(known,context)?resolveLocally(text,context):known;
+  commandStatus.phase(status,local?'Running command':'Interpreting command');
+  // Performances get the recorded "Okay." at once; other turns wait for their route.
+  let acknowledged=false;const acknowledge=()=>{if(acknowledged||token!==run||order!==commandEpoch)return;acknowledged=true;void speak({action:'custom',response:'Okay.',audio:'okay'});void type('Computing sequence...');};
+  if(!local&&requestsPerformance(text))acknowledge();
+  const cmd=local||await requestCommand<Command>({text,context,profile,fastPath},intent=>{if(intent.performance)acknowledge();});
   if(token!==run||order!==commandEpoch||!commandStatus.current(status))return;
-  if(!known){typing++;const content=desktop.querySelector('[data-id="terminal"] .content');if(content)content.textContent=cmd.action==='custom'?`Computing ${cmd.label||'sequence'}...`:cmd.response||(cmd.action==='reaction'?'Acknowledged. No new sequence requested.':'Preparing command…');}
+  if(acknowledged&&cmd.action==='custom'){typing++;const content=desktop.querySelector('[data-id="terminal"] .content');if(content)content.textContent=`Computing ${cmd.label||'sequence'}...`;}
   context.history.push(text);context.history=context.history.slice(-12);
   context.conversation=[...(context.conversation||[]),{role:'user' as const,content:text},{role:'assistant' as const,content:cmd.response}].slice(-12);
-  commandStatus.phase(status,'Preparing sequence');const applied=await apply(cmd,acknowledged&&cmd.action==='custom');if(applied===false)return;if(token===run&&order===commandEpoch){scriptGuide.observe(text,cmd.action);commandStatus.finish(status);}events.push({kind:'command-complete',text,action:cmd.action,time:performance.now()});return cmd;
+  context.director=advanceDirector(context.director,cmd,context);
+  const spoken=acknowledged&&(cmd.action==='custom'||(cmd.action==='director'&&cmd.beat?.kind==='reveal'));
+  commandStatus.phase(status,'Preparing sequence');const applied=await apply(cmd,spoken);if(applied===false)return;if(token===run&&order===commandEpoch){scriptGuide.observe(text,cmd.action);commandStatus.finish(status);}events.push({kind:'command-complete',text,action:cmd.action,time:performance.now()});return cmd;
  }catch(e){if(token===run&&order===commandEpoch&&commandStatus.current(status)){const message=(e as Error).name==='TimeoutError'?'Computer timed out. Please try again.':(e as Error).message;commandStatus.error(status,message);typing++;const content=desktop.querySelector('[data-id="terminal"] .content');if(content)content.textContent='Command failed.';}throw e;}
 }
 async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,recording?:{requestId:string;durationMs:number;peak:number;device:string},streaming?:TranscriptionTurn){
@@ -465,7 +543,7 @@ async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,rec
  }catch(e){if(token===run&&commandStatus.current(status))commandStatus.error(status,(e as Error).name==='TimeoutError'?'Transcription timed out. Settings → Replay mic to check the recording.':(e as Error).message);throw e;}
 }
 
-function reset(){generationOverlay.clear();microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','flash');clearWindows(false);started=false;replaying=false;setMicState('idle');fit();launch();}
+function reset(){generationOverlay.clear();microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','flash');delete desktop.dataset.mode;clearWindows(false);started=false;replaying=false;setMicState('idle');fit();launch();}
 async function begin(){scriptGuide.reset();void unlockAudio();if(streamingTranscription){warmTranscription();void prepareTranscription(speechBus().context).catch(()=>{});}void api('warm',{profile,name:identity}).catch(()=>{});clearWindows(false);started=true;fit();terminal();void readyMicrophone().catch(()=>{});await dispatch('Good morning','boot');}
 function launch(){
  const existing=desktop.querySelector<HTMLElement>('.launch');if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);return;}
@@ -599,5 +677,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelHeldR
 addEventListener('pagehide',()=>{stream?.getTracks().forEach(t=>t.stop());});
 addEventListener('blur',cancelHeldRecording);
 Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,fastPath,streamingTranscription,liveAssets,profile,context,lastPrint,started,replaying,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();syncSequenceMusic();},settle:()=>delay(1800)}});
+// Verify with Turnstile while the identity launcher is open, off the command path.
+prewarmSession();
 launch();
 for(const name of ['okay','yes','greeting','hat','flower']){const audio=new Audio(`/media/original/${name}.wav`);audio.preload='auto';audio.load();}
