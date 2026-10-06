@@ -1,0 +1,56 @@
+[
+  {
+    "person": "upload",
+    "variant": "face",
+    "arm": "fix",
+    "name": "upload-face-fix",
+    "requestId": "01a11314-32c5-7930-b586-2f8ddd40365e",
+    "ms": 3932,
+    "prompt": "Generate the SAME recognizable adult person depicted in Image 1, the original identity photograph. Preserve facial proportions, hair, age appearance, and presence or absence of facial hair and eyeglasses, except eyewear or headwear explicitly specified by the costume. Image 1 supplies identity only: never copy its clothing, scenery, pose or camera framing. Dress the person in this outfit: shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp. Reframe as a tight head-and-shoulders portrait, with the entire head visible with a small margin above, shoulders and upper chest filling the bottom edge. Never show the waist, legs or feet. Solid hot pink studio background, edge to edge. Locked static camera with no zoom. Flat 1990s low-budget desktop footage. Small rhythmic head bobs and glances, subtle awkward smile. Exactly one coherent person, no pasted head, collage, other people, text, cuts or speech. End in the starting pose for a seamless five-second loop."
+  },
+  {
+    "person": "upload",
+    "variant": "smile",
+    "arm": "fix",
+    "name": "upload-smile-fix",
+    "requestId": "01a11314-32c0-7b11-8c22-a676969ad397",
+    "ms": 3935,
+    "prompt": "Image 1 supplies only the identity of the adult performer. Preserve their recognizable face, hair, facial hair and eyewear unless the outfit explicitly replaces it. Ignore the reference clothing, pose and scenery. Dress in shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp. Tight head-and-shoulders studio portrait, full head visible, shoulders and upper chest in frame. Look at the camera and hold a broad closed-mouth smile from the very first frame through the entire clip. Uniform pale gray empty background. Locked camera. Exactly one person. No props, background figures, text, cuts, speech or music."
+  },
+  {
+    "person": "thomas",
+    "variant": "smile",
+    "arm": "fix",
+    "name": "thomas-smile-fix",
+    "requestId": "01a11314-32be-7892-b662-8d78a74cc1a9",
+    "ms": 3940,
+    "prompt": "Image 1 supplies only the identity of the adult performer. Preserve their recognizable face, hair, facial hair and eyewear unless the outfit explicitly replaces it. Ignore the reference clothing, pose and scenery. Dress in shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp. Tight head-and-shoulders studio portrait, full head visible, shoulders and upper chest in frame. Look at the camera and hold a broad closed-mouth smile from the very first frame through the entire clip. Uniform pale gray empty background. Locked camera. Exactly one person. No props, background figures, text, cuts, speech or music."
+  },
+  {
+    "person": "thomas",
+    "variant": "face",
+    "arm": "fix",
+    "name": "thomas-face-fix",
+    "requestId": "01a11314-32bd-7dc1-93d5-42ba979fa103",
+    "ms": 4215,
+    "prompt": "Generate the SAME recognizable adult person depicted in Image 1, the original identity photograph. Preserve facial proportions, hair, age appearance, and presence or absence of facial hair and eyeglasses, except eyewear or headwear explicitly specified by the costume. Image 1 supplies identity only: never copy its clothing, scenery, pose or camera framing. Dress the person in this outfit: shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp. Reframe as a tight head-and-shoulders portrait, with the entire head visible with a small margin above, shoulders and upper chest filling the bottom edge. Never show the waist, legs or feet. Solid hot pink studio background, edge to edge. Locked static camera with no zoom. Flat 1990s low-budget desktop footage. Small rhythmic head bobs and glances, subtle awkward smile. Exactly one coherent person, no pasted head, collage, other people, text, cuts or speech. End in the starting pose for a seamless five-second loop."
+  },
+  {
+    "person": "paul",
+    "variant": "face",
+    "arm": "fix",
+    "name": "paul-face-fix",
+    "requestId": "01a11314-4130-7db2-bf48-a2261923bccc",
+    "ms": 3273,
+    "prompt": "Generate the SAME recognizable adult person depicted in Image 1, the original identity photograph. Preserve facial proportions, hair, age appearance, and presence or absence of facial hair and eyeglasses, except eyewear or headwear explicitly specified by the costume. Image 1 supplies identity only: never copy its clothing, scenery, pose or camera framing. Dress the person in this outfit: shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp. Reframe as a tight head-and-shoulders portrait, with the entire head visible with a small margin above, shoulders and upper chest filling the bottom edge. Never show the waist, legs or feet. Solid hot pink studio background, edge to edge. Locked static camera with no zoom. Flat 1990s low-budget desktop footage. Small rhythmic head bobs and glances, subtle awkward smile. Exactly one coherent person, no pasted head, collage, other people, text, cuts or speech. End in the starting pose for a seamless five-second loop."
+  },
+  {
+    "person": "paul",
+    "variant": "smile",
+    "arm": "fix",
+    "name": "paul-smile-fix",
+    "requestId": "01a11314-4131-7b41-b6f9-7e2d67be354d",
+    "ms": 3416,
+    "prompt": "Image 1 supplies only the identity of the adult performer. Preserve their recognizable face, hair, facial hair and eyewear unless the outfit explicitly replaces it. Ignore the reference clothing, pose and scenery. Dress in shiny oversized charcoal gray suit jacket with sleeves pushed up to elbows, shiny silver-white open-collar satin shirt, thin black bolo tie with small silver clasp. Tight head-and-shoulders studio portrait, full head visible, shoulders and upper chest in frame. Look at the camera and hold a broad closed-mouth smile from the very first frame through the entire clip. Uniform pale gray empty background. Locked camera. Exactly one person. No props, background figures, text, cuts, speech or music."
+  }
+]

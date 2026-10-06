@@ -9,7 +9,7 @@ import {videoPreviews,VideoDownload} from './video-preview.ts';
 import {isProviderMediaUrl,sealMediaUrl} from './media-token.ts';
 import {costumeFrameInput,costumeFrameKey,costumeFrameVariant} from './costume-frame.ts';
 import {canonicalName,motionPrompt} from './choreography.ts';
-import {usesTextOnlyDance,textMotionPrompt} from './text-motion.ts';
+import {usesTextOnlyDance,textMotionPrompt,smilePortraitPrompt} from './text-motion.ts';
 const exec=promisify(execFile);
 const motionReferences=new Map<string,Promise<string>>();
 function motionReference(file:string){let pending=motionReferences.get(file);if(!pending){pending=fs.readFile(file).then(bytes=>fal.storage.upload(new File([bytes],'motion.mp4',{type:'video/mp4'})));motionReferences.set(file,pending);pending.catch(()=>motionReferences.delete(file));}return pending;}
@@ -55,7 +55,7 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  if(directDance&&body.canonical&&!['hat','intro','smile'].includes(body.variant))prompt=textMotionPrompt(String(body.costume).slice(0,900),String(effectiveMotion).slice(0,1600),body.variant==='face');
  if(canonical==='mozzarell-face')prompt=`Image 1 is the identity of the performer. Preserve the face, hair, facial hair and eyewear. Dress in ${body.costume}. Wide waist-up framing with shoulders and upper arms loosely spread sideways; head occupies only one third of frame height. Goofy grin and small rhythmic upper-body bobs. Uniform pale gray backdrop, locked camera, low-budget analog dance footage. No speech, cuts, text or other people.`;
  if(body.variant==='intro')prompt=`Image 1 is the recognizable adult performer. Dress in ${body.costume}. Tight head-and-shoulders portrait, flat gray studio, locked camera, 1990s analog video. ${body.motion} Speak exactly the requested sentence in a natural warm American voice. No other words, no music, no singing.`;
- if(directDance&&body.variant==='smile')prompt=`Image 1 supplies only the identity of the adult performer. Preserve their recognizable face, hair, facial hair and eyewear unless the outfit explicitly replaces it. Ignore the reference clothing, pose and scenery. Dress in ${String(body.costume).slice(0,900)}. Tight head-and-shoulders studio portrait, full head and hat visible, shoulders and upper chest in frame. Look at the camera and hold a broad closed-mouth smile from the very first frame through the entire clip. Uniform pale gray empty background. Locked camera. Exactly one person. No props, background figures, text, cuts, speech or music.`;
+ if(directDance&&body.variant==='smile')prompt=smilePortraitPrompt(String(body.costume).slice(0,900));
  let costumeFrame:CostumeFrame|undefined;
  if(needsFrame){job.stage='Preparing costume';costumeFrame=await identityCostumeFrame(body.profile,body.costume,closeup,ref,body.variant==='smile'?body.character:canonical,body.variant==='smile');timings.frameMs=performance.now()-start-timings.identityMs;job.stage='Rendering dance';}
  if(body.variant==='smile'&&costumeFrame){
