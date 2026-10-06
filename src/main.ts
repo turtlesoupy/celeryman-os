@@ -15,8 +15,9 @@ import {routeAudio,unlockAudio,speechBus,duckForMicrophone,startOutputCapture,st
 import {sketch,scripted,type Command,type Context} from './protocol';
 import {costumes,motions} from './dances';
 import {revealVideoWindow} from './video-presentation';
-// Opt in with /?fastPath=1; omit it (or use 0) for the anchored control.
-const fastPath=new URLSearchParams(location.search).get('fastPath')==='1';
+import {installVideoSave} from './video-export';
+// Fast generation is the default; use /?fastPath=0 for the anchored control.
+const fastPath=new URLSearchParams(location.search).get('fastPath')!=='0';
 // Compare streaming explicitly while full-recording transcription is the control.
 const streamingTranscription=new URLSearchParams(location.search).get('streamingTranscription')==='1';
 const app=document.querySelector<HTMLDivElement>('#app')!;
@@ -136,7 +137,7 @@ function dancer(character:string,o:Partial<W>={},variant='',url?:string,deferPla
  const t=windowBox({title,x:520,y:12,w:282,h:502,menu:'',...o});
  const v=document.createElement('video');const source=url||videoSource(character,variant);if(!source){t.content.textContent='Sequence not loaded.';return t;}v.src=source;v.poster=mode==='live'?(liveAssets[`${profile}:${character}:${variant==='hat'?'hat':variant.includes('face')?'face':variant==='tayne-intro'?'intro':'base'}`]?.image||''):'';v.playbackRate=liveAssets[`${profile}:${character}:${variant||'base'}`]?.playbackRate||1;v.muted=true;v.loop=true;v.autoplay=!paused&&!deferPlayback;v.playsInline=true;v.dataset.character=character;v.dataset.sequence=character==='celery'?'Celery Man':character;v.className=face?'face-video':mode==='live'&&variant==='tayne-intro'?'intro-video':'';t.content.append(v);
  // Keep generated soundtrack URLs tied to this window, even if its asset cache changes.
- v.dataset.musicSource=sequenceMusicSource(character,source);queueMicrotask(syncSequenceMusic);
+ v.dataset.musicSource=sequenceMusicSource(character,source);installVideoSave(t.win,v,notify);queueMicrotask(syncSequenceMusic);
  const status=feedbackToken,key=`video:${++mediaStatusId}`;commandStatus.job(status,key,'Loading video');
  const progress=mode==='live'?generationOverlay.begin(generationEpoch,key,face?'Portrait':'Dancer'):undefined;
  const done=()=>{clearTimeout(timeout);progress?.done();commandStatus.jobDone(status,key);};
