@@ -1,0 +1,17 @@
+{
+  "purpose": "Isolate NB2 0.5K vs 1K and assess resulting 480P videos.",
+  "cases": [
+    "Uploaded Celery portrait",
+    "Uploaded Celery body",
+    "Uploaded Oyster body",
+    "Thomas Celery portrait"
+  ],
+  "takesPerCase": 2,
+  "imagePairs": 8,
+  "videoPairs": 8,
+  "controls": "Identical source bytes, production image prompt, aspect ratio, seed, PNG format. Video routes and prompts mirror current production with matched video seeds, 480P, five seconds. Only image resolution varies within each pair.",
+  "schedule": "Sequential calls, alternating order per take, first successful output, maximum one transport/API retry, no quality rerolls.",
+  "metrics": "Separate likeness, costume/framing, motion/stability for video, overall and absolute use/reject ratings. Keep upload/control separate. Successful provider time and image+video request sum, failures shown separately.",
+  "limits": "Only two identities and two takes per case. Shared image/video source outcomes are related. Cold request sum excludes common uploads, download and playback. Production currently uses half for bodies and full for portraits.",
+  "productionChanged": false
+}

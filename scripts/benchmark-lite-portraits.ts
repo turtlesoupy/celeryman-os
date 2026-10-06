@@ -16,7 +16,7 @@ const results:any[]=[];
 for(const [person,file] of Object.entries({thomas:'reference/thomas-dimson.jpg',upload:photo})){
  const ref=await fal.storage.upload(new File([await fs.readFile(file)],'identity.jpg',{type:'image/jpeg'}));
  for(const seed of [12345,54321]){
-  const normal=costumeFrameInput(ref,costumes.celery,true,'celery-face');
+  const normal=costumeFrameInput(ref,costumes.celery,true,'celery-face',false,'1K');
   const {resolution,...input}=normal;
   input.prompt=input.prompt.replace('Create a new coherent whole-person photograph','Create a tight head-and-shoulders ID portrait photograph').replace('Render the entire person naturally together.','Render the visible person naturally together.').replace(/General costume description:.*?TIGHT head-and-shoulders closeup:/,'Visible costume: shiny gray suit jacket collar over a light gray shirt and bolo tie. EXTREME CLOSE-UP: only the head, neck, collar and tops of shoulders are in frame. Crop both shoulders at the left and right edges. No arms, hands, belt or waist. TIGHT head-and-shoulders closeup:');
   const start=performance.now(),label=`${person}-portrait-refined-${seed}`;

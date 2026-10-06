@@ -23,7 +23,7 @@ function identityCostumeFrame(profile:string,costume:string,closeup:boolean,ref:
   const file=path.join(process.cwd(),'public/media/generated',`identity-frame-${key}.png`);
   if(await fs.access(file).then(()=>true,()=>false))return {file,url:smiling?'':await fal.storage.upload(new File([await fs.readFile(file)],'costume.png',{type:'image/png'})),timings:{frameCacheHit:1}};
   const started=performance.now();
-  const result:any=await fal.run('fal-ai/nano-banana-2/edit',{input:costumeFrameInput(ref,costume,closeup,canonical,smiling,closeup?'1K':'0.5K')});
+  const result:any=await fal.run('fal-ai/nano-banana-2/edit',{input:costumeFrameInput(ref,costume,closeup,canonical,smiling)});
   const timings:Record<string,number>={frameCacheHit:0,frameRequestMs:performance.now()-started};
   if(typeof result.data.timings?.inference==='number')timings.frameInferenceMs=result.data.timings.inference*1000;
   // The video provider can use its own image URL immediately. Persisting our

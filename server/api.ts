@@ -18,6 +18,7 @@ import type {IncomingMessage,ServerResponse} from 'node:http';
 import {scripted,type Context} from '../src/protocol.ts';
 import {costumes,motions} from '../src/dances.ts';
 import {interactiveVideo} from './interactive-video.ts';
+import {COSTUME_FRAME_RESOLUTION} from './costume-frame.ts';
 import {savedGeneration} from './saved-generation.ts';
 import {computerVoiceId,streamComputerVoice} from './computer-voice.ts';
 import {canonicalName,generationKey,finishChoreography,motionPrompt} from './choreography.ts';
@@ -40,7 +41,7 @@ function reference(profile:string){
  })();references.set(profile,pending);pending.catch(()=>references.delete(profile));return pending;
 }
 async function costumeFrame(profile:string,costume:string,closeup=false,canonical=''){
- const key=hash(JSON.stringify({profile,costume,closeup,canonical,version:6,revision:canonical==='mozzarell-face'?4:canonical==='engaged'?1:canonical==='intro'?1:closeup?3:canonical==='oyster'?2:canonical==='flarhgunnstow'?2:0}));
+ const key=hash(JSON.stringify({profile,costume,closeup,canonical,resolution:COSTUME_FRAME_RESOLUTION,version:6,revision:canonical==='mozzarell-face'?4:canonical==='engaged'?1:canonical==='intro'?1:closeup?3:canonical==='oyster'?2:canonical==='flarhgunnstow'?2:0}));
  if(frameLocks.has(key))return frameLocks.get(key)!;
  const promise=(async()=>{
   const local=path.join(media,'generated',`frame-${key}.png`);
@@ -48,7 +49,7 @@ async function costumeFrame(profile:string,costume:string,closeup=false,canonica
   if(canonical==='flarhgunnstow'){
    const person=await costumeFrame(profile,costume,false,'tayne');
    const garment=await fal.storage.upload(new File([await fs.readFile(path.join(media,'motion/tayne-shirt-detail.png'))],'wardrobe.png',{type:'image/png'}));
-   const rendered:any=await fal.subscribe('fal-ai/nano-banana-2/edit',{input:{image_urls:[person,garment],prompt:'Create one completely coherent full-body live-action photograph of the same person in image 1, dressed in precisely the same hat, sunglasses, gold necklace, black leather pants and shoes. His shirt uses the exact fabric pattern, dense gold-orange floral medallions on black and buttoned neckline from image 2. Same recognizable facial identity. Stand upright with feet apart and both arms slightly out. The whole person is visible including hat and shoes, centered and occupying only 70 percent of the image height, large empty margins above the hat for jumping. Seamless flat pure white backdrop with no floor line, no shadows, no texture, no environment. Vertical composition. Render the entire body and head naturally together with consistent lighting, not pasted layers. 1990s low-budget dance footage. No text.',aspect_ratio:'9:16',resolution:'1K',output_format:'png'}});
+   const rendered:any=await fal.subscribe('fal-ai/nano-banana-2/edit',{input:{image_urls:[person,garment],prompt:'Create one completely coherent full-body live-action photograph of the same person in image 1, dressed in precisely the same hat, sunglasses, gold necklace, black leather pants and shoes. His shirt uses the exact fabric pattern, dense gold-orange floral medallions on black and buttoned neckline from image 2. Same recognizable facial identity. Stand upright with feet apart and both arms slightly out. The whole person is visible including hat and shoes, centered and occupying only 70 percent of the image height, large empty margins above the hat for jumping. Seamless flat pure white backdrop with no floor line, no shadows, no texture, no environment. Vertical composition. Render the entire body and head naturally together with consistent lighting, not pasted layers. 1990s low-budget dance footage. No text.',aspect_ratio:'9:16',resolution:COSTUME_FRAME_RESOLUTION,output_format:'png'}});
    await saveRemote(rendered.data.images[0].url,local);return rendered.data.images[0].url;
   }
   const imageUrl=await reference(profile);const backdrop=canonical==='intro'?'plain light gray':'solid hot pink';
@@ -63,7 +64,7 @@ async function costumeFrame(profile:string,costume:string,closeup=false,canonica
   if(canonical==='mozzarell-face')finalPrompt='Generate a new coherent photograph of the adult person from Image 1, recreating the exact upper-body framing, costume and pose of Image 2. Orange baseball cap, white tank top. Wide waist-up composition, shoulders and upper arms spread wide out to the sides, goofy smiling expression. Head only one third of image height, broad torso and arms filling width. Flat pale gray background. Entire person rendered naturally together, no pasted head or collage, no text, low-budget analog dance video.';
   let result:any;const reviews=[];
   for(let attempt=0;attempt<3;attempt++){
-   result=await fal.subscribe('fal-ai/nano-banana-2/edit',{input:{prompt:finalPrompt,image_urls:sources,aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='intro'?'9:16':closeup?'4:3':canonical?'auto':'9:16',resolution:'1K',output_format:'png'}});
+   result=await fal.subscribe('fal-ai/nano-banana-2/edit',{input:{prompt:finalPrompt,image_urls:sources,aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='intro'?'9:16':closeup?'4:3':canonical?'auto':'9:16',resolution:COSTUME_FRAME_RESOLUTION,output_format:'png'}});
    const assessment=await openai.chat.completions.create({model:'gpt-4.1-mini',temperature:0,response_format:{type:'json_object'},messages:[{role:'user',content:[{type:'text',text:`Compare identity consistency of two images without identifying anyone. Image 1 is the uploaded person, image 2 is their newly generated costume photograph. Requested outfit: ${costume}. Preserve visible eyeglasses unless the outfit explicitly substitutes other glasses, hair and facial hair, facial structure and general body build. Minor facial variation is acceptable. Do not reject expected changes in costume, pose, expression or framing. Return JSON {pass:boolean,missing_eyewear:boolean,major_identity_defect:boolean,corrections:string}. Only fail for missing visible eyewear (unless explicitly replaced) or a major identity defect such as missing facial hair or clearly different hair/person. Minor facial variation, portrait cropping, smile, lighting changes and hair hidden by a requested hat MUST pass. Do not require exact biometric similarity.`},{type:'image_url',image_url:{url:imageUrl}},{type:'image_url',image_url:{url:result.data.images[0].url}}]}]});
    const review=JSON.parse(assessment.choices[0].message.content||'{}');reviews.push(review);await fs.mkdir(path.join(root,'cache/identity-reviews'),{recursive:true});await fs.writeFile(path.join(root,'cache/identity-reviews',key+'.json'),JSON.stringify({profile,costume,canonical,reviews,lastImage:result.data.images[0].url},null,2));if(!review.missing_eyewear&&!review.major_identity_defect)break;
    if(attempt===2)throw Error('Identity frame did not retain the uploaded appearance. Try a clearer front-facing photograph.');

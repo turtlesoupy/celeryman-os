@@ -1,0 +1,734 @@
+{
+  "id": "9ccd6c6a-8059-41df-a874-f24add9e837e",
+  "sourceSha256": "a6289a7fab5742dbe0bf62e4e24aad735b768619803b6128c8c1c08f7adaf717",
+  "verifiedAgainstKeyAndMedia": true,
+  "groups": {
+    "image": {
+      "usable": {
+        "half": {
+          "yes": 8,
+          "no": 0
+        },
+        "full": {
+          "yes": 8,
+          "no": 0
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "tie": 5,
+          "full": 2,
+          "half": 1
+        },
+        "costume": {
+          "tie": 8
+        },
+        "overall": {
+          "tie": 8
+        }
+      }
+    },
+    "image:upload": {
+      "usable": {
+        "half": {
+          "yes": 6,
+          "no": 0
+        },
+        "full": {
+          "yes": 6,
+          "no": 0
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "tie": 4,
+          "full": 1,
+          "half": 1
+        },
+        "costume": {
+          "tie": 6
+        },
+        "overall": {
+          "tie": 6
+        }
+      }
+    },
+    "image:portrait": {
+      "usable": {
+        "half": {
+          "yes": 4,
+          "no": 0
+        },
+        "full": {
+          "yes": 4,
+          "no": 0
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "tie": 3,
+          "full": 1
+        },
+        "costume": {
+          "tie": 4
+        },
+        "overall": {
+          "tie": 4
+        }
+      }
+    },
+    "image:body": {
+      "usable": {
+        "half": {
+          "yes": 4,
+          "no": 0
+        },
+        "full": {
+          "yes": 4,
+          "no": 0
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "full": 1,
+          "half": 1,
+          "tie": 2
+        },
+        "costume": {
+          "tie": 4
+        },
+        "overall": {
+          "tie": 4
+        }
+      }
+    },
+    "image:thomas": {
+      "usable": {
+        "half": {
+          "yes": 2,
+          "no": 0
+        },
+        "full": {
+          "yes": 2,
+          "no": 0
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "full": 1,
+          "tie": 1
+        },
+        "costume": {
+          "tie": 2
+        },
+        "overall": {
+          "tie": 2
+        }
+      }
+    },
+    "video": {
+      "usable": {
+        "half-video": {
+          "yes": 8,
+          "no": 0
+        },
+        "full-video": {
+          "yes": 6,
+          "no": 2
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "half-video": 3,
+          "tie": 4,
+          "full-video": 1
+        },
+        "costume": {
+          "full-video": 1,
+          "tie": 6,
+          "half-video": 1
+        },
+        "motion": {
+          "full-video": 1,
+          "half-video": 1,
+          "tie": 2
+        },
+        "stability": {
+          "tie": 7,
+          "half-video": 1
+        },
+        "overall": {
+          "half-video": 3,
+          "tie": 5
+        }
+      }
+    },
+    "video:upload": {
+      "usable": {
+        "half-video": {
+          "yes": 6,
+          "no": 0
+        },
+        "full-video": {
+          "yes": 4,
+          "no": 2
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "half-video": 3,
+          "tie": 2,
+          "full-video": 1
+        },
+        "costume": {
+          "full-video": 1,
+          "tie": 4,
+          "half-video": 1
+        },
+        "motion": {
+          "full-video": 1,
+          "half-video": 1,
+          "tie": 2
+        },
+        "stability": {
+          "tie": 5,
+          "half-video": 1
+        },
+        "overall": {
+          "half-video": 3,
+          "tie": 3
+        }
+      }
+    },
+    "video:body": {
+      "usable": {
+        "half-video": {
+          "yes": 4,
+          "no": 0
+        },
+        "full-video": {
+          "yes": 2,
+          "no": 2
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "half-video": 3,
+          "full-video": 1
+        },
+        "costume": {
+          "full-video": 1,
+          "half-video": 1,
+          "tie": 2
+        },
+        "motion": {
+          "full-video": 1,
+          "half-video": 1,
+          "tie": 2
+        },
+        "stability": {
+          "tie": 3,
+          "half-video": 1
+        },
+        "overall": {
+          "half-video": 3,
+          "tie": 1
+        }
+      }
+    },
+    "video:portrait": {
+      "usable": {
+        "full-video": {
+          "yes": 4,
+          "no": 0
+        },
+        "half-video": {
+          "yes": 4,
+          "no": 0
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "tie": 4
+        },
+        "costume": {
+          "tie": 4
+        },
+        "stability": {
+          "tie": 4
+        },
+        "overall": {
+          "tie": 4
+        }
+      }
+    },
+    "video:thomas": {
+      "usable": {
+        "half-video": {
+          "yes": 2,
+          "no": 0
+        },
+        "full-video": {
+          "yes": 2,
+          "no": 0
+        }
+      },
+      "ratings": {
+        "likeness": {
+          "tie": 2
+        },
+        "costume": {
+          "tie": 2
+        },
+        "stability": {
+          "tie": 2
+        },
+        "overall": {
+          "tie": 2
+        }
+      }
+    }
+  },
+  "pairedTimeSavings": {
+    "all": {
+      "n": 8,
+      "medianPairedImageSavingSeconds": 2.8695275624999974,
+      "medianPairedColdImageVideoSavingSeconds": 2.8461569589999947,
+      "imageFasterCases": 7
+    },
+    "portrait": {
+      "n": 4,
+      "medianPairedImageSavingSeconds": 3.0793446249999814,
+      "medianPairedColdImageVideoSavingSeconds": 3.9093238749999673,
+      "imageFasterCases": 4
+    },
+    "body": {
+      "n": 4,
+      "medianPairedImageSavingSeconds": 2.1604341869999844,
+      "medianPairedColdImageVideoSavingSeconds": 1.878284583499997,
+      "imageFasterCases": 3
+    }
+  },
+  "matchedTimings": {
+    "full": {
+      "requestsSeconds": [
+        9.986487,
+        10.337179334,
+        10.682024917000003,
+        10.673175290999993,
+        9.976954041999997,
+        9.937128958999994,
+        12.394033624999981,
+        11.020634417000023
+      ],
+      "coldSeconds": [],
+      "medianRequestSeconds": 10.505177312499995
+    },
+    "half": {
+      "requestsSeconds": [
+        8.146044833,
+        7.270536624999997,
+        7.111252999999997,
+        8.000762875,
+        8.328498084000021,
+        11.438316584000015,
+        9.301987084000022,
+        6.7408139169999925
+      ],
+      "coldSeconds": [],
+      "medianRequestSeconds": 8.073403853999999
+    },
+    "full-video": {
+      "requestsSeconds": [
+        2.103247083000002,
+        2.7351463339999973,
+        7.505952292000002,
+        7.676691667000006,
+        10.113614959,
+        9.904578666999994,
+        2.905586457999976,
+        2.5815304579999645
+      ],
+      "coldSeconds": [
+        12.089734083000003,
+        13.072325667999998,
+        18.187977209000003,
+        18.349866958,
+        20.090569000999995,
+        19.841707625999987,
+        15.299620082999958,
+        13.602164874999987
+      ],
+      "medianRequestSeconds": 5.2057693749999885,
+      "medianColdSeconds": 16.74379864599998
+    },
+    "half-video": {
+      "requestsSeconds": [
+        2.5183994579999998,
+        1.9899397920000046,
+        6.457454209000003,
+        8.472999582999996,
+        9.881606249999983,
+        9.971509250000002,
+        1.9908344999999972,
+        2.0648204159999732
+      ],
+      "coldSeconds": [
+        10.664444291,
+        9.260476417000001,
+        13.568707209,
+        16.473762457999996,
+        18.210104334000004,
+        21.409825834000017,
+        11.29282158400002,
+        8.805634332999965
+      ],
+      "medianRequestSeconds": 4.487926833500001,
+      "medianColdSeconds": 12.43076439650001
+    }
+  },
+  "caseResults": [
+    {
+      "pair": 1,
+      "caseId": "upload-celery-portrait-2",
+      "kind": "image",
+      "A": "half",
+      "B": "full",
+      "vote": {
+        "ratings": {
+          "likeness": "tie",
+          "costume": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": false
+      }
+    },
+    {
+      "pair": 2,
+      "caseId": "upload-celery-body-2",
+      "kind": "image",
+      "A": "half",
+      "B": "full",
+      "vote": {
+        "ratings": {
+          "likeness": "B",
+          "costume": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": false
+      }
+    },
+    {
+      "pair": 3,
+      "caseId": "upload-celery-body-1",
+      "kind": "image",
+      "A": "full",
+      "B": "half",
+      "vote": {
+        "ratings": {
+          "likeness": "B",
+          "costume": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": false
+      }
+    },
+    {
+      "pair": 4,
+      "caseId": "thomas-celery-portrait-2",
+      "kind": "image",
+      "A": "half",
+      "B": "full",
+      "vote": {
+        "ratings": {
+          "likeness": "B",
+          "costume": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": false
+      }
+    },
+    {
+      "pair": 5,
+      "caseId": "upload-celery-portrait-1",
+      "kind": "image",
+      "A": "full",
+      "B": "half",
+      "vote": {
+        "ratings": {
+          "likeness": "tie",
+          "costume": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": false
+      }
+    },
+    {
+      "pair": 6,
+      "caseId": "upload-oyster-body-2",
+      "kind": "image",
+      "A": "half",
+      "B": "full",
+      "vote": {
+        "ratings": {
+          "likeness": "tie",
+          "costume": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": false
+      }
+    },
+    {
+      "pair": 7,
+      "caseId": "thomas-celery-portrait-1",
+      "kind": "image",
+      "A": "full",
+      "B": "half",
+      "vote": {
+        "ratings": {
+          "likeness": "tie",
+          "costume": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": false
+      }
+    },
+    {
+      "pair": 8,
+      "caseId": "upload-oyster-body-1",
+      "kind": "image",
+      "A": "full",
+      "B": "half",
+      "vote": {
+        "ratings": {
+          "likeness": "tie",
+          "costume": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": false
+      }
+    },
+    {
+      "pair": 9,
+      "caseId": "upload-celery-body-2",
+      "kind": "video",
+      "A": "half-video",
+      "B": "full-video",
+      "vote": {
+        "ratings": {
+          "likeness": "A",
+          "costume": "B",
+          "motion": "B",
+          "stability": "tie",
+          "overall": "A"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "B likeness kinda bad",
+        "watched": true
+      }
+    },
+    {
+      "pair": 10,
+      "caseId": "upload-celery-portrait-1",
+      "kind": "video",
+      "A": "full-video",
+      "B": "half-video",
+      "vote": {
+        "ratings": {
+          "likeness": "tie",
+          "costume": "tie",
+          "stability": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": true
+      }
+    },
+    {
+      "pair": 11,
+      "caseId": "thomas-celery-portrait-2",
+      "kind": "video",
+      "A": "half-video",
+      "B": "full-video",
+      "vote": {
+        "ratings": {
+          "likeness": "tie",
+          "costume": "tie",
+          "stability": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": true
+      }
+    },
+    {
+      "pair": 12,
+      "caseId": "upload-oyster-body-2",
+      "kind": "video",
+      "A": "full-video",
+      "B": "half-video",
+      "vote": {
+        "ratings": {
+          "likeness": "B",
+          "costume": "B",
+          "motion": "B",
+          "stability": "B",
+          "overall": "B"
+        },
+        "usable": {
+          "A": "no",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": true
+      }
+    },
+    {
+      "pair": 13,
+      "caseId": "upload-celery-portrait-2",
+      "kind": "video",
+      "A": "half-video",
+      "B": "full-video",
+      "vote": {
+        "ratings": {
+          "likeness": "tie",
+          "costume": "tie",
+          "stability": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": true
+      }
+    },
+    {
+      "pair": 14,
+      "caseId": "upload-celery-body-1",
+      "kind": "video",
+      "A": "full-video",
+      "B": "half-video",
+      "vote": {
+        "ratings": {
+          "likeness": "A",
+          "costume": "tie",
+          "motion": "tie",
+          "stability": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": true
+      }
+    },
+    {
+      "pair": 15,
+      "caseId": "thomas-celery-portrait-1",
+      "kind": "video",
+      "A": "full-video",
+      "B": "half-video",
+      "vote": {
+        "ratings": {
+          "likeness": "tie",
+          "costume": "tie",
+          "stability": "tie",
+          "overall": "tie"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "yes"
+        },
+        "notes": "",
+        "watched": true
+      }
+    },
+    {
+      "pair": 16,
+      "caseId": "upload-oyster-body-1",
+      "kind": "video",
+      "A": "half-video",
+      "B": "full-video",
+      "vote": {
+        "ratings": {
+          "likeness": "A",
+          "costume": "tie",
+          "motion": "tie",
+          "stability": "tie",
+          "overall": "A"
+        },
+        "usable": {
+          "A": "yes",
+          "B": "no"
+        },
+        "notes": "B has weird face distortion",
+        "watched": true
+      }
+    }
+  ],
+  "findings": [
+    "All eight still pairs tied overall and every image was usable. Likeness alone favored 1K twice, 0.5K once, with five ties.",
+    "0.5K-derived videos won overall three times with five ties and no losses; usable 8/8 versus 1K 6/8.",
+    "All four portrait-video pairs tied on all rated axes and all were usable. Both rejected 1K videos were uploaded Oyster bodies; one note reports face distortion.",
+    "Both takes of the uploaded Celery body were usable at both resolutions. 0.5K won overall once and tied once.",
+    "Resolution won speed in seven of eight matched image cases; median paired image saving and cold image+video saving were each about 2.9 seconds.",
+    "Small two-identity, two-take study; do not infer that lower resolution inherently improves video quality. Earlier four-pair still sweep favored 1K three times, so still-image superiority is not settled."
+  ],
+  "scope": "Two identities, four cases, two takes per case. Portrait and full-body production routes differ. Shared still/video outputs are related. Body videos retain choreography references; results cannot prove equivalence on the no-reference path. Cold image+video request sum excludes planning and common uploads/downloads.",
+  "productionChanged": false
+}
