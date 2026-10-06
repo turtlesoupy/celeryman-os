@@ -67,7 +67,7 @@ type W={title:string;x:number;y:number;w:number;h:number;className?:string;menu?
 function windowBox(o:W){
  const win=document.createElement('section');win.className=`window active ${o.className||''}`;win.dataset.id=o.id||`window-${++winCount}`;win.setAttribute('aria-label',o.title);win.style.zIndex=String(++topZ);placeWindow(win,o);
  const bar=document.createElement('header');bar.className=`titlebar ${o.blue?'blue':''}`;
- bar.innerHTML='<button class="sys" aria-label="Window menu"><i class="window-dash"></i></button><span></span><button class="close" aria-label="Close window">Close</button><button class="min" aria-label="Minimize window">▾</button><button class="max" aria-label="Maximize window">▴</button>';
+ bar.innerHTML='<button class="sys" aria-label="Window menu"><i class="window-dash"></i></button><span></span><button class="close" aria-label="Close window">Close</button><button class="min" aria-label="Minimize window"></button><button class="max" aria-label="Maximize window"></button>';
  bar.querySelector('span')!.textContent=o.title;win.append(bar);
  if(o.menu!==undefined){const m=document.createElement('div');m.className='menu-line';m.textContent=o.menu;win.append(m);}
  const content=document.createElement('div');content.className='content';win.append(content);const bottom=document.createElement('div');bottom.className='bottom-edge';win.append(bottom);
