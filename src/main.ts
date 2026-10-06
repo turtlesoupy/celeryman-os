@@ -1,4 +1,5 @@
 import {requestJson} from './api-client';
+import {safeStorage} from './storage';
 import {preparePrintout,type Printout} from './printout';
 import {mobileFrame,clampFrame,type Frame,type Workspace} from './window-layout';
 import {MicrophoneDevices} from './microphone-device';
@@ -33,7 +34,7 @@ const diagnostics=document.createElement('div');diagnostics.className='input-dia
 const generationOverlay=createGenerationOverlay();
 const commandStatus=createCommandStatus(activity,()=>desktop.classList.contains('paused')?'Paused':'Ready',diagnostics);let feedbackToken=0;
 const scriptGuide=createScriptGuide(diagnostics,activity.querySelector<HTMLElement>('.command-status-line')!);
-let profile=localStorage.getItem('cinco-profile')||'paul',identity=localStorage.getItem('cinco-name')||'Paul';
+let profile=safeStorage.getItem('cinco-profile')||'paul',identity=safeStorage.getItem('cinco-name')||'Paul';
 let context:Context={identity,character:'celery',pending:'',history:[]};
 let mode:'live'|'reference'='live';
 const liveAssets:Record<string,{url:string;image?:string;playbackRate?:number}>={};
@@ -57,7 +58,9 @@ let recordingPointer:number|undefined,recordingCancelled=false;
 let stopRecordingTimer:number|undefined,lastMicUrl='',lastMicPlayback:HTMLAudioElement|undefined;
 let microphoneOpening:{token:number;promise:Promise<MediaStream>}|undefined;
 const microphone=new MicrophoneDevices(()=>{stream?.getTracks().forEach(t=>t.stop());stream=null;if(started)void readyMicrophone().catch(()=>{});},()=>recordingStarting||recorder?.state==='recording');
-const events:any[]=[];
+// Diagnostic history for window.cinco; bounded because partial transcripts arrive constantly.
+const events:any[]=[],MAX_EVENTS=2000;
+events.push=(...items:any[])=>{const length=Array.prototype.push.apply(events,items);if(length>MAX_EVENTS)events.splice(0,length-MAX_EVENTS);return events.length;};
 const spokenLines:Record<string,string>={'okay':'Okay.','print':'Okay.','confirm':'Okay.','yes':'Yes.','hat':'Yes.','flower':'Yes.','yes-paul':'Yes, Paul!','greeting':'Good morning Paul. What will your first sequence of the day be?','beta':"I have a beta sequence I've been working on. Would you like to see it?",'repeat':'Not computing. Please repeat.','nsfw':'This is not suitable for work. Are you sure?','call':"Excuse me Paul. Your wife is on the phone. It's an emergency."};
 const delay=(ms:number)=>new Promise(r=>setTimeout(r,ms));
 const schedule=(fn:()=>void,ms:number)=>{const id=window.setTimeout(fn,ms);timers.push(id);return id;};
@@ -227,7 +230,15 @@ function showTayne(followupReady?:Promise<boolean>){
  else {v.muted=true;v.addEventListener('playing',()=>{void speak({action:'tayne',response:"Hey Paul. I'm Tayne, your latest dancer. I can't wait to entertain you.",audio:'intro'});schedule(advance,4800);},{once:true});}
  v.addEventListener('pause',release);v.addEventListener('error',()=>{release();commandStatus.jobDone(status,key);});
  const previousCleanup=mediaStatusCleanup.get(v);mediaStatusCleanup.set(v,()=>{previousCleanup?.();commandStatus.jobDone(status,key);release();});
- if(!paused)void v.play().catch(error=>{commandStatus.error(status,`Tayne introduction could not play: ${error.message}`);});
+ // Playback starts long after the user's gesture. If autoplay policy blocks
+ // sound, continue silently; if it still cannot play, skip ahead rather than
+ // waiting forever for an ended event.
+ const playFailed=(error:Error)=>{
+  if(!intro.win.isConnected||error.name==='AbortError')return;
+  if(error.name==='NotAllowedError'&&!v.muted){v.muted=true;void v.play().catch(playFailed);return;}
+  commandStatus.error(status,`Tayne introduction could not play: ${error.message}`);void advance();
+ };
+ if(!paused)void v.play().catch(playFailed);
 }
 
 function showHat(){
@@ -466,7 +477,7 @@ function launch(){
    await Promise.all([ready,feedback]);
    if(token!==run||!win.isConnected)return;
    mode='live';profile=person.id;identity=person.name;context.identity=identity;
-   localStorage.setItem('cinco-profile',profile);localStorage.setItem('cinco-name',identity);
+   safeStorage.setItem('cinco-profile',profile);safeStorage.setItem('cinco-name',identity);
    await begin();
   }
  });
@@ -489,8 +500,9 @@ async function startRecording(){
  recordingStarting=true;recordingCancelled=false;void unlockAudio();setMicState('opening');
  microphoneTurn?.cancel();microphoneTurn=undefined;if(streamingTranscription)warmTranscription();
  // Opening the microphone is not a replacement dance command. Keep pending
- // generation alive, including when this recording is empty or fails.
- commandEpoch++;typing++;stopSpeech();lastMicPlayback?.pause();duckForMicrophone(true);
+ // commands and generation alive, including when this recording is empty or
+ // fails; dispatching the transcribed command is what supersedes them.
+ typing++;stopSpeech();lastMicPlayback?.pause();duckForMicrophone(true);
  const recordingRun=run,status=commandStatus.begin('Opening microphone…');feedbackToken=status;
  const number=++recordingNumber,requestId=`${crypto.randomUUID()}-${number}`,openingAt=performance.now();
  events.push({kind:'microphone-opening',requestId,time:openingAt});

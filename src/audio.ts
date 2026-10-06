@@ -42,7 +42,14 @@ export function playDesktopDoubleClick(){
 export function routeAudio(media:HTMLMediaElement){
  if(connected.has(media))return media;
  const b=bus();const source=b.context.createMediaElementSource(media);
- source.connect(b.output);connected.add(media);return media;
+ source.connect(b.output);connected.add(media);
+ // A connected source keeps its element alive. Detach finished one-shot audio
+ // so it can be collected, and reattach if the same element plays again.
+ let linked=true;
+ media.addEventListener('play',()=>{if(!linked){source.connect(b.output);linked=true;}});
+ const detach=()=>{if(linked){source.disconnect();linked=false;}};
+ for(const event of ['pause','ended','emptied'])media.addEventListener(event,detach);
+ return media;
 }
 export function startOutputCapture(){
  const b=bus();chunks=[];recorder=new MediaRecorder(b.capture.stream,{mimeType:'audio/webm;codecs=opus'});
@@ -56,10 +63,13 @@ export async function stopOutputCapture(){
  let binary='';for(const b of bytes)binary+=String.fromCharCode(b);return btoa(binary);
 }
 
-const buffers=new Map<string,Promise<AudioBuffer>>();
+// Decoded audio is large (about 2 MB per generated clip). Keep only recent tracks.
+const buffers=new Map<string,Promise<AudioBuffer>>(),MAX_BUFFERS=24;
 export function preloadAudio(url:string){
  let pending=buffers.get(url);
- if(!pending){pending=fetch(url).then(r=>{if(!r.ok)throw Error(`Audio unavailable: ${r.status}`);return r.arrayBuffer();}).then(bytes=>bus().context.decodeAudioData(bytes));buffers.set(url,pending);pending.catch(()=>buffers.delete(url));}
+ if(pending){buffers.delete(url);buffers.set(url,pending);return pending;}
+ pending=fetch(url).then(r=>{if(!r.ok)throw Error(`Audio unavailable: ${r.status}`);return r.arrayBuffer();}).then(bytes=>bus().context.decodeAudioData(bytes));buffers.set(url,pending);pending.catch(()=>buffers.delete(url));
+ while(buffers.size>MAX_BUFFERS)buffers.delete(buffers.keys().next().value!);
  return pending;
 }
 

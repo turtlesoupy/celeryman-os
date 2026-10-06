@@ -24,12 +24,12 @@ function identityCostumeFrame(profile:string,costume:string,closeup:boolean,ref:
   const file=path.join(process.cwd(),'public/media/generated',`identity-frame-${key}.png`);
   if(await fs.access(file).then(()=>true,()=>false))return {file,url:smiling?'':await fal.storage.upload(new File([await fs.readFile(file)],'costume.png',{type:'image/png'})),timings:{frameCacheHit:1}};
   const started=performance.now();
-  const result:any=await fal.run('fal-ai/nano-banana-2/edit',{input:costumeFrameInput(ref,costume,closeup,canonical,smiling)});
+  const result:any=await fal.run('fal-ai/nano-banana-2/edit',{input:costumeFrameInput(ref,costume,closeup,canonical,smiling),abortSignal:AbortSignal.timeout(90000)});
   const timings:Record<string,number>={frameCacheHit:0,frameRequestMs:performance.now()-started};
   if(typeof result.data.timings?.inference==='number')timings.frameInferenceMs=result.data.timings.inference*1000;
   // The video provider can use its own image URL immediately. Persisting our
   // copy must not hold up inference (especially on the production GCS mount).
-  const saved=(async()=>{const began=performance.now();const response=await fetch(result.data.images[0].url);if(!response.ok)throw Error('Costume frame download failed');const bytes=Buffer.from(await response.arrayBuffer());timings.frameDownloadMs=performance.now()-began;const saveAt=performance.now();await fs.writeFile(file+'.partial',bytes);await fs.rename(file+'.partial',file);timings.frameSaveMs=performance.now()-saveAt;})();
+  const saved=(async()=>{const began=performance.now();const response=await fetch(result.data.images[0].url,{signal:AbortSignal.timeout(60000)});if(!response.ok)throw Error('Costume frame download failed');const bytes=Buffer.from(await response.arrayBuffer());timings.frameDownloadMs=performance.now()-began;const saveAt=performance.now();await fs.writeFile(file+'.partial',bytes);await fs.rename(file+'.partial',file);timings.frameSaveMs=performance.now()-saveAt;})();
   void saved.catch(()=>costumeFrames.delete(key));
   return {file,url:result.data.images[0].url,requestId:result.requestId,saved,timings};
  })();costumeFrames.set(key,pending);pending.catch(()=>costumeFrames.delete(key));return pending;
@@ -78,7 +78,7 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  const motionRef=motionResult.url;timings.motionWaitMs=performance.now()-motionWaitAt;
  // Synchronous inference avoids the hosted queue's poll/delivery round trips.
  const videoStarted=performance.now();
- const video:any=await fal.run(model,{input:{...(anchoredPortrait?{image_url:costumeFrame!.url}:{reference_image_urls:costumeFrame?[costumeFrame.url,ref]:[ref],...(canonical==='oyster'&&costumeFrame?{image_url:costumeFrame.url}:{})}),...(motionRef?{reference_video_urls:[motionRef]}:{}),prompt,duration:5,resolution:'480P',aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='oyster'?'4:3':body.variant==='intro'?'9:16':closeup?'4:3':'9:16',prompt_expansion_mode:'disabled'}});
+ const video:any=await fal.run(model,{input:{...(anchoredPortrait?{image_url:costumeFrame!.url}:{reference_image_urls:costumeFrame?[costumeFrame.url,ref]:[ref],...(canonical==='oyster'&&costumeFrame?{image_url:costumeFrame.url}:{})}),...(motionRef?{reference_video_urls:[motionRef]}:{}),prompt,duration:5,resolution:'480P',aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='oyster'?'4:3':body.variant==='intro'?'9:16':closeup?'4:3':'9:16',prompt_expansion_mode:'disabled'},abortSignal:AbortSignal.timeout(170000)});
  timings.videoMs=performance.now()-videoStarted;
  timings.previewMs=performance.now()-start;
  const downloadStarted=performance.now(),download=new VideoDownload(video.data.video.url);

@@ -19,18 +19,24 @@ const server=createServer(async(req,res)=>{
   res.setHeader('X-Frame-Options','DENY');
   res.setHeader('Referrer-Policy','same-origin');
   res.setHeader('X-Robots-Tag','noindex, nofollow');
-  res.setHeader('Permissions-Policy','camera=(), microphone=(self)');
+  res.setHeader('Permissions-Policy','camera=(self), microphone=(self)');
   if(req.url==='/healthz'){res.writeHead(200,{'Content-Type':'application/json'});res.end('{"ok":true}');return;}
   if(originToken){
    const supplied=Buffer.from(String(req.headers['x-cinco-origin-token']||'')),expected=Buffer.from(originToken);
    if(supplied.length!==expected.length||!timingSafeEqual(supplied,expected)){res.writeHead(403);res.end('Use celeryman.fun');return;}
   }
   if(req.headers.origin&&!allowedOrigins.has(req.headers.origin)){res.writeHead(403);res.end('Origin not allowed');return;}
+  if(req.url?.startsWith('/api/')){
+   // Only job polling and health checks are reads; every other API call must be a limited POST.
+   const route=new URL(req.url,'http://localhost').pathname;
+   const readable=route.startsWith('/api/job/')||route==='/api/health';
+   if(req.method!=='POST'&&!(readable&&['GET','HEAD'].includes(req.method||''))){res.writeHead(405,{'Content-Type':'application/json','Cache-Control':'no-store',Allow:readable?'GET, HEAD, POST':'POST'});res.end('{"error":"Method not allowed"}');return;}
+  }
   if(req.method==='POST'&&req.url?.startsWith('/api/')){
    for(const [key,value] of requests)if(value.expires<Date.now())requests.delete(key);
    const client=originToken?String(req.headers['x-cinco-client-ip']||'unknown'):req.socket.remoteAddress||'unknown';
-   const key=client+':'+req.url,entry=requests.get(key)||{count:0,expires:Date.now()+60000};
-   const limit=req.url==='/api/profile'?5:30;
+   const key=client+':'+new URL(req.url,'http://localhost').pathname,entry=requests.get(key)||{count:0,expires:Date.now()+60000};
+   const limit=key.endsWith(':/api/profile')?5:30;
    if(entry.count>=limit){res.writeHead(429,{'Content-Type':'application/json','Retry-After':'60'});res.end('{"error":"Too many requests. Please try again in a minute."}');return;}
    entry.count++;requests.set(key,entry);
   }

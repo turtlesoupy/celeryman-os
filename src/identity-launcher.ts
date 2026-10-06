@@ -1,4 +1,5 @@
 import {bitmapPortrait,fillPortraitIcon} from './portrait-icon';
+import {safeStorage} from './storage';
 
 type Identity={id:string;name:string;label:string;thumbnail?:string};
 type DesktopWindow={win:HTMLElement;content:HTMLElement};
@@ -26,7 +27,7 @@ export function launchIdentity(options:LauncherOptions){
  const {windowBox,removeWindow}=options;
  const presets:Identity[]=[{id:'paul',name:'Paul',label:'Paul Rudd'},{id:'thomas',name:'Thomas',label:'Thomas Dimson'}];
  let custom:Identity|undefined;
- try{const saved=JSON.parse(localStorage.getItem('cinco-custom-identity')||'null');if(saved?.id&&saved?.name)custom={id:String(saved.id),name:String(saved.name),label:String(saved.name),thumbnail:typeof saved.thumbnail==='string'?saved.thumbnail:undefined};}catch{}
+ try{const saved=JSON.parse(safeStorage.getItem('cinco-custom-identity')||'null');if(saved?.id&&saved?.name)custom={id:String(saved.id),name:String(saved.name),label:String(saved.name),thumbnail:typeof saved.thumbnail==='string'?saved.thumbnail:undefined};}catch{}
  if(!presets.some(p=>p.id===options.profile)&&options.name.trim())custom={id:options.profile,name:options.name,label:options.name,thumbnail:custom?.id===options.profile?custom.thumbnail:undefined};
  let selected=presets.find(p=>p.id===options.profile)||custom||presets[0];
  const t=windowBox({title:'Cinco Identity Generator 2.5',x:230,y:155,w:500,h:230,className:'launch'});
@@ -52,7 +53,7 @@ export function launchIdentity(options:LauncherOptions){
  const sync=()=>{start.disabled=starting||!!uploadWindow;icons.querySelectorAll('button').forEach(b=>b.disabled=starting);};
  function openUpload(){
   if(uploadWindow){uploadWindow.win.classList.remove('minimized');uploadWindow.win.dispatchEvent(new Event('pointerdown'));uploadWindow.content.querySelector('input')?.focus();return;}
-  uploadWindow=createUploadWindow(options,person=>{custom=selected=person;localStorage.setItem('cinco-custom-identity',JSON.stringify(person));render();options.select(person);},()=>{uploadWindow=undefined;sync();icons.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();});sync();
+  uploadWindow=createUploadWindow(options,person=>{custom=selected=person;safeStorage.setItem('cinco-custom-identity',JSON.stringify(person));render();options.select(person);},()=>{uploadWindow=undefined;sync();icons.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();});sync();
  }
  t.win.addEventListener('windowclose',()=>{if(uploadWindow)removeWindow(uploadWindow.win);});
  async function startSelected(doubleClick=false){

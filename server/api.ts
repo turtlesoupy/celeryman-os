@@ -32,7 +32,7 @@ const jobs=shared.cincoJobs??=new Map<string,Job>();
 const frameLocks=new Map<string,Promise<string>>();
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex').slice(0,20);
 const exists=async(p:string)=>fs.access(p).then(()=>true,()=>false);
-async function saveRemote(url:string,file:string){const r=await fetch(url);if(!r.ok)throw Error('Media download failed');await fs.writeFile(file,Buffer.from(await r.arrayBuffer()));}
+async function saveRemote(url:string,file:string){const r=await fetch(url,{signal:AbortSignal.timeout(60000)});if(!r.ok)throw Error('Media download failed');await fs.writeFile(file,Buffer.from(await r.arrayBuffer()));}
 const references=new Map<string,Promise<string>>();
 function reference(profile:string){
  if(references.has(profile))return references.get(profile)!;
@@ -74,10 +74,15 @@ async function costumeFrame(profile:string,costume:string,closeup=false,canonica
   await saveRemote(result.data.images[0].url,local);await fs.writeFile(local+'.json',JSON.stringify({profile,canonical,identityReviews:reviews,imageRequestId:result.requestId},null,2));return result.data.images[0].url;
  })();frameLocks.set(key,promise);promise.catch(()=>frameLocks.delete(key));return promise;
 }
+// Generation is provider-bound, so this is only a safety valve against runaway load.
+const MAX_ACTIVE_GENERATIONS=100;
+// The client stops waiting after 180s; a hung provider call must not hold a slot forever.
+const GENERATION_TIMEOUT_MS=180000;
 async function generate(id:string,body:any){
  const job=jobs.get(id)!;job.started=Date.now();
- void logDiagnostic({event:'generation-start',jobId:id,character:body.character,variant:body.variant});
- if([...jobs.values()].filter(j=>j.status==='working'&&j.started).length>4){Object.assign(job,{status:'error',stage:'Busy',error:'The computer is busy with other sequences. Please try again shortly.'});void logDiagnostic({event:'generation-error',jobId:id,stage:'Busy',message:job.error});return;}
+ logDiagnostic({event:'generation-start',jobId:id,character:body.character,variant:body.variant});
+ const watchdog=setTimeout(()=>{if(job.status!=='working')return;Object.assign(job,{status:'error',stage:'Timed out',error:'The video provider took too long. Please try again.'});logDiagnostic({event:'generation-error',jobId:id,stage:'Timed out',message:job.error});},GENERATION_TIMEOUT_MS);
+ if([...jobs.values()].filter(j=>j.status==='working'&&j.started).length>MAX_ACTIVE_GENERATIONS){clearTimeout(watchdog);Object.assign(job,{status:'error',stage:'Busy',error:'The computer is busy with other sequences. Please try again shortly.'});logDiagnostic({event:'generation-error',jobId:id,stage:'Busy',message:job.error});return;}
  try{
   if(usesTextOnlyDance(body)||body.profile!=='paul'||!body.canonical){await interactiveVideo(id,body,job,()=>reference(body.profile||'thomas'));return;}
   job.stage='Building identity';
@@ -103,8 +108,8 @@ async function generate(id:string,body:any){
   await fs.writeFile(path.join(media,'generated',`${id}.json`),JSON.stringify({profile:body.profile,character,variant:body.variant,costume,prompt,motion,model,processing,videoRequest:video.requestId,elapsedMs:Date.now()-job.started},null,2));
   if(body.variant==='smile'){await exec('ffmpeg',['-y','-i',path.join(media,'generated',`${id}.mp4`),'-ss','2','-frames:v','1',path.join(media,'generated',`${id}-print.png`),'-loglevel','error']);job.image=`/media/generated/${id}-print.png`;}
   Object.assign(job,{status:'complete',stage:'Ready',url:`/media/generated/${id}.mp4`,elapsed:Date.now()-job.started});
- }catch(e){const failedStage=job.stage;void logDiagnostic({event:'generation-error',jobId:id,stage:failedStage,message:e instanceof Error?e.message:'Generation failed',elapsedMs:Date.now()-job.started!});Object.assign(job,{status:'error',stage:'Generation failed',error:(e as any)?.body?JSON.stringify((e as any).body):e instanceof Error?(e.message||e.name):'Generation failed'});}
- finally{void logDiagnostic({event:'generation-settled',jobId:id,status:job.status,stage:job.stage,elapsedMs:Date.now()-job.started!,timings:job.timings});}
+ }catch(e){const failedStage=job.stage;logDiagnostic({event:'generation-error',jobId:id,stage:failedStage,message:e instanceof Error?e.message:'Generation failed',elapsedMs:Date.now()-job.started!});Object.assign(job,{status:'error',stage:'Generation failed',error:(e as any)?.body?JSON.stringify((e as any).body):e instanceof Error?(e.message||e.name):'Generation failed'});}
+ finally{clearTimeout(watchdog);logDiagnostic({event:'generation-settled',jobId:id,status:job.status,stage:job.stage,elapsedMs:Date.now()-job.started!,timings:job.timings});}
 }
 let voiceEmbedding:Promise<string>|undefined;
 const voiceLocks=new Map<string,Promise<string>>();
@@ -156,14 +161,14 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
   try{
    const allowedOrigins=(process.env.APP_ORIGINS||'http://localhost:5173,http://127.0.0.1:5173').split(',');
    if(req.headers.origin&&!allowedOrigins.includes(req.headers.origin)){res.statusCode=403;res.end(JSON.stringify({error:'Origin not allowed'}));return;}
-   let raw=Buffer.alloc(0);for await(const chunk of req){raw=Buffer.concat([raw,chunk]);if(raw.length>16e6)throw Error('Request too large');}
+   const chunks:Buffer[]=[];let size=0;for await(const chunk of req){chunks.push(chunk);size+=chunk.length;if(size>16e6)throw Error('Request too large');}const raw=Buffer.concat(chunks,size);
    const b=raw.length?JSON.parse(raw.toString()):{};let result:any;
    if(b.profile!==undefined&&(typeof b.profile!=='string'||!/^(paul|thomas|[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/.test(b.profile)))throw Error('Invalid profile');
    if(req.url==='/api/generate'&&(typeof b.character!=='string'||!/^[-\w .]{1,80}$/.test(b.character)||!['base','face','engaged','hat','flarhgunnstow','intro','sway','smile'].includes(b.variant)))throw Error('Invalid sequence');
    if(req.url==='/api/health')result={ok:true,providers:{openai:!!process.env.OPENAI_API_KEY,fal:!!process.env.FAL_KEY}};
    else if(req.url==='/api/client-event'){
     if(!['generation-ready','generation-error','generation-cancelled','video-visible','transcription'].includes(b.event))throw Error('Invalid diagnostic event');
-    await logDiagnostic({event:'client-'+b.event,...(b.event==='transcription'?{requestId:String(b.requestId||'').slice(0,80),model:String(b.model||'').slice(0,80),durationMs:Number(b.durationMs)||0}:{}),jobId:/^[a-f0-9]{20}$/.test(b.jobId)?b.jobId:undefined,character:String(b.character||'').slice(0,80),variant:String(b.variant||'').slice(0,30),message:String(b.message||'').slice(0,500),elapsedMs:Number(b.elapsedMs)||0});result={ok:true};
+    logDiagnostic({event:'client-'+b.event,...(b.event==='transcription'?{requestId:String(b.requestId||'').slice(0,80),model:String(b.model||'').slice(0,80),durationMs:Number(b.durationMs)||0}:{}),jobId:/^[a-f0-9]{20}$/.test(b.jobId)?b.jobId:undefined,character:String(b.character||'').slice(0,80),variant:String(b.variant||'').slice(0,30),message:String(b.message||'').slice(0,500),elapsedMs:Number(b.elapsedMs)||0});result={ok:true};
    }
    else if(req.url==='/api/warm'){
     void reference(String(b.profile||'paul')).catch(()=>{});
@@ -175,7 +180,7 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     let routed=false,sequenceMode:'new'|'modify'='new';
     if(!result){
      const route=await routeIntent(openai,text,context);routed=true;result=route.command;sequenceMode=route.intent==='modify_current'?'modify':'new';
-     await logDiagnostic({event:'command-intent',text,intent:route.intent,elapsedMs:route.elapsedMs,provider:commandModel.model,serviceTier:route.serviceTier});
+     logDiagnostic({event:'command-intent',text,intent:route.intent,elapsedMs:route.elapsedMs,provider:commandModel.model,serviceTier:route.serviceTier});
     }
     if(!result){
      const playbackRate=/twice as slow|half[ -]?speed|50%.*speed/i.test(text)?.5:/twice as fast|double[ -]?speed/i.test(text)?2:1;
@@ -210,7 +215,7 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
      if(result.action==='custom')result.audio='okay';
      result.provider=commandModel.model;
     }else result.provider=routed?commandModel.model:'reference-protocol';
-    await logDiagnostic({event:'command',text,character:context.character,action:result.action,label:result.label,generationId:result.generationId,planningMs:result.planningMs,provider:result.provider});
+    logDiagnostic({event:'command',text,character:context.character,action:result.action,label:result.label,generationId:result.generationId,planningMs:result.planningMs,provider:result.provider});
    }else if(req.url==='/api/transcribe/session'){
     res.setHeader('Cache-Control','no-store');
     if(req.method!=='POST'){res.statusCode=405;res.end(JSON.stringify({error:'POST required'}));return;}
@@ -224,9 +229,9 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     const controller=new AbortController();res.on('close',()=>{if(!res.writableEnded)controller.abort();});
     res.setHeader('Content-Type','application/x-ndjson');res.setHeader('Cache-Control','no-store');res.flushHeaders();
     const send=(data:unknown)=>{if(!res.destroyed)res.write(JSON.stringify(data)+'\n');};
-    const voiceTrace=randomUUID();void logDiagnostic({event:'voice-stream-start',voiceTrace,textLength:text.length});
-    const summary=await streamComputerVoice(text,chunk=>send({type:'pcm',data:chunk.toString('base64')}),controller.signal,{onProgress:progress=>void logDiagnostic({event:'voice-stream-progress',voiceTrace,...progress})});
-    void logDiagnostic({event:'voice-stream-complete',voiceTrace,textLength:text.length,...summary});
+    const voiceTrace=randomUUID();logDiagnostic({event:'voice-stream-start',voiceTrace,textLength:text.length});
+    const summary=await streamComputerVoice(text,chunk=>send({type:'pcm',data:chunk.toString('base64')}),controller.signal,{onProgress:progress=>logDiagnostic({event:'voice-stream-progress',voiceTrace,...progress})});
+    logDiagnostic({event:'voice-stream-complete',voiceTrace,textLength:text.length,...summary});
     send({type:'done',...summary});res.end();return;
    }else if(req.url==='/api/voice')result={url:await voice(String(b.text||'').slice(0,600),b.style==='phone'?'phone':'computer')};
    else if(req.url==='/api/generate'){
@@ -247,6 +252,6 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),Buffer.from(b.image,'base64'));void reference(id).catch(()=>{});result={id};
    }else {res.statusCode=404;result={error:'Unknown endpoint'};}
    res.end(JSON.stringify(result));
-  }catch(e){const rawError=e instanceof Error?e.message:'Request failed';void logDiagnostic({event:'request-error',route:req.url?.split('?')[0],message:rawError});const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){res.end(JSON.stringify({type:'error',error})+'\n');}else{res.statusCode=500;res.end(JSON.stringify({error}));}}
+  }catch(e){const rawError=e instanceof Error?e.message:'Request failed';logDiagnostic({event:'request-error',route:req.url?.split('?')[0],message:rawError});const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){res.end(JSON.stringify({type:'error',error})+'\n');}else{res.statusCode=500;res.end(JSON.stringify({error}));}}
 }
 export function apiPlugin():Plugin{return {name:'cinco-local-api',configureServer(server){server.middlewares.use(apiMiddleware);}};}

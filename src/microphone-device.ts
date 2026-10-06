@@ -1,3 +1,4 @@
+import {safeStorage} from './storage';
 type InputDevice=Pick<MediaDeviceInfo,'deviceId'|'groupId'|'label'>;
 const physical=(device:InputDevice)=>device.deviceId&& !['default','communications'].includes(device.deviceId);
 const cleanLabel=(label:string)=>label.replace(/^default\s*(?:[-–—:]\s*|\((.*)\)$)/i,'$1').trim().toLowerCase();
@@ -30,7 +31,7 @@ export class MicrophoneDevices{
  private verified='';
  private verifiedId='';
  private listeners=new Set<(label:string)=>void>();
- constructor(private changed:()=>void,private busy:()=>boolean,private media=navigator.mediaDevices,private storage:Pick<Storage,'getItem'|'setItem'>=localStorage){this.selected=storage.getItem('cinco-microphone')||'default';this.savedLabel=storage.getItem('cinco-microphone-label')||'';media?.addEventListener('devicechange',()=>void this.refresh());}
+ constructor(private changed:()=>void,private busy:()=>boolean,private media=navigator.mediaDevices,private storage:Pick<Storage,'getItem'|'setItem'>=safeStorage){this.selected=storage.getItem('cinco-microphone')||'default';this.savedLabel=storage.getItem('cinco-microphone-label')||'';media?.addEventListener('devicechange',()=>void this.refresh());}
  get constraints(){return microphoneConstraints(resolveMicrophone(this.devices,this.selected)?.deviceId||this.selected);}
  get label(){return this.devices.find(d=>d.deviceId===this.selected)?.label||this.savedLabel||(this.selected==='default'?'Default microphone':'Selected microphone');}
  subscribe(listener:(label:string)=>void){this.listeners.add(listener);listener(this.verified||resolveMicrophone(this.devices,this.selected)?.label||this.label);return ()=>this.listeners.delete(listener);}

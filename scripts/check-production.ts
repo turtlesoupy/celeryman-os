@@ -19,6 +19,8 @@ try{
  const credentialGet=await request('/api/transcribe/session');
  assert.equal(credentialGet.status,405,'transcription credential creation requires POST');
  assert.equal(credentialGet.headers.get('cache-control'),'no-store');
+ assert.equal((await request('/api/generate',{method:'PUT',body:'{}'})).status,405,'non-POST writes cannot bypass the rate limit');
+ assert.equal((await request('/api/job/0123456789abcdef0123')).status,200,'job polling stays a GET');
  const command=await request('/api/command',{method:'POST',headers:{Origin:'https://celeryman.fun','Content-Type':'application/json'},body:JSON.stringify({text:'Computer?',context:{identity:'Thomas',character:'oyster',pending:'',history:[]}})});
  assert.equal(command.status,200);assert.equal((await command.json()).action,'attention');
  for(let i=0;i<31;i++){
