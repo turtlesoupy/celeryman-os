@@ -1,5 +1,9 @@
 import paulIcon from './assets/paul-icon.png?inline';
 import thomasIcon from './assets/thomas-icon.png?inline';
+import ianIcon from './assets/ian-icon.png?inline';
+import joeyIcon from './assets/joey-icon.png?inline';
+
+const presetIcons:Record<string,string>={paul:paulIcon,thomas:thomasIcon,ian:ianIcon,joey:joeyIcon};
 
 // A small indexed bitmap, like a custom Windows icon: keep enough warm shades
 // to recognize faces, alongside the gray, navy and teal desktop colors.
@@ -43,7 +47,7 @@ export function bitmapPortrait(source:CanvasImageSource,width:number,height:numb
 export async function fillPortraitIcon(button:HTMLElement,id:string,thumbnail?:string){
  try{
   let bitmap=thumbnail;
-  if(!bitmap)bitmap=id==='paul'?paulIcon:id==='thomas'?thomasIcon:undefined;
+  if(!bitmap)bitmap=presetIcons[id];
   if(!bitmap||!/^data:image\/png;base64,/.test(bitmap))return;
   const ns='http://www.w3.org/2000/svg',clipId=`identity-photo-${++portraitClipId}`;
   const clip=document.createElementNS(ns,'clipPath'),outline=document.createElementNS(ns,'path');
