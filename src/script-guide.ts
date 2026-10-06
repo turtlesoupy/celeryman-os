@@ -7,7 +7,9 @@ export function createScriptGuide(parent:HTMLElement,inlineParent?:HTMLElement){
  const guide=document.createElement('aside');guide.className='script-guide';guide.setAttribute('aria-label','Sketch script guide');
  guide.innerHTML='<div class="script-guide-title"><span>SUGGESTED LINE</span><span class="script-guide-count"></span></div><p class="script-guide-quote" aria-live="polite" aria-atomic="true"></p>';
  parent.append(guide);
- const inline=document.createElement('span');inline.className='input-suggestion';inline.setAttribute('aria-label','Suggested line');inline.setAttribute('aria-live','polite');inlineParent?.append(inline);
+ const inline=document.createElement('span');inline.className='input-suggestion';inline.setAttribute('aria-label','Suggested line');inline.setAttribute('aria-live','polite');inlineParent?.prepend(inline);
+ // Desktop users talk with Space; touch users hold the Record button.
+ const key=document.createElement('span'),touch=document.createElement('span');key.className='say-key';key.textContent='Hold space';touch.className='say-touch';touch.textContent='Hold Record';
  const quote=guide.querySelector<HTMLElement>('.script-guide-quote')!,count=guide.querySelector<HTMLElement>('.script-guide-count')!;
  const normalize=(text:string)=>commandText(text).replace(/ /g,'');
  // After the sketch, rotate lines that show what the director can do.
@@ -19,7 +21,8 @@ export function createScriptGuide(parent:HTMLElement,inlineParent?:HTMLElement){
   const line=sketch[index],text=index===9?"Now Tayne I can get into. Can I see a hat wobble?":index===14?"Oh shit! I'm okay.":line?.action==='beta'?`Computer, ${line.text.charAt(0).toLowerCase()+line.text.slice(1)}`:line?.text;count.textContent=line?`${index+1} / ${sketch.length}`:'Complete';
   const suggestion=text||encores[encore%encores.length];
   quote.textContent=`“${suggestion}”`;
-  inline.textContent=`· “${suggestion}”`;inline.title=`Suggested line: ${suggestion}`;
+  // Teach the input on the opening line; later lines are just the words.
+  if(index<=1)inline.replaceChildren('Suggestion: ',key,touch,` and say “${suggestion}”`);else inline.textContent=`Suggestion: ${suggestion}`;inline.title=`Suggested line: ${suggestion}`;
  }
  render();
  return {

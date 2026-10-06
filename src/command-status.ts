@@ -27,8 +27,8 @@ export function createCommandStatus(parent:HTMLElement,idle=()=> 'Ready',details
  const jobs=new Map<string,{text:string;since:number}>();
  function render(){
   const busy=!failed&&(working||jobs.size>0),now=performance.now();
-  const stages=[...(working&&(!jobs.size||phaseText==='Interpreting command')?[phaseText]:[]),...Array.from(jobs.values(),job=>job.text)];
-  label.textContent=failed?phaseText:busy?[...new Set(stages)].join(' · '):idle();
+  // Show only the input phases; the sequence overlay already reports render jobs.
+  label.textContent=failed||working&&(!jobs.size||phaseText==='Interpreting command')?phaseText:idle();
   detail.textContent=detailText;element.classList.toggle('busy',busy);
   time.textContent=busy?`${((now-start)/1000).toFixed(1)}s`:completedAt?`${failed?'failed':'done'} ${((completedAt-start)/1000).toFixed(1)}s`:'';
   const waiting=[...jobs.values()].filter(job=>now-job.since>=12000);
@@ -48,7 +48,7 @@ export function createCommandStatus(parent:HTMLElement,idle=()=> 'Ready',details
   job(id:number,key:string,text:string){if(id!==token||failed)return;if(jobs.get(key)?.text!==text)jobs.set(key,{text,since:performance.now()});render();},
   jobDone(id:number,key:string){if(id!==token||!jobs.delete(key))return;if(!failed&&!working&&!jobs.size)completedAt=performance.now();render();},
   finish(id:number){if(id!==token||failed)return;working=false;completedAt=performance.now();render();},
-  error(id:number,message:string){if(id!==token)return;const failure=describeServiceError(message);if(!failures.some(f=>f.details===message))failures.push(failure);const primary=primaryFailure(failures)!;failed=primary.blocking;if(failed){working=false;phaseText='Stopped · '+primary.title;completedAt=performance.now();}element.classList.toggle('failed',failed);renderErrors();render();},
+  error(id:number,message:string){if(id!==token)return;const failure=describeServiceError(message);if(!failures.some(f=>f.details===message))failures.push(failure);const primary=primaryFailure(failures)!;failed=primary.blocking;if(failed){working=false;phaseText=primary.status||'Stopped · '+primary.title;completedAt=performance.now();}element.classList.toggle('failed',failed);renderErrors();render();},
   clear(){clearError();token++;jobs.clear();failed=false;working=false;completedAt=0;detailText='';echo.textContent='';element.classList.remove('failed');render();}
  };
 }

@@ -119,16 +119,16 @@
 .input-activity{flex:none;height:14px;border-top:1px solid #fff;background:#e3e3e3;padding:1px 5px;color:#555}
 .input-activity .command-status{padding:0}
 .input-activity .command-status-line{align-items:center;font:9px/11px Arial,Helvetica,sans-serif;color:#555}
-.input-activity .command-status-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.input-activity .command-status-label{flex:none;max-width:45%}
-.input-suggestion{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#555;order:1}
-.input-activity .command-status-time{order:2}
+.input-activity .command-status-label{order:1;flex:0 1 auto;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.input-activity .command-status-label:empty,.input-activity .command-status-time{display:none}
+.input-suggestion{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#555}
+.input-suggestion .say-touch,.mobile .input-suggestion .say-key{display:none}.mobile .input-suggestion .say-touch{display:inline}
 .input-activity .command-status.failed .input-suggestion{display:none}
 .input-activity .command-status.failed .command-status-label{max-width:100%;flex:1}
-.input-activity .command-status-time{font-size:8px;line-height:11px}
-.input-activity .command-status:not(.busy) .command-status-time{display:none}
 .input-activity .command-status.busy .command-status-label:before{color:#555;animation:none}
-.terminal:has(.input-activity.has-error) .mic-settings,.terminal:has(.input-activity.has-warning) .mic-settings{outline:1px solid #800000}
+.terminal:has(.input-activity.has-error) .mic-settings,.terminal:has(.input-activity.has-warning) .mic-settings,.terminal:has(.input-activity.mic-blocked) .mic-settings{outline:1px solid #800000}
+.input-activity.mic-blocked .command-status:not(.busy) .input-suggestion{display:none}
+.input-activity.mic-blocked .command-status:not(.busy) .command-status-label{max-width:100%;flex:1;color:#842c22}
 .input-settings .content{overflow:auto}
 .input-settings .settings-actions{position:static;display:flex;flex-wrap:wrap;gap:6px;max-width:none;max-height:none;padding:8px 0 0;border:0;background:none;box-shadow:none;font-size:11px}
 .input-settings .settings-actions button{font-size:11px;padding:4px 8px}

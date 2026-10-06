@@ -4,11 +4,12 @@ import {prewarmSession} from './session';
 import {followGeneration,requestCommand,takeCommandGeneration,type GenerationFeed} from './generation-stream';
 import {preparePrintout,type Printout} from './printout';
 import {mobileFrame,clampFrame,type Frame,type Workspace} from './window-layout';
-import {MicrophoneDevices} from './microphone-device';
+import {MicrophoneDevices,microphoneBlocked} from './microphone-device';
 import {incompleteTranscript} from './transcript-quality';
 import {launchIdentity} from './identity-launcher';
 import './style.css';
 import {createCommandStatus} from './command-status';
+import {microphoneBlockedStatus} from './service-errors';
 import {createGenerationOverlay} from './generation-overlay';
 import {createScriptGuide} from './script-guide';
 import {StreamingSpeech} from './streaming-speech';
@@ -30,12 +31,13 @@ const desktop=document.querySelector<HTMLElement>('.desktop')!;
 const dock=document.createElement('div');dock.className='dock settings-actions';
 dock.innerHTML='<button type="button" class="classic-button replay-mic" disabled>Replay mic</button><button type="button" class="classic-button" data-tool="identity">Identity</button><button type="button" class="classic-button" data-tool="replay">Sketch</button><button type="button" class="classic-button" data-tool="printout">Printout</button><button type="button" class="classic-button" data-tool="sound">Sound on</button><button type="button" class="classic-button" data-tool="reset">Reset</button>';
 const inputControls=document.createElement('div');inputControls.className='input-controls';
-inputControls.innerHTML='<button type="button" class="classic-button record-button" aria-label="Record" aria-pressed="false" aria-describedby="record-hint"><i class="record-light" aria-hidden="true"></i><span>Record</span></button><span id="record-hint" class="record-hint">Hold Space</span><span class="input-microphone">Default microphone</span><button type="button" class="classic-button mic-settings" aria-label="Microphone settings" title="Microphone settings"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 0h4v3l2-2 3 3-2 2h3v4h-3l2 2-3 3-2-2v3H6v-3l-2 2-3-3 2-2H0V6h3L1 4l3-3 2 2z"/><path fill="#ededed" d="M6 5h4v1h1v4h-1v1H6v-1H5V6h1z"/></svg></button>';
+inputControls.innerHTML='<button type="button" class="classic-button record-button" aria-label="Record" aria-pressed="false" aria-describedby="record-hint"><i class="record-light" aria-hidden="true"></i><span>Record</span></button><span id="record-hint" class="record-hint"></span><span class="input-microphone">Default microphone</span><button type="button" class="classic-button mic-settings" aria-label="Microphone settings" title="Microphone settings"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 0h4v3l2-2 3 3-2 2h3v4h-3l2 2-3 3-2-2v3H6v-3l-2 2-3-3 2-2H0V6h3L1 4l3-3 2 2z"/><path fill="#ededed" d="M6 5h4v1h1v4h-1v1H6v-1H5V6h1z"/></svg></button>';
 const recordButton=inputControls.querySelector<HTMLButtonElement>('.record-button')!,settingsButton=inputControls.querySelector<HTMLButtonElement>('.mic-settings')!;
 const activity=document.createElement('div');activity.className='input-activity';
 const diagnostics=document.createElement('div');diagnostics.className='input-diagnostics';
 const generationOverlay=createGenerationOverlay();
-const commandStatus=createCommandStatus(activity,()=>'Ready',diagnostics);let feedbackToken=0;
+let micBlocked=false;
+const commandStatus=createCommandStatus(activity,()=>micBlocked?microphoneBlockedStatus:'',diagnostics);let feedbackToken=0;
 const scriptGuide=createScriptGuide(diagnostics,activity.querySelector<HTMLElement>('.command-status-line')!);
 let profile=safeStorage.getItem('cinco-profile')||'paul',identity=safeStorage.getItem('cinco-name')||'Paul';
 let context:Context={identity,character:'celery',pending:'',history:[]};
@@ -60,6 +62,9 @@ let recordingRequested=false,recordingStarting=false,pushToTalk=false,recordingN
 let recordingPointer:number|undefined,recordingCancelled=false;
 let stopRecordingTimer:number|undefined,lastMicUrl='',lastMicPlayback:HTMLAudioElement|undefined;
 let microphoneOpening:{token:number;promise:Promise<MediaStream>}|undefined;
+// A denied permission persists until the user changes site settings; say so up front.
+function setMicBlocked(blocked:boolean){micBlocked=blocked;activity.classList.toggle('mic-blocked',blocked);}
+void navigator.permissions?.query({name:'microphone' as PermissionName}).then(permission=>{permission.onchange=()=>{if(permission.state==='denied')setMicBlocked(true);else if(micBlocked){setMicBlocked(false);if(started)void readyMicrophone().catch(()=>{});}};}).catch(()=>{});
 const microphone=new MicrophoneDevices(()=>{stream?.getTracks().forEach(t=>t.stop());stream=null;if(started)void readyMicrophone().catch(()=>{});},()=>recordingStarting||recorder?.state==='recording');
 // Diagnostic history for window.cinco; bounded because partial transcripts arrive constantly.
 const events:any[]=[],MAX_EVENTS=2000;
@@ -571,8 +576,8 @@ function readyMicrophone():Promise<MediaStream>{
  const token=run;if(microphoneOpening?.token===token)return microphoneOpening.promise;
  const promise=microphone.open(stream).then(opened=>{
   if(token!==run){opened.getTracks().forEach(t=>t.stop());throw new DOMException('Session ended','AbortError');}
-  stream=opened;return opened;
- }).finally(()=>{if(microphoneOpening?.promise===promise){microphoneOpening=undefined;if(!recordingRequested)setMicState('idle');}});
+  stream=opened;setMicBlocked(false);return opened;
+ }).catch(error=>{if(microphoneBlocked(error))setMicBlocked(true);throw error;}).finally(()=>{if(microphoneOpening?.promise===promise){microphoneOpening=undefined;if(!recordingRequested)setMicState('idle');}});
  microphoneOpening={token,promise};if(!recordingRequested)inputControls.querySelector('.record-hint')!.textContent='Opening mic…';return promise;
 }
 async function startRecording(){
@@ -623,7 +628,7 @@ async function startRecording(){
   };
   current.onstart=()=>{if(!recordingRequested||recordingCancelled||recordingRun!==run||!commandStatus.current(status))return;events.push({kind:'microphone-ready',requestId,openingMs:performance.now()-openingAt,time:performance.now()});commandStatus.phase(status,'Speak now · recording');setMicState('recording');};
   current.start();
- }catch(e){duckForMicrophone(false);setMicState('idle');commandStatus.error(status,`Microphone unavailable: ${(e as Error).message||microphone.label}. Use the gear to choose a microphone.`);}
+ }catch(e){duckForMicrophone(false);setMicState('idle');commandStatus.error(status,microphoneBlocked(e)?'Microphone blocked by the browser.':`Microphone unavailable: ${(e as Error).message||microphone.label}. Use the gear to choose a microphone.`);}
  finally{recordingStarting=false;}
 }
 function stopRecording(){recordingRequested=false;const current=recorder;clearTimeout(stopRecordingTimer);if(current?.state==='recording')stopRecordingTimer=window.setTimeout(()=>{if(current.state==='recording')current.stop();},150);}
@@ -633,7 +638,7 @@ function setMicState(state:'idle'|'opening'|'recording'){
  recordButton.dataset.state=state;recordButton.setAttribute('aria-pressed',String(state!=='idle'));
  recordButton.setAttribute('aria-label',state==='idle'?'Record (press and hold)':state==='opening'?'Opening microphone (wait to speak)':'Recording (release to send)');
  recordButton.querySelector('span')!.textContent=state==='opening'?'Opening…':state==='recording'?'Recording':'Record';
- inputControls.querySelector('.record-hint')!.textContent=state==='idle'?'Hold Space':state==='opening'?'Wait for mic':pushToTalk?'Release Space':'Release to send';
+ inputControls.querySelector('.record-hint')!.textContent=state==='idle'?'':state==='opening'?'Wait for mic':pushToTalk?'Release Space':'Release to send';
 }
 recordButton.setAttribute('aria-label','Record (press and hold)');recordButton.setAttribute('aria-keyshortcuts','Space');recordButton.title='Hold Record or Space, wait for Speak now, then talk. Release to send.';
 recordButton.addEventListener('pointerdown',event=>{

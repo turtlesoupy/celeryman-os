@@ -2,6 +2,8 @@ import {safeStorage} from './storage';
 type InputDevice=Pick<MediaDeviceInfo,'deviceId'|'groupId'|'label'>;
 const physical=(device:InputDevice)=>device.deviceId&& !['default','communications'].includes(device.deviceId);
 const cleanLabel=(label:string)=>label.replace(/^default\s*(?:[-–—:]\s*|\((.*)\)$)/i,'$1').trim().toLowerCase();
+/** The browser refused access: denied now, or blocked in site settings. */
+export function microphoneBlocked(error:unknown){return error instanceof DOMException&&error.name==='NotAllowedError';}
 export function microphoneConstraints(deviceId:string):MediaTrackConstraints{
  return {echoCancellation:true,noiseSuppression:true,autoGainControl:true,...(deviceId?{deviceId:{exact:deviceId}}:{})};
 }
@@ -73,7 +75,7 @@ export class MicrophoneDevices{
    if(this.busy()){this.message='Finish the recording first.';this.render();return;}
    this.detecting=true;this.message='Checking selected microphone…';this.render();
    try{if(!this.devices.some(d=>d.label)){const permission=await this.media.getUserMedia({audio:true});permission.getTracks().forEach(t=>t.stop());await this.refresh();}const checked=await this.open();checked.getTracks().forEach(t=>t.stop());}
-   catch(error){this.verified='';this.message=error instanceof Error?error.message:'Allow microphone access in your browser to choose an input.';}
+   catch(error){this.verified='';this.message=microphoneBlocked(error)?'Microphone is blocked for this site. Allow it in your browser’s site settings, then test again.':error instanceof Error?error.message:'Allow microphone access in your browser to choose an input.';}
    finally{this.detecting=false;this.render();}
   };
   this.render();void this.refresh();

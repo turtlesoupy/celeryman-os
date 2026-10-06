@@ -12,5 +12,7 @@ assert.equal(describeServiceError('{"detail":[{"msg":"insufficient balance"}]}')
 assert.equal(describeServiceError('Server request failed (HTTP 504)').title,'Connection interrupted');
 assert.equal(describeServiceError('401 unauthorized').title,'AI service unavailable');
 assert.equal(describeServiceError('Microphone recording failed').title,'Microphone input failed');
+const blocked=describeServiceError('Microphone blocked by the browser.');
+assert.equal(blocked.title,'Microphone blocked');assert.match(blocked.recovery,/site settings/);assert.match(blocked.status!,/site settings/);
 assert.equal(describeServiceError('Dance generation failed: {"detail":"provider rejected request"}').details,'Dance generation failed: {"detail":"provider rejected request"}');
 console.log('Service-error checks passed: partial failures, blocking priority, actionable explanations and preserved details.');
