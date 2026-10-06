@@ -51,7 +51,7 @@ const server=createServer(async(req,res)=>{
   const pathname=decodeURIComponent(new URL(req.url||'/','http://localhost').pathname);
   const relative=pathname==='/'?'index.html':pathname.slice(1);
   // Only ship and serve the desktop bundle. No source, reference files or voice lab.
-  if(relative!=='index.html'&&!relative.startsWith('assets/')&&!relative.startsWith('fonts/')){res.writeHead(404);res.end('Not found');return;}
+  if(relative!=='index.html'&&relative!=='og.png'&&!relative.startsWith('assets/')&&!relative.startsWith('fonts/')){res.writeHead(404);res.end('Not found');return;}
   let file=path.resolve(root,relative);
   if(!file.startsWith(root+path.sep)){res.writeHead(404);res.end();return;}
   // Retain hashed assets across deployments so a cached shell/open tab stays valid.

@@ -10,6 +10,7 @@ try{
  assert.equal((await fetch('http://127.0.0.1:8088/healthz')).status,200,'probe works');
  assert.equal((await request('/')).status,200,'public desktop loads through edge');
  assert.equal((await request('/fonts/VT323-Regular.ttf')).status,200,'retro font is served');
+ assert.equal((await request('/og.png')).headers.get('content-type'),'image/png','link preview image is served');
  for(const path of ['/.env','/server/api.ts','/reference/celery-man.mp4','/voice-lab/index.html'])assert.equal((await request(path)).status,404,path);
  const range=await request('/media/original/okay.wav',{headers:{Range:'bytes=0-43'}});
  assert.equal(range.status,206);assert.equal((await range.arrayBuffer()).byteLength,44);

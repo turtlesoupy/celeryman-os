@@ -179,3 +179,15 @@ video.censored{opacity:0}
 .desktop[data-mode="mirror"] video{transform:scaleX(-1)}
 .desktop[data-mode="invert"] video{filter:invert(1)}
 .desktop[data-mode="zoom"] video{transform:scale(1.35)}
+
+/* Shortcuts beside the identity chooser, labeled like the identity icons. */
+.desktop-links{position:absolute;right:10px;bottom:8px;display:flex;gap:2px}
+.desktop.running .desktop-links{display:none}
+.desktop-link{display:flex;flex-direction:column;align-items:center;gap:5px;width:56px;padding:3px 0 5px;color:#000;text-decoration:none;font-size:11px;line-height:1.2;user-select:none;touch-action:manipulation}
+.desktop-link img{width:24px;height:24px;image-rendering:pixelated}
+.desktop-link span{padding:2px 3px}
+.desktop-link:hover span,.desktop-link:focus-visible span{background:#000080;color:#fff}
+.desktop-link:focus-visible{outline:none}.desktop-link:active img{transform:translate(1px,1px)}
+.mobile .desktop-links{right:4px;bottom:max(6px,env(safe-area-inset-bottom))}.mobile .desktop-link{font-size:12px}
+/* The identity chooser and its startup screen are not dismissable. */
+.launch .titlebar .close,.intro .titlebar .close{display:none}

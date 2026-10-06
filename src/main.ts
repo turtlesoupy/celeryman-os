@@ -21,6 +21,7 @@ import {advanceDirector,directorOwnsTurn,requestsPerformance,resolveLocally,type
 import {costumes,motions} from './dances';
 import {revealVideoWindow} from './video-presentation';
 import {installVideoSave} from './video-export';
+import {installDesktopLinks} from './desktop-links';
 import {shareableFile,shareFile} from './save-media';
 // Fast generation is the default; use /?fastPath=0 for the anchored control.
 const fastPath=new URLSearchParams(location.search).get('fastPath')!=='0';
@@ -28,7 +29,7 @@ const fastPath=new URLSearchParams(location.search).get('fastPath')!=='0';
 const streamingTranscription=new URLSearchParams(location.search).get('streamingTranscription')==='1';
 const app=document.querySelector<HTMLDivElement>('#app')!;
 app.innerHTML='<main class="viewport"><section class="desktop" aria-label="Cinco desktop"></section></main>';
-const desktop=document.querySelector<HTMLElement>('.desktop')!;
+const desktop=document.querySelector<HTMLElement>('.desktop')!;installDesktopLinks(desktop);
 const dock=document.createElement('div');dock.className='dock settings-actions';
 dock.innerHTML='<button type="button" class="classic-button replay-mic" disabled>Replay mic</button><button type="button" class="classic-button" data-tool="identity">Identity</button><button type="button" class="classic-button" data-tool="replay">Sketch</button><button type="button" class="classic-button" data-tool="printout">Printout</button><button type="button" class="classic-button" data-tool="sound">Sound on</button><button type="button" class="classic-button" data-tool="reset">Reset</button>';
 const inputControls=document.createElement('div');inputControls.className='input-controls';
@@ -226,7 +227,7 @@ async function speak(cmd:Command){
   current.onended=release;current.onpause=release;current.onerror=()=>{release();commandStatus.error(status,'Voice playback failed');events.push({kind:'voice-error',src,message:current.error?.message});};await current.play();
  }catch(e){done();if(epoch===speechEpoch){ducks.delete('speech');musicLevel();commandStatus.error(status,`Voice unavailable: ${(e as Error).message}`);notify(`Voice unavailable: ${(e as Error).message}`);}events.push({kind:'voice-error',message:String(e)});}
 }
-function loading(label:string,boot=false){const t=windowBox({title:'Cinco Identity Generator 2.5',x:boot?221:221,y:boot?70:209,w:526,h:boot?362:157,className:'boot',id:'loader'});
+function loading(label:string,boot=false){const t=windowBox({title:'Cinco Identity Generator 2.5',x:boot?221:221,y:boot?70:209,w:526,h:boot?362:157,className:boot?'boot intro':'boot',id:'loader'});
  if(boot){const art=document.createElement('div');art.className='identity-art';art.innerHTML=`<svg viewBox="0 0 140 180" aria-label="Wireframe identity"><defs><pattern id="grid" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" fill="none" stroke="#49b6c9" stroke-width=".65"/></pattern><clipPath id="head"><path d="M35 174L40 142 31 120 22 92 24 50Q28 10 70 6Q112 10 116 50L118 92 109 120 100 142 105 174Z"/></clipPath></defs><path d="M35 174L40 142 31 120 22 92 24 50Q28 10 70 6Q112 10 116 50L118 92 109 120 100 142 105 174Z" fill="#146884"/><rect width="140" height="180" fill="url(#grid)" clip-path="url(#head)"/><path d="M70 7Q34 82 70 172M70 7Q105 82 70 172M24 70Q70 94 116 70M28 110Q70 130 112 110" stroke="#60c5cd" fill="none" stroke-width=".6"/></svg>`;t.content.append(art);const brand=document.createElement('div');brand.className='brand';brand.textContent='Cinco Identity Generator 2.5';t.content.append(brand);}
  const p=document.createElement('div');p.className='progress';p.innerHTML='<i></i>';t.content.append(p);const l=document.createElement('div');l.className='loading-label';l.textContent=label;t.content.append(l);return t;
 }
