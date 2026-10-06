@@ -18,15 +18,20 @@ export function mobileFrame(o:Frame,s:Workspace):Frame{
   w=Math.min(280,s.width*.76);h=Math.min(w*.85+36,available);
   x=8+(s.width-w-16)*Math.max(0,Math.min(1,o.x/660));
   y=s.top+(available-h)*Math.max(0,Math.min(1,(o.y-68)/210));
- }else if(/portrait/.test(c)){
-  w=Math.min(o.w,landscape?250:s.width*.72);h=Math.min(w*.85+36,available);
+ }else if(/portrait/.test(c)&&landscape){
+  w=Math.min(o.w,250);h=Math.min(w*.85+36,available);
   x=8+(s.width-w-16)*Math.max(0,Math.min(1,o.x/650));
-  y=s.top+(available-h)*(landscape?.35:.65)+Math.min(24,o.y/12);
+  y=s.top+(available-h)*.35+Math.min(24,o.y/12);
  }else{
-  h=Math.min(o.h,Math.max(160,available-(landscape?0:70)));
-  w=Math.min(o.w,s.width*.7,Math.max(200,h*.62));
-  x=8+(s.width-w-16)*Math.max(0,Math.min(1,o.x/680));
-  y=s.top+Math.max(0,Math.min(available-h,o.y*.3));
+  // A phone has height to spare: keep the footage's own shape (videos stretch to
+  // fill) and grow it to the screen width or the computer, whichever comes first.
+  const chrome=29,aspect=o.w/Math.max(1,o.h-chrome);
+  h=Math.min(o.h*(landscape?1:1.6),available);w=(h-chrome)*aspect;
+  if(w>s.width-16){w=s.width-16;h=w/aspect+chrome;}
+  w=Math.max(w,Math.min(200,s.width-16));
+  x=8+(s.width-w-16)*Math.max(0,Math.min(1,o.x/(960-o.w||1)));
+  // Portraits sit low so the dancer they overlap keeps its head and torso in view.
+  y=s.top+(available-h)*(/portrait/.test(c)?1:Math.max(0,Math.min(1,o.y/(540-o.h||1))));
  }
  return clampFrame({...o,x,y,w,h},s);
 }

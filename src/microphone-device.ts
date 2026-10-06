@@ -42,23 +42,26 @@ export class MicrophoneDevices{
   let expected=resolveMicrophone(this.devices,this.selected);
   if(this.selected!=='default'&&!expected){existing?.getTracks().forEach(t=>t.stop());throw Error(`Selected microphone is disconnected: ${this.savedLabel||this.selected}. Use the gear to choose a connected microphone.`);}
   const cached=existing?.getAudioTracks().find(t=>t.readyState==='live');
-  if(cached&&expected&&microphoneMatches(cached,expected))return existing!;
+  if(cached&&(this.systemDefault()||expected&&microphoneMatches(cached,expected)))return existing!;
   existing?.getTracks().forEach(t=>t.stop());
-  // Even the default alias is an exact constraint. Never delegate an unspecified choice.
+  // Where the default alias exists it is an exact constraint. Never delegate an unspecified choice.
   const selected=this.selected;
-  const opened=await this.media.getUserMedia({audio:microphoneConstraints(expected?.deviceId||selected)});
+  const opened=await this.media.getUserMedia({audio:microphoneConstraints(this.systemDefault()?'':expected?.deviceId||selected)});
   try{
    // First-time permission reveals device names. Keep that same stream open:
    // stopping and reopening it makes Bluetooth startup happen twice.
    if(!expected?.deviceId||!expected.label){await this.refresh();expected=resolveMicrophone(this.devices,selected);}
    const track=opened.getAudioTracks()[0];
    if(selected!==this.selected)throw Error('Microphone selection changed. Try again.');
+   if(track&&this.systemDefault()){this.verified=track.label||'Default input';this.verifiedId=track.getSettings().deviceId||'';this.render();return opened;}
    if(!track||!expected||!microphoneMatches(track,expected))throw Error(`Microphone mismatch: requested ${expected?.label||this.savedLabel||'default input'}, but the browser opened ${track?.label||'an unidentified input'}. Select your headphones by name. Recording was not started.`);
    this.verified=track.label;this.verifiedId=expected.deviceId;this.render();return opened;
   }catch(error){opened.getTracks().forEach(t=>t.stop());throw error;}
  }
+ // Safari and Firefox expose no "default" alias; there the system default is the unconstrained input.
+ private systemDefault(){return this.selected==='default'&&!this.devices.some(d=>d.deviceId==='default');}
  async refresh(){
-  try{this.devices=(await this.media.enumerateDevices()).filter(d=>d.kind==='audioinput');this.message='';if(resolveMicrophone(this.devices,this.selected)?.deviceId!==this.verifiedId)this.verified='';}
+  try{this.devices=(await this.media.enumerateDevices()).filter(d=>d.kind==='audioinput');this.message='';if(this.systemDefault()?!this.devices.some(d=>d.deviceId===this.verifiedId):resolveMicrophone(this.devices,this.selected)?.deviceId!==this.verifiedId)this.verified='';}
   catch{this.message='Microphone devices unavailable. Check browser permission.';}
   this.render();
  }

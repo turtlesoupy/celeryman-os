@@ -111,10 +111,12 @@ try{
  assert((await mediaCalls()).some(c=>!!c.audio),'Start prepares the microphone without blocking on permission');
  assert.equal(await page.locator('.launch').count(),0);
  await page.keyboard.down('Space');
- await page.waitForFunction(()=>document.querySelector('.command-status-label')?.textContent?.includes('Microphone input failed'));
+ await page.waitForFunction(()=>document.querySelector('.command-status-label')?.textContent?.includes('Microphone blocked'));
  await page.keyboard.up('Space');
  assert((await mediaCalls()).some(c=>!!c.audio),'Holding Record requests the microphone');
- assert.match(await page.locator('.command-status-label').innerText(),/Microphone input failed/);
+ assert.match(await page.locator('.command-status-label').innerText(),/Microphone blocked/);
+ assert.equal(await page.locator('.input-settings .activity-details[open]').count(),1,'A failed microphone opens the debug window with its details');
+ await page.keyboard.press('Escape');
  assert.equal(await page.evaluate(()=>localStorage.getItem('cinco-name')),'Camera identity');
  await page.evaluate(()=>(window as any).cinco.reset());
  await page.getByRole('button',{name:'Camera identity',exact:true}).waitFor();

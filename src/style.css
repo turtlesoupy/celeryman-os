@@ -92,7 +92,7 @@
 @keyframes identity-open{0%,100%{background:#000080;color:#fff}45%{background:#fff;color:#000080}}
 @media(prefers-reduced-motion:reduce){.identity-opening .identity-icon[aria-pressed=true] span{animation:none}}
 .launch .buttons{justify-content:center;margin-top:18px}.launch .start{min-width:112px;padding:6px 22px}.launch .launch-status{font-size:11px;text-align:center;margin:6px 0 0}.launch-status:empty{display:none}
-.identity-upload .content{padding:16px 20px;overflow:auto;font-size:13px}.identity-upload p{margin:0 0 10px}.photo-stage{height:164px;background:#fffef7;border:2px inset #ddd;display:grid;place-items:center;overflow:hidden}.photo-placeholder svg{width:64px;height:64px;image-rendering:pixelated}.photo-stage .identity-preview,.photo-stage .camera-preview{display:block;width:100%;height:100%;max-height:160px;object-fit:contain;filter:none}.camera-preview{transform:scaleX(-1)}
+.identity-upload .content{padding:16px 20px;overflow:auto;font-size:13px}.identity-upload p{margin:0 0 10px}.photo-stage{position:relative;height:164px;background:#fffef7;border:2px inset #ddd;display:grid;place-items:center;overflow:hidden}.photo-placeholder svg{width:64px;height:64px;image-rendering:pixelated}.photo-stage .identity-preview,.photo-stage .camera-preview{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;filter:none}.camera-preview{transform:scaleX(-1)}
 .photo-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.photo-actions button{padding:5px 9px;font-size:12px}.identity-name{display:flex;align-items:center;gap:16px;margin:12px 0}.identity-name input{min-width:0;flex:1;width:100%;border:2px inset #ddd;background:#fff;padding:5px}.identity-upload .photo-status{font-size:11px;line-height:1.4;min-height:30px}.identity-upload .buttons{display:flex;justify-content:flex-end;gap:8px}.identity-upload .buttons button{min-width:76px}
 .mobile .launch .content{padding:18px 16px}.mobile .launch .buttons{display:flex}.mobile .identity-icon{font-size:12px;min-height:82px}.mobile .identity-group{padding:10px 4px}.mobile .identity-icons{gap:2px}.mobile .launch h1{font-size:21px}.mobile .launch .note{font-size:11px}.mobile .launch .start{min-width:130px}.mobile .identity-upload .content{padding:14px}.mobile .identity-name input{font-size:16px;min-height:44px}.mobile .identity-upload .photo-status{font-size:12px}.mobile .identity-upload .photo-actions{gap:6px}.mobile .identity-upload .photo-actions button{font-size:12px;padding:6px 8px}
 
@@ -120,7 +120,8 @@
 .input-activity .command-status{padding:0}
 .input-activity .command-status-line{align-items:center;font:9px/11px Arial,Helvetica,sans-serif;color:#555}
 .input-activity .command-status-label{order:1;flex:0 1 auto;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.input-activity .command-status-label:empty,.input-activity .command-status-time{display:none}
+/* The strip shows only the suggestion; status text appears only when it replaces it. */
+.input-activity .command-status:not(.failed) .command-status-label,.input-activity .command-status-time{display:none}
 .input-suggestion{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#555}
 .input-suggestion .say-touch,.mobile .input-suggestion .say-key{display:none}.mobile .input-suggestion .say-touch{display:inline}
 .input-activity .command-status.failed .input-suggestion{display:none}
@@ -128,7 +129,7 @@
 .input-activity .command-status.busy .command-status-label:before{color:#555;animation:none}
 .terminal:has(.input-activity.has-error) .mic-settings,.terminal:has(.input-activity.has-warning) .mic-settings,.terminal:has(.input-activity.mic-blocked) .mic-settings{outline:1px solid #800000}
 .input-activity.mic-blocked .command-status:not(.busy) .input-suggestion{display:none}
-.input-activity.mic-blocked .command-status:not(.busy) .command-status-label{max-width:100%;flex:1;color:#842c22}
+.input-activity.mic-blocked .command-status:not(.busy) .command-status-label{display:block;max-width:100%;flex:1;color:#842c22}
 .input-settings .content{overflow:auto}
 .input-settings .settings-actions{position:static;display:flex;flex-wrap:wrap;gap:6px;max-width:none;max-height:none;padding:8px 0 0;border:0;background:none;box-shadow:none;font-size:11px}
 .input-settings .settings-actions button{font-size:11px;padding:4px 8px}

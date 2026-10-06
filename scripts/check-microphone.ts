@@ -36,4 +36,12 @@ const firstMedia={addEventListener(){},enumerateDevices:async()=>permitted?[inpu
 const fresh=new MicrophoneDevices(()=>{},()=>false,firstMedia,{getItem:()=>null,setItem(){}});
 assert.equal(await fresh.open(),firstStream);assert.equal(firstOpens,1);
 assert.equal(firstStream.getAudioTracks()[0].readyState,'live');
-console.log('Microphone checks passed: default resolution, exact constraints, stale stream replacement, warm reuse, default change, wrong-device rejection, disconnected selection.');
+// Safari has no "default" alias and rejects an exact "default" request without prompting.
+let safariPermitted=false;const iphone=input('iphone','iPhone Microphone','iphone'),airpods=input('airpods','AirPods','airpods');
+const safariStream=stream(airpods);let safariConstraints:MediaTrackConstraints|undefined;
+const safariMedia={addEventListener(){},enumerateDevices:async()=>safariPermitted?[iphone,airpods]:[input('','','')],getUserMedia:async(c:MediaStreamConstraints)=>{safariConstraints=c.audio as MediaTrackConstraints;if(safariConstraints.deviceId)throw new DOMException('No default','OverconstrainedError');safariPermitted=true;return safariStream;}} as unknown as MediaDevices;
+const safari=new MicrophoneDevices(()=>{},()=>false,safariMedia,{getItem:()=>null,setItem(){}});
+assert.equal(await safari.open(),safariStream);assert.equal(safariConstraints!.deviceId,undefined);
+assert.equal(await safari.open(safariStream),safariStream);
+let safariLabel='';safari.subscribe(label=>{safariLabel=label;});assert.equal(safariLabel,'AirPods');
+console.log('Microphone checks passed: default resolution, exact constraints, stale stream replacement, warm reuse, default change, wrong-device rejection, disconnected selection, Safari system default.');

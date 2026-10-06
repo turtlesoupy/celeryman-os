@@ -1,3 +1,4 @@
+import {downloadBlob,shareableFile,shareFile} from './save-media';
 import {loopBuffer,preloadAudio,speechBus} from './audio';
 
 // Snapshot layout once: moving or resizing the live window cannot distort an export.
@@ -107,17 +108,21 @@ async function recordVideoWindow(win:HTMLElement,video:HTMLVideoElement,signal:A
 
 export function installVideoSave(win:HTMLElement,video:HTMLVideoElement,notify:(message:string)=>void){
  const button=win.querySelector<HTMLButtonElement>('.close')!;button.textContent='Save';button.setAttribute('aria-label','Save video with audio');button.tabIndex=0;
- let controller:AbortController|undefined;
+ let controller:AbortController|undefined,ready:File|undefined;
  win.addEventListener('windowclose',()=>controller?.abort());
  button.addEventListener('click',async event=>{
   event.stopImmediatePropagation();if(controller)return;
+  // The export outlives Safari's tap allowance; a second tap opens the share sheet.
+  if(ready){const file=ready;ready=undefined;button.textContent='Save';try{if(await shareFile(file))notify('Saved video with its audio loop.');}catch(error){notify(error instanceof Error?error.message:'Video could not be saved.');}return;}
   controller=new AbortController();const timeout=window.setTimeout(()=>controller?.abort(Error('Export timed out. Please retry.')),180_000);
   button.disabled=true;button.textContent='Saving';
   try{
-   const blob=await exportVideoWindow(win,video,controller.signal,message=>{button.textContent=message;button.title=`Saving video: ${message}`;}),url=URL.createObjectURL(blob),link=document.createElement('a');
-   link.href=url;link.download=`${(win.getAttribute('aria-label')||'cinco').replace(/[^a-z0-9-]+/gi,'-')}.${blob.type.includes('mp4')?'mp4':'webm'}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),60_000);
-   notify('Saved video with its audio loop.');
+   const blob=await exportVideoWindow(win,video,controller.signal,message=>{button.textContent=message;button.title=`Saving video: ${message}`;});
+   const name=`${(win.getAttribute('aria-label')||'cinco').replace(/[^a-z0-9-]+/gi,'-')}.${blob.type.includes('mp4')?'mp4':'webm'}`,file=new File([blob],name,{type:blob.type});
+   if(!shareableFile(file)){downloadBlob(blob,name);notify('Saved video with its audio loop.');}
+   else if(await shareFile(file))notify('Saved video with its audio loop.');
+   else{ready=file;notify('Video ready. Tap Save to add it to Photos.');}
   }catch(error){if(win.isConnected)notify(error instanceof Error?error.message:'Video could not be saved.');}
-  finally{clearTimeout(timeout);controller=undefined;button.disabled=false;button.textContent='Save';button.title='';}
+  finally{clearTimeout(timeout);controller=undefined;button.disabled=false;button.textContent=ready?'Tap to save':'Save';button.title='';}
  },{capture:true});
 }

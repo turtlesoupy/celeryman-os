@@ -21,6 +21,7 @@ import {advanceDirector,directorOwnsTurn,requestsPerformance,resolveLocally,type
 import {costumes,motions} from './dances';
 import {revealVideoWindow} from './video-presentation';
 import {installVideoSave} from './video-export';
+import {shareableFile,shareFile} from './save-media';
 // Fast generation is the default; use /?fastPath=0 for the anchored control.
 const fastPath=new URLSearchParams(location.search).get('fastPath')!=='0';
 // Compare streaming explicitly while full-recording transcription is the control.
@@ -160,7 +161,12 @@ function dancer(character:string,o:Partial<W>={},variant='',url?:string,deferPla
  mediaStatusCleanup.set(v,()=>{done();cancelReveal();});
  v.addEventListener('error',()=>{done();cancelReveal();if(!v.isConnected)return;t.win.style.visibility='';commandStatus.error(status,'Video playback failed. Try the command again.');t.content.textContent='Sequence unavailable. Open controls to regenerate.';events.push({kind:'media-error',url:v.src});});if(!deferPlayback)void v.play().catch((error:Error)=>{if(!v.isConnected||error.name==='AbortError')return;done();cancelReveal();t.win.style.visibility='';t.content.textContent='Sequence unavailable. Try the command again.';commandStatus.error(status,`Video playback failed: ${error.message}`);});return t;
 }
-function portrait(character:string){return dancer(character,{title:'',x:125,y:62,w:375,h:332,menu:character==='celery'?'Celery Man':character==='oyster'?'Celery Man':'Tayne',blue:true,className:'portrait'},character+'-face');}
+function portrait(character:string){
+ const t=dancer(character,{title:'',x:125,y:62,w:375,h:332,menu:character==='celery'?'Celery Man':character==='oyster'?'Celery Man':'Tayne',blue:true,className:'portrait'},character+'-face');
+ // Phones cannot set them side by side, so the dancer stays in front of the portrait.
+ if(compact)[...desktop.querySelectorAll<HTMLElement>('.window:not(.portrait):not(.terminal):has(video)')].sort((a,b)=>Number(a.style.zIndex)-Number(b.style.zIndex)).forEach(win=>{win.style.zIndex=String(++topZ);});
+ return t;
+}
 function sequenceMusicSource(character:string,source=videoSource(character)){
  return ['celery','oyster','tayne','chaos'].includes(character)?`/media/original/music-${character}.wav`:source;
 }
@@ -278,7 +284,10 @@ function showPrintout(){
  const actions=document.createElement('div');actions.className='print-actions';t.content.append(actions);
  const print=document.createElement('button');print.className='classic-button';print.textContent='Print…';print.disabled=!openPrintDialog;const ready=openPrintDialog;
  print.onclick=()=>{try{ready?.();}catch(e){notify(`Print dialog unavailable: ${(e as Error).message}`);}};actions.append(print);
- const save=document.createElement('button');save.className='classic-button';save.textContent='Save image';save.onclick=()=>{const a=document.createElement('a');a.href=job.image;a.download=`${job.character}-smiling.png`;a.click();};actions.append(save);
+ const save=document.createElement('button');save.className='classic-button';save.textContent='Save image';const name=`${job.character}-smiling.png`;
+ // Fetch ahead so the tap itself can open the phone's share sheet (Save Image goes to Photos).
+ let file:File|undefined;void fetch(job.image).then(r=>r.ok?r.blob():Promise.reject()).then(blob=>{file=new File([blob],name,{type:blob.type||'image/png'});},()=>{});
+ save.onclick=()=>{if(file&&shareableFile(file))void shareFile(file).catch(()=>{});else{const a=document.createElement('a');a.href=job.image;a.download=name;a.click();}};actions.append(save);
 }
 function showNsfw(confirmed=false){
  clearWindows();
@@ -618,7 +627,7 @@ async function startRecording(){
   const samples=new Float32Array(meter.fftSize);let peak=0;const began=performance.now();
   const interval=window.setInterval(()=>{meter.getFloatTimeDomainData(samples);const rms=Math.sqrt(samples.reduce((sum,v)=>sum+v*v,0)/samples.length);peak=Math.max(peak,rms);if(recordButton.dataset.state==='recording')commandStatus.phase(status,rms>.005?'Recording…':'Speak now · recording');},100);
   current.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
-  current.onerror=()=>{commandStatus.error(status,'Microphone recording failed. Try again.');stopRecording();};
+  current.onerror=()=>{commandStatus.error(status,'Microphone recording failed. Try again.');stopRecording();openInputSettings();};
   current.onstop=async()=>{
    clearInterval(interval);source.disconnect();meter.disconnect();
    if(recorder===current){duckForMicrophone(false);setMicState('idle');}
@@ -633,7 +642,9 @@ async function startRecording(){
   };
   current.onstart=()=>{if(!recordingRequested||recordingCancelled||recordingRun!==run||!commandStatus.current(status))return;events.push({kind:'microphone-ready',requestId,openingMs:performance.now()-openingAt,time:performance.now()});commandStatus.phase(status,'Speak now · recording');setMicState('recording');};
   current.start();
- }catch(e){duckForMicrophone(false);setMicState('idle');commandStatus.error(status,microphoneBlocked(e)?'Microphone blocked by the browser.':`Microphone unavailable: ${(e as Error).message||microphone.label}. Use the gear to choose a microphone.`);}
+ }catch(e){duckForMicrophone(false);setMicState('idle');commandStatus.error(status,microphoneBlocked(e)?'Microphone blocked by the browser.':`Microphone unavailable: ${(e as Error).message||microphone.label}. Use the gear to choose a microphone.`);
+  // A mic that cannot open needs the device picker and error details, not just a status line.
+  if(recordingRun===run)openInputSettings();}
  finally{recordingStarting=false;}
 }
 function stopRecording(){recordingRequested=false;const current=recorder;clearTimeout(stopRecordingTimer);if(current?.state==='recording')stopRecordingTimer=window.setTimeout(()=>{if(current.state==='recording')current.stop();},150);}
@@ -662,7 +673,7 @@ recordButton.addEventListener('lostpointercapture',event=>releaseRecordPointer(e
 recordButton.addEventListener('contextmenu',event=>event.preventDefault());
 function openInputSettings(){
  const existing=desktop.querySelector<HTMLElement>('.input-settings');
- if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);return;}
+ if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);existing.querySelector<HTMLDetailsElement>('.activity-details')!.open||=activity.classList.contains('has-error')||activity.classList.contains('has-warning');return;}
  const t=windowBox({title:'Microphone',x:250,y:160,w:460,h:260,className:'input-settings'});
  t.win.setAttribute('role','dialog');microphone.mount(t.content);
  const details=document.createElement('details');details.className='activity-details';

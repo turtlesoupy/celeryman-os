@@ -40,11 +40,13 @@ export function launchIdentity(options:LauncherOptions){
    const button=document.createElement('button');button.type='button';button.className='identity-icon';button.setAttribute('aria-pressed',String(person.id===selected.id));
    button.innerHTML=icon(presets.includes(person)?person.id:'custom');const label=document.createElement('span');label.textContent=person.label;button.append(label);
    void fillPortraitIcon(button,person.id,person.thumbnail);
-   button.onclick=()=>{
+   button.onclick=event=>{
     selected=person;
     // Keep the button mounted so the second click can produce a native dblclick.
     icons.querySelectorAll<HTMLButtonElement>('[aria-pressed]').forEach(other=>other.setAttribute('aria-pressed',String(other===button)));
     options.select(selected);button.focus();
+    // Touch has no comfortable double-tap, so a single tap opens the identity on mobile.
+    if(options.compact||(event as PointerEvent).pointerType==='touch')void startSelected(true);
    };
    button.ondblclick=()=>void startSelected(true);icons.append(button);
   }
