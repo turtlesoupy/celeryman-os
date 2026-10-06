@@ -45,6 +45,8 @@ let mode:'live'|'reference'='live';
 const liveAssets:Record<string,{url:string;image?:string;playbackRate?:number}>={};
 let generationEpoch=0;
 let topZ=10,winCount=0,typing=0,started=false,sound=true,run=0,replaying=false;
+// Live play holds the phone until the user reacts to the censored Tayne, like Paul does.
+let awaitingCall=false;
 let timers:number[]=[],music:MusicLoop|null=null,speech:HTMLAudioElement|null=null;
 let streamedSpeech:StreamingSpeech|undefined;
 let speechEpoch=0,musicEpoch=0,commandEpoch=0;
@@ -281,7 +283,7 @@ function showPrintout(){
 function showNsfw(confirmed=false){
  clearWindows();
  const t=dancer('tayne',{x:confirmed?345:596,y:confirmed?16:18,w:282,h:501},'tayne-sway');
- const video=t.content.querySelector('video');if(video&&confirmed)video.dataset.sequence='Tayne / NSFW preview';
+ const video=t.content.querySelector('video');if(video&&confirmed){video.dataset.sequence='Tayne / NSFW preview';censor(t.win,{cols:22,rows:40,crisp:true});}
  // The source cuts to Paul's reaction after the warning. Keep that unseen reveal
  // represented by the same retro censor window until the phone interrupts it.
  const banner=windowBox({title:'Cinco Identity Generator 2.5',x:confirmed?218:325,y:278,w:525,h:162,className:'nsfw',id:'nsfw-banner'});
@@ -289,7 +291,7 @@ function showNsfw(confirmed=false){
 }
 function showCall(call?:{caller:string;line:string}){
  const banner=desktop.querySelector('[data-id="nsfw-banner"]');if(banner)removeWindow(banner);
- const preview=desktop.querySelector<HTMLVideoElement>('video[data-sequence="Tayne / NSFW preview"]');if(preview)preview.dataset.sequence='tayne';
+ const preview=desktop.querySelector<HTMLVideoElement>('video[data-sequence="Tayne / NSFW preview"]');if(preview){preview.dataset.sequence='tayne';uncensor(preview);}
  desktop.classList.add('alarm');const main=desktop.querySelector<HTMLElement>('.window:not(.terminal)');if(main)placeWindow(main,{x:345,y:16,w:282,h:503});
  const t=windowBox({title:'',blue:true,menu:'INCOMING CALL',x:398,y:126,w:150,h:225,className:'phone',id:'call'});
  t.content.innerHTML='<div class="number">545-33448</div><div class="phone-screen"><svg class="receiver" viewBox="0 0 64 70" aria-label="Telephone"><path d="M15 14Q8 39 47 53" fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/><path d="M14 9L22 20M42 49L53 52" stroke="white" stroke-width="14" stroke-linecap="round"/><path d="M30 7L27 16M39 11L32 19M44 19L35 23" stroke="white" stroke-width="3"/></svg><div class="label">WIFE</div></div>';
@@ -321,7 +323,7 @@ function chaos(error='ERROR: BETA TAYNE\nIMPROPER CODING'){
 }
 function presentSequence(show:()=>void,ms:number){const status=feedbackToken,order=commandEpoch,token=run;commandStatus.job(status,'presentation','Opening sequence');schedule(()=>{if(order===commandEpoch&&token===run)show();commandStatus.jobDone(status,'presentation');},ms);}
 async function apply(cmd:Command,acknowledged=false){
- const preparingAt=performance.now();events.push({kind:'action',...cmd,time:performance.now()});if(cmd.action==='reaction')return;clearTimers();if(desktop.classList.contains('finale')&&cmd.action!=='attention')clearWindows();if(cmd.action!=='attention')context.pending='';
+ const preparingAt=performance.now();events.push({kind:'action',...cmd,time:performance.now()});if(cmd.action==='reaction'){if(awaitingCall){awaitingCall=false;showCall();}return;}awaitingCall=false;clearTimers();if(desktop.classList.contains('finale')&&cmd.action!=='attention')clearWindows();if(cmd.action!=='attention')context.pending='';
  if(!acknowledged&&!['greeting','engage','director'].includes(cmd.action)&&(cmd.audio||['celery','attention','custom','dialogue'].includes(cmd.action)))void speak(cmd);
  // Start the spoken introduction as soon as it is ready; the two dance clips
  // prepare behind it instead of blocking all visible response for ~20 seconds.
@@ -403,7 +405,7 @@ async function apply(cmd:Command,acknowledged=false){
  if(cmd.action==='flarhgunnstow'){showFlower();void type(cmd.response);}
  if(cmd.action==='repeat'){context.pending='repeat';void type(cmd.response);}
  if(cmd.action==='nsfw'){context.pending='nsfw';showNsfw();}
- if(cmd.action==='confirm'){showNsfw(true);schedule(showCall,6900);}
+ if(cmd.action==='confirm'){showNsfw(true);if(replaying)schedule(showCall,6900);else{awaitingCall=true;schedule(()=>{if(awaitingCall){awaitingCall=false;showCall();}},20000);}}
  if(cmd.action==='call')showCall();
  if(cmd.action==='chaos')chaos();
  if(cmd.action==='custom')return customDance(cmd);
@@ -463,11 +465,12 @@ async function tabooReveal(cmd:Command){
  return true;
 }
 /** The reveal is never shown plainly: a coarse, blurred mosaic of a clothed render. */
-function censor(win:HTMLElement){
+function censor(win:HTMLElement,{cols=14,rows=26,crisp=false}={}){
  const v=win.querySelector('video');if(!v)return;
- const canvas=document.createElement('canvas');canvas.width=14;canvas.height=26;canvas.className='mosaic';v.classList.add('censored');v.after(canvas);
+ const canvas=document.createElement('canvas');canvas.width=cols;canvas.height=rows;canvas.className=crisp?'mosaic crisp':'mosaic';v.classList.add('censored');v.after(canvas);
  const ctx=canvas.getContext('2d')!;const draw=()=>{if(!canvas.isConnected)return;if(v.readyState>=2)ctx.drawImage(v,0,0,canvas.width,canvas.height);requestAnimationFrame(draw);};requestAnimationFrame(draw);
 }
+function uncensor(v:HTMLVideoElement){v.classList.remove('censored');if(v.nextElementSibling?.classList.contains('mosaic'))v.nextElementSibling.remove();}
 /** "Delete the internet": the desktop empties, then restores itself. */
 function deleteDesktop(){
  const windows=[...desktop.querySelectorAll<HTMLElement>('.window:not(.terminal)')];
@@ -551,7 +554,7 @@ async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,rec
  }catch(e){if(token===run&&commandStatus.current(status))commandStatus.error(status,(e as Error).name==='TimeoutError'?'Transcription timed out. Settings → Replay mic to check the recording.':(e as Error).message);throw e;}
 }
 
-function reset(){generationOverlay.clear();microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','flash');delete desktop.dataset.mode;clearWindows(false);started=false;replaying=false;setMicState('idle');fit();launch();}
+function reset(){awaitingCall=false;generationOverlay.clear();microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','flash');delete desktop.dataset.mode;clearWindows(false);started=false;replaying=false;setMicState('idle');fit();launch();}
 async function begin(){scriptGuide.reset();void unlockAudio();if(streamingTranscription){warmTranscription();void prepareTranscription(speechBus().context).catch(()=>{});}void api('warm',{profile,name:identity}).catch(()=>{});clearWindows(false);started=true;fit();terminal();void readyMicrophone().catch(()=>{});await dispatch('Good morning','boot');}
 function launch(){
  const existing=desktop.querySelector<HTMLElement>('.launch');if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);return;}

@@ -139,6 +139,9 @@
 .input-diagnostics .script-guide-title{font-size:9px;color:#555}
 .input-diagnostics .script-guide-quote{font-size:17px}
 .input-diagnostics .command-error{background:#e3e3e3;border:1px inset #fff;color:#333;font-size:11px;margin-top:6px}
+/* The computer stays reachable above every sequence window; its own dialogs sit above it, the scanlines over both. */
+.terminal{z-index:8990!important}
+.input-settings,.identity-upload,.launch{z-index:8995!important}
 .mobile .terminal{z-index:9001!important}
 
 .mobile .input-controls{height:48px;padding:2px 4px;gap:4px}
@@ -168,6 +171,7 @@
 .window .content:has(.mosaic){position:relative}
 video.censored{opacity:0}
 .mosaic{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;filter:blur(3px) saturate(1.2)}
+.mosaic.crisp{filter:none}
 .phone .label.long{font-size:17px;letter-spacing:1px;text-align:center;padding:0 4px}
 .desktop[data-mode="ghost"] video{filter:blur(1.2px) brightness(1.15);opacity:.82}
 .desktop[data-mode="vhs"] video{filter:saturate(2.4) hue-rotate(-28deg) contrast(1.35)}
