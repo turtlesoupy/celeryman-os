@@ -14,7 +14,8 @@
 
 .name-card svg{width:72%;height:62%;display:block}.free-dancer{height:330px}
 
-.window-dash{display:block;width:17px;height:6px;border:2px outset #eee;background:#bbb}.terminal .window-dash{width:9px;height:4px;border-width:1px}.window-menu{position:absolute;left:0;top:27px;background:#eee;border:2px outset white;z-index:100;display:grid}.window-menu button{background:#eee;border:0;text-align:left;font-size:13px;padding:6px 14px}.window-menu button:hover{background:#12218b;color:white}
+.titlebar .sys{display:grid;place-items:center;flex:none;padding:0;border:1px solid;border-color:white #8b8b8b #8b8b8b white;background:#ededed}
+.window-dash{display:block;width:17px;height:6px;border:2px outset #eee;background:#bbb}.terminal .window-dash{width:9px;height:4px;border-width:1px}
 .titlebar,.menu-line,.terminal .drive,.terminal .status{filter:blur(.22px)}.titlebar{font-weight:600}.desktop{background:#00a8bf}.desktop:after{background:repeating-linear-gradient(0deg,#00000005 0px,#00000005 1px,#ffffff02 1px,#ffffff02 3px)}
 .desktop{background:#00a6d0}.titlebar,.menu-line{filter:blur(.4px)}.terminal .content{filter:blur(.15px)}
 
@@ -65,7 +66,7 @@
 .mobile .titlebar button{min-width:32px;padding:2px 4px}.mobile .titlebar .close{width:46px}.mobile .titlebar .sys{width:32px}
 .mobile .resize{width:28px;height:28px;background:linear-gradient(135deg,transparent 66%,#888 67%,transparent 71%,#888 74%,transparent 78%)}
 .mobile .window.minimized{height:40px!important}.mobile .menu-line{font-size:14px;height:25px}
-.mobile .window-menu{top:35px;font-size:15px}.mobile .window-menu button{min-height:44px}
+
 .mobile .launch .content{padding:14px 16px;font-size:14px}.mobile .launch h1{font-size:22px}.mobile .launch p{font-size:13px}
 .mobile .launch label{margin:10px 0}.mobile .launch input,.mobile .launch select{font-size:16px;min-height:44px;width:62%;max-width:62%}
 .mobile .classic-button{min-height:44px;font-size:14px;padding:8px 12px}
