@@ -52,3 +52,9 @@ gcloud run services logs read celeryman --project=celeryman-os --region=us-centr
 ```
 
 Rollback changes the application image, not stored media. Do not delete the media bucket when rolling back. No public write permission is granted to that bucket.
+
+## Edge caching
+
+The Worker explicitly caches the public HTML shell for 30 seconds at the edge (`max-age=0, s-maxage=30`), retaining the full query string in its cache key. Hashed `/assets/` bundles cache for a year; fonts have shorter browser/edge TTLs. Cookies, authorization, cross-origin requests and ranges bypass shared cache lookup. APIs, streamed speech, uploaded/generated media, errors and responses setting cookies remain uncached. Cached HTML still loads and executes the browser app normally; identity/session state and API requests are not embedded into the shell. If personalized data is ever rendered into HTML, return `private, no-store` for that response.
+
+Startup archives hashed bundles in `/data/cache/static-assets`; the origin can serve older bundles to cached HTML and already-open tabs after deployment. Keep that archive when rolling revisions. `X-Cinco-Cache` reports HIT, MISS or BYPASS. Run `node scripts/check-edge-cache.mjs` to verify policy.

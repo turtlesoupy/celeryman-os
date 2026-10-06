@@ -40,12 +40,17 @@ const server=createServer(async(req,res)=>{
   const relative=pathname==='/'?'index.html':pathname.slice(1);
   // Only ship and serve the desktop bundle. No source, reference files or voice lab.
   if(relative!=='index.html'&&!relative.startsWith('assets/')&&!relative.startsWith('fonts/')){res.writeHead(404);res.end('Not found');return;}
-  const file=path.resolve(root,relative);
+  let file=path.resolve(root,relative);
   if(!file.startsWith(root+path.sep)){res.writeHead(404);res.end();return;}
+  // Retain hashed assets across deployments so a cached shell/open tab stays valid.
+  if(relative.startsWith('assets/')&&!await fs.access(file).then(()=>true,()=>false)){
+   const archive=path.resolve('cache/static-assets'),fallback=path.resolve(archive,relative.slice(7));
+   if(!fallback.startsWith(archive+path.sep)){res.writeHead(404);res.end();return;}file=fallback;
+  }
   const stat=await fs.stat(file);if(!stat.isFile())throw Error('Not a file');
   res.setHeader('Content-Type',types[path.extname(file)]||'application/octet-stream');
   res.setHeader('Content-Length',stat.size);
-  res.setHeader('Cache-Control',relative==='index.html'?'no-store':'private, max-age=31536000, immutable');
+  res.setHeader('Cache-Control',relative==='index.html'?'public, max-age=0, s-maxage=30, must-revalidate':relative.startsWith('assets/')?'public, max-age=31536000, immutable':'public, max-age=3600, s-maxage=86400');
   if(req.method==='HEAD'){res.end();return;}
   const stream=createReadStream(file);stream.on('error',()=>res.destroy());res.on('close',()=>stream.destroy());stream.pipe(res);
  }catch(error){console.error('Request failed:',error instanceof Error?error.message:'Unknown error');if(res.headersSent){res.destroy();return;}res.writeHead(500);res.end('Request failed');}

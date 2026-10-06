@@ -1,5 +1,5 @@
-import paulPhoto from '../reference/paul-rudd.png';
-import thomasPhoto from '../reference/thomas-dimson.jpg';
+import paulIcon from './assets/paul-icon.png?inline';
+import thomasIcon from './assets/thomas-icon.png?inline';
 
 // A small indexed bitmap, like a custom Windows icon: keep enough warm shades
 // to recognize faces, alongside the gray, navy and teal desktop colors.
@@ -9,7 +9,7 @@ const palette=[
  [112,64,40],[176,120,88],[224,168,136],[255,224,192],
 ];
 const bayer=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
-const presets=new Map<string,Promise<string>>();
+
 let portraitClipId=0;
 
 export function bitmapPortrait(source:CanvasImageSource,width:number,height:number,crop?:number[]){
@@ -43,18 +43,7 @@ export function bitmapPortrait(source:CanvasImageSource,width:number,height:numb
 export async function fillPortraitIcon(button:HTMLElement,id:string,thumbnail?:string){
  try{
   let bitmap=thumbnail;
-  if(!bitmap&&(id==='paul'||id==='thomas')){
-   let pending=presets.get(id);
-   if(!pending){
-    pending=(async()=>{
-     const photo=new Image();photo.src=id==='paul'?paulPhoto:thomasPhoto;await photo.decode();
-     return bitmapPortrait(photo,photo.naturalWidth,photo.naturalHeight,id==='thomas'?[.12,.10,.60,.80]:[0,0,1,1]);
-    })();
-    presets.set(id,pending);
-    void pending.catch(()=>presets.delete(id));
-   }
-   bitmap=await pending;
-  }
+  if(!bitmap)bitmap=id==='paul'?paulIcon:id==='thomas'?thomasIcon:undefined;
   if(!bitmap||!/^data:image\/png;base64,/.test(bitmap))return;
   const ns='http://www.w3.org/2000/svg',clipId=`identity-photo-${++portraitClipId}`;
   const clip=document.createElementNS(ns,'clipPath'),outline=document.createElementNS(ns,'path');
