@@ -15,7 +15,7 @@ import {createScriptGuide} from './script-guide';
 import {StreamingSpeech} from './streaming-speech';
 import {TranscriptionTurn,prepareTranscription,warmTranscription,closeTranscription} from './streaming-transcription';
 import hatTrack from './hat-track.json';
-import {routeAudio,unlockAudio,onAudioBlocked,preparePlayAndRecord,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop,playDesktopDoubleClick} from './audio';
+import {routeAudio,unlockAudio,onAudioBlocked,preparePlayAndRecord,Clip,preloadAudio,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop,playDesktopDoubleClick} from './audio';
 import {sketch,scripted,type Command,type Context} from './protocol';
 import {advanceDirector,directorOwnsTurn,requestsPerformance,resolveLocally,type Beat,type ModeEffect,type Offer} from './director';
 import {costumes,motions} from './dances';
@@ -49,7 +49,7 @@ let generationEpoch=0;
 let topZ=10,winCount=0,typing=0,started=false,sound=true,run=0,replaying=false;
 // Live play holds the phone until the user reacts to the censored Tayne, like Paul does.
 let awaitingCall=false;
-let timers:number[]=[],music:MusicLoop|null=null,speech:HTMLAudioElement|null=null;
+let timers:number[]=[],music:MusicLoop|null=null,speech:Clip|null=null;
 let streamedSpeech:StreamingSpeech|undefined;
 let speechEpoch=0,musicEpoch=0,commandEpoch=0;
 let pendingMusic:{source:string;token:number}|undefined;
@@ -57,7 +57,7 @@ let finishSpeechStatus:(()=>void)|undefined;
 let mediaStatusId=0;const mediaStatusCleanup=new WeakMap<HTMLVideoElement,()=>void>();
 const ducks=new Set<string>();
 function musicLevel(){if(music)music.volume=sound?(ducks.size?.16:.6):0;}
-function stopSpeech(){finishSpeechStatus?.();finishSpeechStatus=undefined;speechEpoch++;streamedSpeech?.stop();streamedSpeech=undefined;speech?.pause();ducks.delete('speech');musicLevel();}
+function stopSpeech(){finishSpeechStatus?.();finishSpeechStatus=undefined;speechEpoch++;streamedSpeech?.stop();streamedSpeech=undefined;speech?.stop();speech=null;ducks.delete('speech');musicLevel();}
 let lastPrint:Printout|undefined;let openPrintDialog:(()=>void)|undefined;
 let recorder:MediaRecorder|null=null,stream:MediaStream|null=null;
 let microphoneTurn:TranscriptionTurn|undefined;
@@ -180,8 +180,9 @@ function syncSequenceMusic(){
   .sort((a,b)=>Number(b.style.zIndex)-Number(a.style.zIndex))[0];
  const video=front?.querySelector<HTMLVideoElement>('video[data-music-source]');
  const intros=[...desktop.querySelectorAll<HTMLVideoElement>('video.intro-video')];
- intros.forEach(intro=>intro.muted=!sound||intro!==video);
- if(intros.some(intro=>!intro.muted&&!intro.paused))ducks.add('intro');else ducks.delete('intro');
+ // Intro pictures stay muted; their soundtrack plays as a Clip (see showTayne).
+ intros.forEach(intro=>intro.muted=true);
+ if(intros.some(intro=>intro.dataset.voice==='playing'&&!intro.paused))ducks.add('intro');else ducks.delete('intro');
  musicLevel();
  if(video){musicFor(video.dataset.character!,video.dataset.musicSource);return;}
  if(desktop.querySelector('.free-dancer'))return;
@@ -221,11 +222,11 @@ async function speak(cmd:Command){
  }
  try{const src=`/media/original/${cmd.audio}.wav${cmd.audio==='engaged'?'?v=2':''}`;
   await speechOutputReady();
-  if(epoch!==speechEpoch||!sound)return;const current=new Audio(src);routeAudio(current);speech=current;current.volume=1;
+  if(epoch!==speechEpoch||!sound)return;const current=new Clip(src);speech=current;
   const release=()=>{done();if(epoch===speechEpoch){ducks.delete('speech');musicLevel();}};
   events.push({kind:'audio',src,text:cmd.response,spokenText:cmd.audio?(spokenLines[cmd.audio]||cmd.response):cmd.response,time:performance.now()});
-  current.onplaying=()=>{if(epoch!==speechEpoch)return;commandStatus.job(status,key,'Speaking');ducks.add('speech');musicLevel();events.push({kind:'audio-playing',src,text:cmd.response,spokenText:cmd.audio?(spokenLines[cmd.audio]||cmd.response):cmd.response,time:performance.now()});};
-  current.onended=release;current.onpause=release;current.onerror=()=>{release();commandStatus.error(status,'Voice playback failed');events.push({kind:'voice-error',src,message:current.error?.message});};await current.play();
+  void current.done.then(release);
+  await current.play(()=>{if(epoch!==speechEpoch)return;commandStatus.job(status,key,'Speaking');ducks.add('speech');musicLevel();events.push({kind:'audio-playing',src,text:cmd.response,spokenText:cmd.audio?(spokenLines[cmd.audio]||cmd.response):cmd.response,time:performance.now()});});
  }catch(e){done();if(epoch===speechEpoch){ducks.delete('speech');musicLevel();commandStatus.error(status,`Voice unavailable: ${(e as Error).message}`);notify(`Voice unavailable: ${(e as Error).message}`);}events.push({kind:'voice-error',message:String(e)});}
 }
 function loading(label:string,boot=false){const t=windowBox({title:'Cinco Identity Generator 2.5',x:boot?221:221,y:boot?70:209,w:526,h:boot?362:157,className:boot?'boot intro':'boot',id:'loader'});
@@ -236,7 +237,11 @@ function showCelery(){clearWindows();terminal();dancer('celery');portrait('celer
 function showTayne(followupReady?:Promise<boolean>){
  clearWindows();const intro=dancer('tayne',{x:482,y:14},'tayne-intro',undefined,true),v=intro.content.querySelector('video');musicFor('tayne');if(!v)return;
  const status=feedbackToken,key='tayne-introduction';commandStatus.job(status,key,'Playing Tayne introduction');
- const release=()=>{ducks.delete('intro');musicLevel();};let transitioned=false;
+ // iOS refuses an unmuted video started long after the tap, so the picture plays
+ // muted and its soundtrack plays as a clip on the already-unlocked audio output.
+ const voice=mode==='live'&&sound?new Clip(v.currentSrc||v.src):undefined;if(voice)void preloadAudio(voice.url).catch(()=>{});
+ const release=()=>{voice?.stop();delete v.dataset.voice;ducks.delete('intro');musicLevel();};let transitioned=false;
+ if(voice)void voice.done.then(()=>{delete v.dataset.voice;syncSequenceMusic();});
  const advance=async()=>{if(transitioned||!intro.win.isConnected)return;transitioned=true;release();
   if(followupReady){commandStatus.job(status,key,'Preparing Tayne choreography');const ready=await followupReady;if(!intro.win.isConnected)return;if(!ready){commandStatus.jobDone(status,key);return;}}
   commandStatus.jobDone(status,key);
@@ -244,7 +249,7 @@ function showTayne(followupReady?:Promise<boolean>){
   schedule(()=>{clearWindows();for(let i=0;i<7;i++)dancer('tayne',{x:233+i*36,y:28+[0,25,55,73,52,22,-2][i],w:282,h:502},'tayne-squat');},3700);
  };
  v.loop=false;
- if(mode==='live'){routeAudio(v);v.muted=!sound;v.addEventListener('playing',syncSequenceMusic);v.addEventListener('ended',advance,{once:true});}
+ if(mode==='live'){v.muted=true;v.addEventListener('playing',()=>{if(voice)void voice.play(()=>{v.dataset.voice='playing';syncSequenceMusic();}).catch(()=>{});},{once:true});v.addEventListener('playing',syncSequenceMusic);v.addEventListener('ended',advance,{once:true});}
  else {v.muted=true;v.addEventListener('playing',()=>{void speak({action:'tayne',response:"Hey Paul. I'm Tayne, your latest dancer. I can't wait to entertain you.",audio:'intro'});schedule(advance,4800);},{once:true});}
  v.addEventListener('pause',release);v.addEventListener('error',()=>{release();commandStatus.jobDone(status,key);});
  const previousCleanup=mediaStatusCleanup.get(v);mediaStatusCleanup.set(v,()=>{previousCleanup?.();commandStatus.jobDone(status,key);release();});
@@ -585,7 +590,7 @@ function launch(){
  });
  t.win.addEventListener('windowclose',()=>clearTimeout(warmTimer));
 }
-async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};started=true;fit();replaying=true;terminal();let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){const a=new Audio('/media/original/keyboard.wav');routeAudio(a);if(sound)void a.play();}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
+async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};started=true;fit();replaying=true;terminal();let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){if(sound)void new Clip('/media/original/keyboard.wav').play().catch(()=>{});}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
 async function fileBase64(blob:Blob){return new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(blob);});}
 // Keep the input device active for the session; Space only gates recording.
 function readyMicrophone():Promise<MediaStream>{
@@ -704,4 +709,4 @@ Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src
 // Verify with Turnstile while the identity launcher is open, off the command path.
 prewarmSession();
 launch();
-for(const name of ['okay','yes','greeting','hat','flower']){const audio=new Audio(`/media/original/${name}.wav`);audio.preload='auto';audio.load();}
+for(const name of ['okay','yes','greeting','hat','flower'])void preloadAudio(`/media/original/${name}.wav`).catch(()=>{});

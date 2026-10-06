@@ -39,7 +39,7 @@ const dialog=page.getByRole('dialog',{name:'New identity'});
 try{
  await fs.mkdir('output/identity-launcher',{recursive:true});
  await page.goto('http://127.0.0.1:5173');
- await page.waitForFunction(()=>document.querySelectorAll('.identity-icon svg image').length===2);
+ await page.waitForFunction(()=>document.querySelectorAll('.identity-icon svg image').length===4);
  const bitmap=await page.locator('.identity-icon svg image').first().getAttribute('href');
  assert(bitmap?.startsWith('data:image/png;base64,'),'Preset portraits must render from processed photos');
  const bitmapInfo=await page.evaluate(async source=>{
@@ -56,7 +56,7 @@ try{
  assert.equal(await page.getByLabel('Experience',{exact:true}).count(),0);
  assert.equal(await page.getByLabel('Microphone input').count(),0);
  assert.equal(await page.locator('.launch .buttons button').count(),1);
- assert.equal((await page.locator('.launch .content').innerText()).replace(/\s+/g,' ').trim(),'Identity Paul Rudd Thomas Dimson Upload Start');
+ assert.equal((await page.locator('.launch .content').innerText()).replace(/\s+/g,' ').trim(),'Identity Paul Rudd Thomas Dimson Ian Silber Joey Flynn Upload Start');
  await page.getByRole('button',{name:'Thomas Dimson',exact:true}).click();
  assert.equal(await page.getByRole('button',{name:'Thomas Dimson',exact:true}).getAttribute('aria-pressed'),'true');
  assert.equal(await page.evaluate(()=>(window as any).cinco.state().started),false,'Single click only selects an identity');

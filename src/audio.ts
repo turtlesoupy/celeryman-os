@@ -114,6 +114,22 @@ export function loopBuffer(input:AudioBuffer,generated:boolean){
  }
  return output;
 }
+/** One-shot clip on the shared output. Unlike a new <audio> element, a buffer
+ * source needs no tap of its own on iOS once the context is running. */
+export class Clip{
+ private node?:AudioBufferSourceNode;
+ private stopped=false;
+ private finish!:()=>void;
+ readonly done=new Promise<void>(resolve=>{this.finish=resolve;});
+ constructor(readonly url:string){}
+ async play(onStart?:()=>void){
+  const buffer=await preloadAudio(this.url);if(this.stopped)return;
+  await unlockAudio();if(this.stopped)return;
+  const b=bus(),node=b.context.createBufferSource();node.buffer=buffer;node.connect(b.output);
+  node.onended=()=>{node.disconnect();this.finish();};this.node=node;node.start();onStart?.();
+ }
+ stop(){this.stopped=true;try{this.node?.stop();}catch{/* Not started yet. */}this.node?.disconnect();this.finish();}
+}
 export class MusicLoop {
  private node?:AudioBufferSourceNode;
  private gain=bus().context.createGain();
