@@ -19,6 +19,12 @@ export function duckForMicrophone(recording:boolean){
  gain.cancelScheduledValues(now);
  gain.setTargetAtTime(recording?.4:1,now,.025);
 }
+/** Safari 16.4+: settle the audio session for talking and listening up front, so
+ * opening the microphone mid-session does not reconfigure (and interrupt) output. */
+export function preparePlayAndRecord(){
+ const session=(navigator as Navigator&{audioSession?:{type:string}}).audioSession;
+ if(session&&session.type!=='play-and-record')session.type='play-and-record';
+}
 // iOS interrupts this context when the microphone opens and refuses resume()
 // outside a tap. Every tap retries it, so a later reply is not silenced.
 const blockedListeners=new Set<()=>void>();

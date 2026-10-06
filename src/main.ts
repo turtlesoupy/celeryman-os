@@ -15,7 +15,7 @@ import {createScriptGuide} from './script-guide';
 import {StreamingSpeech} from './streaming-speech';
 import {TranscriptionTurn,prepareTranscription,warmTranscription,closeTranscription} from './streaming-transcription';
 import hatTrack from './hat-track.json';
-import {routeAudio,unlockAudio,onAudioBlocked,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop,playDesktopDoubleClick} from './audio';
+import {routeAudio,unlockAudio,onAudioBlocked,preparePlayAndRecord,speechBus,duckForMicrophone,startOutputCapture,stopOutputCapture,MusicLoop,playDesktopDoubleClick} from './audio';
 import {sketch,scripted,type Command,type Context} from './protocol';
 import {advanceDirector,directorOwnsTurn,requestsPerformance,resolveLocally,type Beat,type ModeEffect,type Offer} from './director';
 import {costumes,motions} from './dances';
@@ -575,7 +575,7 @@ function launch(){
   doubleClick:()=>{if(sound)playDesktopDoubleClick();},
   start:async(person,win,feedback)=>{
    // Start authorizes microphone setup; begin keeps the input warm for Space.
-   const ready=unlockAudio(),token=run;void microphone.refresh();
+   preparePlayAndRecord();const ready=unlockAudio(),token=run;void microphone.refresh();
    await Promise.all([ready,feedback]);
    if(token!==run||!win.isConnected)return;
    mode='live';profile=person.id;identity=person.name;context.identity=identity;
