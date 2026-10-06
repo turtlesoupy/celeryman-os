@@ -169,10 +169,11 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
    // Browsers follow generation over Server-Sent Events on the instance doing
    // the work; scripts and older clients still receive a single JSON reply.
    const wantsEvents=String(req.headers.accept||'').includes('text/event-stream');
+   // Paid provider work requires a Turnstile-backed session (when configured),
+   // checked before validation so unverified callers learn nothing else.
+   if(['/api/command','/api/generate','/api/profile','/api/transcribe','/api/transcribe/session','/api/voice/stream','/api/voice'].includes(req.url))requireSession(req);
    if(b.profile!==undefined&&(typeof b.profile!=='string'||!/^(paul|thomas|[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/.test(b.profile)))throw Error('Invalid profile');
    if(req.url==='/api/generate'&&(typeof b.character!=='string'||!/^[-\w .]{1,80}$/.test(b.character)||!['base','face','engaged','hat','flarhgunnstow','intro','sway','smile'].includes(b.variant)))throw Error('Invalid sequence');
-   // Paid provider work requires a Turnstile-backed session (when configured).
-   if(['/api/command','/api/generate','/api/profile','/api/transcribe','/api/transcribe/session','/api/voice/stream','/api/voice'].includes(req.url))requireSession(req);
    if(req.url==='/api/session'){res.setHeader('Cache-Control','no-store');result=await startSession(b.turnstileToken,req);}
    else if(req.url==='/api/health')result={ok:true,providers:{openai:!!process.env.OPENAI_API_KEY,fal:!!process.env.FAL_KEY}};
    else if(req.url==='/api/client-event'){
