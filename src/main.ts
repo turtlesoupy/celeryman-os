@@ -33,12 +33,13 @@ const desktop=document.querySelector<HTMLElement>('.desktop')!;installDesktopLin
 const dock=document.createElement('div');dock.className='dock settings-actions';
 dock.innerHTML='<button type="button" class="classic-button replay-mic" disabled>Replay mic</button><button type="button" class="classic-button" data-tool="identity">Identity</button><button type="button" class="classic-button" data-tool="replay">Sketch</button><button type="button" class="classic-button" data-tool="printout">Printout</button><button type="button" class="classic-button" data-tool="sound">Sound on</button><button type="button" class="classic-button" data-tool="reset">Reset</button>';
 const inputControls=document.createElement('div');inputControls.className='input-controls';
-inputControls.innerHTML='<button type="button" class="classic-button record-button" aria-label="Record" aria-pressed="false" aria-describedby="record-hint"><i class="record-light" aria-hidden="true"></i><span>Record</span></button><span id="record-hint" class="record-hint"></span><span class="input-microphone">Default microphone</span><button type="button" class="classic-button mic-settings" aria-label="Microphone settings" title="Microphone settings"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 0h4v3l2-2 3 3-2 2h3v4h-3l2 2-3 3-2-2v3H6v-3l-2 2-3-3 2-2H0V6h3L1 4l3-3 2 2z"/><path fill="#ededed" d="M6 5h4v1h1v4h-1v1H6v-1H5V6h1z"/></svg></button>';
+inputControls.innerHTML='<button type="button" class="classic-button record-button" aria-label="Record" aria-pressed="false" aria-describedby="record-hint"><i class="record-light" aria-hidden="true"></i><span>Record</span></button><span id="record-hint" class="record-hint"></span><form class="command-form" autocomplete="off"><input class="command-input" type="text" maxlength="200" enterkeyhint="send" aria-label="Type a command" placeholder="Or type a command…"><button type="submit" class="classic-button command-send" disabled>Send</button></form><button type="button" class="classic-button mic-settings" aria-label="Microphone settings" title="Microphone settings"><svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 0h4v3l2-2 3 3-2 2h3v4h-3l2 2-3 3-2-2v3H6v-3l-2 2-3-3 2-2H0V6h3L1 4l3-3 2 2z"/><path fill="#ededed" d="M6 5h4v1h1v4h-1v1H6v-1H5V6h1z"/></svg></button>';
 const recordButton=inputControls.querySelector<HTMLButtonElement>('.record-button')!,settingsButton=inputControls.querySelector<HTMLButtonElement>('.mic-settings')!;
+const commandForm=inputControls.querySelector<HTMLFormElement>('.command-form')!,commandInput=commandForm.querySelector<HTMLInputElement>('.command-input')!,sendButton=commandForm.querySelector<HTMLButtonElement>('.command-send')!;
 const activity=document.createElement('div');activity.className='input-activity';
 const diagnostics=document.createElement('div');diagnostics.className='input-diagnostics';
 const generationOverlay=createGenerationOverlay();
-let micBlocked=false;
+let micBlocked=false,micMissing=false;
 const commandStatus=createCommandStatus(activity,()=>micBlocked?microphoneBlockedStatus:'',diagnostics);let feedbackToken=0;
 const scriptGuide=createScriptGuide(diagnostics,activity.querySelector<HTMLElement>('.command-status-line')!);
 let profile=safeStorage.getItem('cinco-profile')||'paul',identity=safeStorage.getItem('cinco-name')||'Paul';
@@ -67,7 +68,9 @@ let recordingPointer:number|undefined,recordingCancelled=false;
 let stopRecordingTimer:number|undefined,lastMicUrl='',lastMicPlayback:HTMLAudioElement|undefined;
 let microphoneOpening:{token:number;promise:Promise<MediaStream>}|undefined;
 // A denied permission persists until the user changes site settings; say so up front.
-function setMicBlocked(blocked:boolean){micBlocked=blocked;activity.classList.toggle('mic-blocked',blocked);}
+function setMicBlocked(blocked:boolean){micBlocked=blocked;syncNoMic();}
+// Without a usable mic, the suggestion and the field say to type instead.
+function syncNoMic(){activity.classList.toggle('no-mic',micBlocked||micMissing);commandInput.placeholder=micBlocked?'Mic blocked · type…':micMissing?'No mic · type…':'Or type a command…';}
 void navigator.permissions?.query({name:'microphone' as PermissionName}).then(permission=>{permission.onchange=()=>{if(permission.state==='denied')setMicBlocked(true);else if(micBlocked){setMicBlocked(false);if(started)void readyMicrophone().catch(()=>{});}};}).catch(()=>{});
 const microphone=new MicrophoneDevices(()=>{stream?.getTracks().forEach(t=>t.stop());stream=null;if(started)void readyMicrophone().catch(()=>{});},()=>recordingStarting||recorder?.state==='recording');
 // Diagnostic history for window.cinco; bounded because partial transcripts arrive constantly.
@@ -597,8 +600,8 @@ function readyMicrophone():Promise<MediaStream>{
  const token=run;if(microphoneOpening?.token===token)return microphoneOpening.promise;
  const promise=microphone.open(stream).then(opened=>{
   if(token!==run){opened.getTracks().forEach(t=>t.stop());throw new DOMException('Session ended','AbortError');}
-  stream=opened;setMicBlocked(false);return opened;
- }).catch(error=>{if(microphoneBlocked(error))setMicBlocked(true);throw error;}).finally(()=>{if(microphoneOpening?.promise===promise){microphoneOpening=undefined;if(!recordingRequested)setMicState('idle');}});
+  stream=opened;micMissing=false;setMicBlocked(false);return opened;
+ }).catch(error=>{if(microphoneBlocked(error))setMicBlocked(true);else if(error instanceof DOMException&&['NotFoundError','NotSupportedError'].includes(error.name)){micMissing=true;syncNoMic();}throw error;}).finally(()=>{if(microphoneOpening?.promise===promise){microphoneOpening=undefined;if(!recordingRequested)setMicState('idle');}});
  microphoneOpening={token,promise};if(!recordingRequested)inputControls.querySelector('.record-hint')!.textContent='Opening mic…';return promise;
 }
 async function startRecording(){
@@ -649,9 +652,10 @@ async function startRecording(){
   };
   current.onstart=()=>{if(!recordingRequested||recordingCancelled||recordingRun!==run||!commandStatus.current(status))return;events.push({kind:'microphone-ready',requestId,openingMs:performance.now()-openingAt,time:performance.now()});commandStatus.phase(status,'Speak now · recording');setMicState('recording');};
   current.start();
- }catch(e){duckForMicrophone(false);setMicState('idle');commandStatus.error(status,microphoneBlocked(e)?'Microphone blocked by the browser.':`Microphone unavailable: ${(e as Error).message||microphone.label}. Use the gear to choose a microphone.`);
+ }catch(e){duckForMicrophone(false);setMicState('idle');commandStatus.error(status,microphoneBlocked(e)?'Microphone blocked by the browser.':`Microphone unavailable: ${(e as Error).message||microphone.label}. Use the gear to choose a microphone, or type a command.`);
   // A mic that cannot open needs the device picker and error details, not just a status line.
-  if(recordingRun===run)openInputSettings();}
+  // Without any usable mic, typing is the way forward.
+  if(recordingRun===run){if(micBlocked||micMissing)commandInput.focus();else openInputSettings();}}
  finally{recordingStarting=false;}
 }
 function stopRecording(){recordingRequested=false;const current=recorder;clearTimeout(stopRecordingTimer);if(current?.state==='recording')stopRecordingTimer=window.setTimeout(()=>{if(current.state==='recording')current.stop();},150);}
@@ -662,6 +666,7 @@ function setMicState(state:'idle'|'opening'|'recording'){
  recordButton.setAttribute('aria-label',state==='idle'?'Record (press and hold)':state==='opening'?'Opening microphone (wait to speak)':'Recording (release to send)');
  recordButton.querySelector('span')!.textContent=state==='opening'?'Opening…':state==='recording'?'Recording':'Record';
  inputControls.querySelector('.record-hint')!.textContent=state==='idle'?'':state==='opening'?'Wait for mic':pushToTalk?'Release Space':'Release to send';
+ syncSend();
 }
 recordButton.setAttribute('aria-label','Record (press and hold)');recordButton.setAttribute('aria-keyshortcuts','Space');recordButton.title='Hold Record or Space, wait for Speak now, then talk. Release to send.';
 recordButton.addEventListener('pointerdown',event=>{
@@ -691,14 +696,29 @@ function openInputSettings(){
  t.content.querySelector('select')?.focus();
 }
 settingsButton.onclick=openInputSettings;
-microphone.subscribe(label=>{const name=inputControls.querySelector<HTMLElement>('.input-microphone')!;name.textContent=label;name.title=label;settingsButton.title=`Microphone settings: ${label}`;});
+microphone.subscribe(label=>{settingsButton.title=`Microphone settings: ${label}`;});
+// Typing is the no-microphone path: it skips transcription and joins the same command pipeline.
+// Typed commands wait for the mic and any computing sequence; the field stays editable to type ahead.
+function syncSend(){
+ const busy=recordButton.dataset.state!=='idle'&&recordButton.dataset.state!==undefined?'Wait until recording ends':commandStatus.working()||generationOverlay.active()?'Wait for the sequence to finish':'';
+ sendButton.disabled=!!busy||!commandInput.value.trim();sendButton.title=busy;
+}
+commandInput.addEventListener('input',syncSend);commandStatus.subscribe(syncSend);
+commandForm.addEventListener('submit',event=>{
+ event.preventDefault();syncSend();const text=commandInput.value.trim();if(sendButton.disabled||!started)return;
+ commandInput.value='';syncSend();if(sound)void new Clip('/media/original/keyboard.wav').play().catch(()=>{});
+ // Phones keep the video visible by dropping the keyboard; desktops keep typing.
+ if(desktop.classList.contains('mobile'))commandInput.blur();else commandInput.focus();
+ void dispatch(text,'keyboard');
+});
 dock.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach(b=>b.onclick=()=>{switch(b.dataset.tool){case'identity':launch();break;case'printout':showPrintout();break;case'replay':void replay();break;case'reset':reset();break;case'sound':sound=!sound;b.textContent=sound?'Sound on':'Sound off';if(!sound)stopSpeech();musicLevel();syncSequenceMusic();break;}});
 addEventListener('keydown',e=>{
  if(e.key==='F1'){e.preventDefault();const settings=desktop.querySelector('.input-settings');if(settings)removeWindow(settings);else openInputSettings();return;}
  if(e.key==='Escape'){const settings=desktop.querySelector('.input-settings');if(settings){e.preventDefault();removeWindow(settings);}return;}
  const target=e.target instanceof Element?e.target:null;
  if(e.code!=='Space'||!started||target?.closest('input,textarea,select,[contenteditable="true"],.launch,.identity-upload,.input-settings')||target?.closest('button:not(.record-button)'))return;
- e.preventDefault();if(e.repeat||recordingRequested||recorder?.state==='recording')return;pushToTalk=true;void startRecording();
+ e.preventDefault();if(micBlocked||micMissing){commandInput.focus();return;}
+ if(e.repeat||recordingRequested||recorder?.state==='recording')return;pushToTalk=true;void startRecording();
 });
 addEventListener('keyup',e=>{if(e.code==='Space'&&pushToTalk){e.preventDefault();pushToTalk=false;stopRecording();}});
 function cancelHeldRecording(){if(pushToTalk||recordingPointer!==undefined){pushToTalk=false;recordingPointer=undefined;recordingCancelled=true;stopRecording();}}

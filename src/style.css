@@ -113,7 +113,13 @@
 .record-button[data-state=recording] .record-light{background:#c00000;border-color:#800000}
 .record-button[aria-pressed=true]{border-color:#777 #fff #fff #777;background:#d6d6d6}
 .record-hint{flex:none;font-size:9px;white-space:nowrap;color:#555}
-.input-microphone{flex:1;min-width:0;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+.command-form{display:flex;flex:1;min-width:0;margin:0}
+.command-input{flex:1;min-width:0;height:19px;padding:1px 4px;border:1px solid;border-color:#777 #fff #fff #777;border-radius:0;background:#fff;color:#111;font:10px Arial,Helvetica,sans-serif}
+.command-input::placeholder{color:#888}
+.command-form{gap:4px}.command-send{flex:none}
+/* Classic engraved disabled text, so Send clearly waits for a command. */
+.input-controls .command-send:disabled{color:#a8a8a8;text-shadow:1px 1px 0 #fff;background:#e3e3e3;border-color:#c9c9c9}
+.command-input:focus{outline:1px dotted #333;outline-offset:-3px}
 .input-controls .mic-settings{display:grid;place-items:center;width:20px;padding:2px;flex:none}
 .mic-settings svg{width:12px;height:12px}
 .input-activity{flex:none;height:14px;border-top:1px solid #fff;background:#e3e3e3;padding:1px 5px;color:#555}
@@ -123,13 +129,13 @@
 /* The strip shows only the suggestion; status text appears only when it replaces it. */
 .input-activity .command-status:not(.failed) .command-status-label,.input-activity .command-status-time{display:none}
 .input-suggestion{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#555}
-.input-suggestion .say-touch,.mobile .input-suggestion .say-key{display:none}.mobile .input-suggestion .say-touch{display:inline}
+.input-suggestion .say-touch,.input-suggestion .say-type,.mobile .input-suggestion .say-key{display:none}.mobile .input-suggestion .say-touch{display:inline}
+/* Without a usable mic the suggestion teaches typing instead. */
+.desktop .input-activity.no-mic .input-suggestion :is(.say-key,.say-touch){display:none}.desktop .input-activity.no-mic .input-suggestion .say-type{display:inline}
 .input-activity .command-status.failed .input-suggestion{display:none}
 .input-activity .command-status.failed .command-status-label{max-width:100%;flex:1}
 .input-activity .command-status.busy .command-status-label:before{color:#555;animation:none}
-.terminal:has(.input-activity.has-error) .mic-settings,.terminal:has(.input-activity.has-warning) .mic-settings,.terminal:has(.input-activity.mic-blocked) .mic-settings{outline:1px solid #800000}
-.input-activity.mic-blocked .command-status:not(.busy) .input-suggestion{display:none}
-.input-activity.mic-blocked .command-status:not(.busy) .command-status-label{display:block;max-width:100%;flex:1;color:#842c22}
+.terminal:has(.input-activity.has-error) .mic-settings,.terminal:has(.input-activity.has-warning) .mic-settings,.terminal:has(.input-activity.no-mic) .mic-settings{outline:1px solid #800000}
 .input-settings .content{overflow:auto}
 .input-settings .settings-actions{position:static;display:flex;flex-wrap:wrap;gap:6px;max-width:none;max-height:none;padding:8px 0 0;border:0;background:none;box-shadow:none;font-size:11px}
 .input-settings .settings-actions button{font-size:11px;padding:4px 8px}
@@ -148,7 +154,8 @@
 .mobile .input-controls{height:48px;padding:2px 4px;gap:4px}
 .mobile .input-controls .classic-button{height:44px;min-height:44px;font-size:12px;padding:4px}
 .mobile .record-button{min-width:87px}
-.mobile .record-hint,.mobile .input-microphone{font-size:10px}
+.mobile .record-hint{font-size:10px}
+.mobile .command-input{height:44px;font-size:16px}
 .mobile .input-controls .mic-settings{width:44px}
 .mobile .mic-settings svg{width:15px;height:15px}
 .mobile .input-activity{height:18px;padding:2px 5px}

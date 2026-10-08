@@ -23,7 +23,7 @@ export function createCommandStatus(parent:HTMLElement,idle=()=> 'Ready',details
  }
  const echo=element.querySelector<HTMLElement>('.command-status-echo')!,label=element.querySelector<HTMLElement>('.command-status-label')!,time=element.querySelector<HTMLElement>('.command-status-time')!,detail=element.querySelector<HTMLElement>('.command-status-detail')!;
  if(detailsParent!==parent)detailsParent.append(echo,detail,alert);
- let token=0,start=0,working=false,failed=false,phaseText='',completedAt=0,detailText='';
+ let onRender=()=>{},token=0,start=0,working=false,failed=false,phaseText='',completedAt=0,detailText='';
  const jobs=new Map<string,{text:string;since:number}>();
  function render(){
   const busy=!failed&&(working||jobs.size>0),now=performance.now();
@@ -35,12 +35,16 @@ export function createCommandStatus(parent:HTMLElement,idle=()=> 'Ready',details
   element.classList.toggle('waiting',busy&&waiting.length>0);
   if(busy&&waiting.length)time.textContent+=' · waiting';
   element.title=detailText+'\n'+(jobs.size?[...jobs.values()].map(job=>`${job.text}: ${((now-job.since)/1000).toFixed(1)}s`).join('\n'):label.textContent);
+  onRender();
  }
  function phase(id:number,text:string,inProgress=true){if(id!==token||failed)return;working=inProgress;phaseText=text;render();}
  window.setInterval(render,250);render();
  return {
   begin(text:string,heard='',prefix='Heard'){clearError();retryAction=undefined;token++;jobs.clear();failed=false;working=true;phaseText=text;start=performance.now();completedAt=0;element.classList.remove('failed');detailText='';echo.textContent=heard?`${prefix}: “${heard}”`:'';render();return token;},
   current:(id:number)=>id===token,
+  /** Recording, transcribing or interpreting: before the command's own jobs take over. */
+  working:()=>working&&!failed,
+  subscribe(listener:()=>void){onRender=listener;listener();},
   retry(id:number,action:()=>Promise<unknown>){if(id===token){retryAction=action;retry.classList.remove('hidden');}},
   echo(id:number,text:string,prefix='Heard'){if(id===token)echo.textContent=`${prefix}: “${text}”`;},
   detail(id:number,text:string){if(id===token){detailText=text;render();}},

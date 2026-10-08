@@ -9,7 +9,8 @@ export function createScriptGuide(parent:HTMLElement,inlineParent?:HTMLElement){
  parent.append(guide);
  const inline=document.createElement('span');inline.className='input-suggestion';inline.setAttribute('aria-label','Suggested line');inline.setAttribute('aria-live','polite');inlineParent?.prepend(inline);
  // Desktop users talk with Space; touch users hold the Record button.
- const key=document.createElement('span'),touch=document.createElement('span');key.className='say-key';key.textContent='Hold space';touch.className='say-touch';touch.textContent='Hold Record';
+ const key=document.createElement('span'),touch=document.createElement('span');key.className='say-key';key.textContent='Hold space and say';touch.className='say-touch';touch.textContent='Hold Record and say';
+ const typed=document.createElement('span');typed.className='say-type';typed.textContent='Type';
  const quote=guide.querySelector<HTMLElement>('.script-guide-quote')!,count=guide.querySelector<HTMLElement>('.script-guide-count')!;
  const normalize=(text:string)=>commandText(text).replace(/ /g,'');
  // After the sketch, rotate lines that show what the director can do.
@@ -22,7 +23,7 @@ export function createScriptGuide(parent:HTMLElement,inlineParent?:HTMLElement){
   const suggestion=text||encores[encore%encores.length];
   quote.textContent=`“${suggestion}”`;
   // Teach the input on the opening line; later lines are just the words.
-  if(index<=1)inline.replaceChildren('Suggestion: ',key,touch,` and say “${suggestion}”`);else inline.textContent=`Suggestion: ${suggestion}`;inline.title=`Suggested line: ${suggestion}`;
+  if(index<=1)inline.replaceChildren('Suggestion: ',key,touch,typed,` “${suggestion}”`);else inline.textContent=`Suggestion: ${suggestion}`;inline.title=`Suggested line: ${suggestion}`;
  }
  render();
  return {

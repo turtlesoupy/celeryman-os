@@ -1,5 +1,5 @@
 export type ServiceFailure={title:string;message:string;recovery:string;blocking:boolean;details:string;status?:string};
-export const microphoneBlockedStatus='Microphone blocked · allow it in your browser’s site settings';
+export const microphoneBlockedStatus='Microphone blocked · type a command, or allow the mic in site settings';
 export function describeServiceError(raw:string):ServiceFailure{
  const portrait=/^Portrait generation failed:/.test(raw),voice=/^Voice unavailable:/.test(raw),music=/^Music could not load/.test(raw);
  let message=raw.replace(/^(Portrait generation failed|Dance generation failed|Voice unavailable):\s*/,'');
@@ -11,7 +11,7 @@ export function describeServiceError(raw:string):ServiceFailure{
  else if(/timeout|timed out|taking too long/i.test(message)){title='Request timed out';explanation=/may still be rendering/i.test(message)?'Contact with the server was lost. Your dance may still be rendering.':'This part of the request took too long to finish.';recovery='Retry to reconnect or start another attempt.';}
  else if(/failed to fetch|load failed|network|connection refused|HTTP 50[234]|Lost contact/i.test(message)){title='Connection interrupted';explanation=/^Dance generation failed:/.test(raw)?'The server lost contact with the AI service while generating this dance.':'The browser could not reach the generation service. Your dance may still be rendering.';recovery='Check your connection, then retry.';}
  else if(/complete command/i.test(message)){title='Incomplete command';explanation=message;recovery='Hold Record or Space, wait for Speak now, then repeat the full command.';}
- else if(/microphone blocked/i.test(message)){title='Microphone blocked';explanation='The browser is not letting this site use the microphone.';recovery='Allow the microphone for this site in your browser’s site settings (usually the icon beside the address bar), then try again.';status=microphoneBlockedStatus;}
+ else if(/microphone blocked/i.test(message)){title='Microphone blocked';explanation='The browser is not letting this site use the microphone.';recovery='Type a command in the computer window instead, or allow the microphone for this site in your browser’s site settings (usually the icon beside the address bar), then try again.';status=microphoneBlockedStatus;}
  else if(/microphone|recording|no speech/i.test(message)){title='Microphone input failed';explanation=message;recovery='Use the gear to check your microphone or replay captured audio, then record again.';}
  else if(/video.*play|playback/i.test(message)){title='Video could not play';explanation='The video could not start. Other playing windows are unaffected.';recovery='Retry the command to reload the video.';}
  else if(/Generation failed|Dance generation failed/.test(raw)){title='Dance generation failed';explanation='The AI service could not generate this dance.';}

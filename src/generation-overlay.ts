@@ -28,6 +28,7 @@ export function createGenerationOverlay(){
     done(){if(epoch!==currentEpoch)return;jobs.delete(key);render();}
    };
   },
+  active:()=>jobs.size>0,
   clear(){epoch++;jobs.clear();render();}
  };
 }
