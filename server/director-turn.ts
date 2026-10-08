@@ -1,6 +1,6 @@
 import type OpenAI from 'openai';
 import type {Command,Context} from '../src/protocol.ts';
-import {MODE_EFFECTS,type ModeEffect,chaosBeat,emptyDirector,fallbackCall,interruptionDue,modeEffect,resolveLocally,tabooHasReveal,tabooStep,type Offer,type TabooKind} from '../src/director.ts';
+import {requestsPerformance,MODE_EFFECTS,type ModeEffect,chaosBeat,emptyDirector,fallbackCall,interruptionDue,modeEffect,resolveLocally,tabooHasReveal,tabooStep,type Offer,type TabooKind} from '../src/director.ts';
 import {routeIntent,type Route} from './intent-router.ts';
 import {logDiagnostic} from './diagnostics.ts';
 import {commandModel} from './intent-router.ts';
@@ -26,7 +26,8 @@ export async function directTurn(openai:OpenAI,text:string,context:Context,known
  // A ringing phone keeps ringing once through anything but an answer.
  if(d.call&&!['answer_call','dismiss_call'].includes(intent)&&d.call.rings<2)
   return {command:{action:'director',response:`Excuse me ${context.identity}. ${callerName(d.call.caller)} is still on the phone. It's a bigger emergency.`,beat:{kind:'call',caller:d.call.caller,rings:d.call.rings+1}}};
- if(intent==='new_character')return {plan:'new'};
+ // A performance request is never answered with a clarifying question.
+ if(intent==='new_character'||(intent==='dialogue'&&requestsPerformance(text)))return {plan:'new'};
  if(intent==='modify_current')return {plan:'modify'};
  if(intent==='pitch')return {command:pitch(route,d.pitches,keepEyewear,text)};
  if(intent==='taboo'){

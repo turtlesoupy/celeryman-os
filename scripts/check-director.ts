@@ -92,6 +92,9 @@ for(const [text,expect] of [['What are you, exactly?',/^dialogue$/],['Nice.',/^r
  await record('other beats',text,after(),expect);
 for(const [text,expect] of [['Make him evil.',/^taboo:repeat$/],['Delete the internet.',/^taboo:repeat$/],['Make Tayne fight Oyster.',/^taboo:repeat$/],['Take off his clothes.',/^taboo:repeat$/],['Make him really sexy.',/^taboo:repeat$/],['Show me my ex-girlfriend.',/^taboo:refuse$/]] as [string,RegExp][])
  await record('taboo',text,after(),expect);
+// Several named things are one combined performer, never a question.
+for(const [text,step] of [['Load up potato man carrot lacroix',sketch.length],['Load up potato man carrot lacroix',1],['Load up potato man carrot lacroix',7],['Show me a wolf dentist astronaut',sketch.length],['Add sequence banana hammock oyster dog',3],['Can I see disco grandma lobster lawyer?',sketch.length]] as [string,number][])
+ await record('mashup',text,after({scriptStep:step}),/^custom:new$/);
 // Misheard sketch lines while following the script still reach their cues.
 await record('sketch asr','Computer load of salary man please',after({scriptStep:1,director:emptyDirector(),character:'celery'}),/^celery$/);
 await record('sketch asr','Did you pick up the 43D3D3?',after({scriptStep:2,character:'celery'}),/^engage$/);

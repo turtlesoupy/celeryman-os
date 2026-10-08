@@ -11,3 +11,11 @@ analysis/
 benchmarks/recordings/
 benchmarks/generalization/recordings/
 benchmarks/timed-*/
+# Local test output, benchmark results and eval pages; deploys skip benchmarks/ and output/ too.
+output/
+benchmarks/
+public/*-eval/
+public/turbo-direct-test/
+public/voice-ab/
+public/image-ab/
+public/image-sweep/
