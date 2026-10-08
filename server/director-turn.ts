@@ -28,7 +28,8 @@ export async function directTurn(openai:OpenAI,text:string,context:Context,known
   return {command:{action:'director',response:`Excuse me ${context.identity}. ${callerName(d.call.caller)} is still on the phone. It's a bigger emergency.`,beat:{kind:'call',caller:d.call.caller,rings:d.call.rings+1}}};
  // A performance request is never answered with a clarifying question.
  if(intent==='new_character'||(intent==='dialogue'&&requestsPerformance(text)))return {plan:'new'};
- if(intent==='modify_current')return {plan:'modify'};
+ // With nothing on screen there is nothing to modify.
+ if(intent==='modify_current')return {plan:context.character?'modify':'new'};
  if(intent==='pitch')return {command:pitch(route,d.pitches,keepEyewear,text)};
  if(intent==='taboo'){
   const kind=tabooKinds.includes(route.tabooKind as TabooKind)?route.tabooKind as TabooKind:'harmful';

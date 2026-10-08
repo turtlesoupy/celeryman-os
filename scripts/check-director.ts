@@ -95,6 +95,9 @@ for(const [text,expect] of [['Make him evil.',/^taboo:repeat$/],['Delete the int
 // Several named things are one combined performer, never a question.
 for(const [text,step] of [['Load up potato man carrot lacroix',sketch.length],['Load up potato man carrot lacroix',1],['Load up potato man carrot lacroix',7],['Show me a wolf dentist astronaut',sketch.length],['Add sequence banana hammock oyster dog',3],['Can I see disco grandma lobster lawyer?',sketch.length]] as [string,number][])
  await record('mashup',text,after({scriptStep:step}),/^custom:new$/);
+// The first request after the greeting starts a new performer; nothing is on screen to modify.
+for(const text of ['Do a backflip','Make him dance faster','Show me some dance moves'])
+ await record('first turn',text,after({scriptStep:1,character:'',costume:undefined}),/^custom:new$/);
 // Misheard sketch lines while following the script still reach their cues.
 await record('sketch asr','Computer load of salary man please',after({scriptStep:1,director:emptyDirector(),character:'celery'}),/^celery$/);
 await record('sketch asr','Did you pick up the 43D3D3?',after({scriptStep:2,character:'celery'}),/^engage$/);

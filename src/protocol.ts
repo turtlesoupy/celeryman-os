@@ -43,7 +43,7 @@ function scriptedExact(text:string,c:Context):Command|null {
  if(/important work|ill get it later|ignore.*(call|phone)/.test(t))return {action:'chaos',response:'ERROR: BETA TAYNE\nIMPROPER CODING'};
  if(/nude|naked|nsfw/.test(t))return c.pending==='repeat'?{action:'nsfw',response:'This is not suitable for work.\nAre you sure?',audio:'nsfw'}:{action:'repeat',response:'Not computing. Please repeat.',audio:'repeat'};
  if(/good morning|^(boot|hello|hi)$/.test(t))return {action:'greeting',response:`Good morning ${c.identity}.\nWhat will your first sequence of the day be?`,audio:c.identity==='Paul'?'greeting':undefined};
- if(/print/.test(t))return {action:'print',response:'Okay.',audio:'print',target:/oyster/.test(t)?'oyster':c.character,costume:/oyster/.test(t)?undefined:c.costume};
+ if(/print/.test(t))return {action:'print',response:'Okay.',audio:'print',target:/oyster/.test(t)?'oyster':c.character||'celery',costume:/oyster/.test(t)?undefined:c.costume};
  if(/4\s*d|4d3|four.?d|kick up|dimensional/.test(t))return {action:'engage',response:'4d3d3d3 Engaged.',audio:'engaged'};
  if(/^(could (i|you) (see|show me) |show me |do |and |a )*(a )?hat wobble[?.! ]*$/.test(t))return {action:'hat',response:'HAT WOBBLE',audio:'hat'};
  if(/^(and |did |a |could i see |show me )*(flar[a-z]*|flower getting smelled)[?.! ]*$/.test(commandText(text)))return {action:'flarhgunnstow',response:'FLARHGUNNSTOW',audio:'flower'};

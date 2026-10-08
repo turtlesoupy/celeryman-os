@@ -43,7 +43,8 @@ let micBlocked=false,micMissing=false;
 const commandStatus=createCommandStatus(activity,()=>micBlocked?microphoneBlockedStatus:'',diagnostics);let feedbackToken=0;
 const scriptGuide=createScriptGuide(diagnostics,activity.querySelector<HTMLElement>('.command-status-line')!);
 let profile=safeStorage.getItem('cinco-profile')||'paul',identity=safeStorage.getItem('cinco-name')||'Paul';
-let context:Context={identity,character:'celery',pending:'',history:[]};
+// No performer is on screen until a command loads one; the first request must not inherit Celery Man.
+let context:Context={identity,character:'',pending:'',history:[]};
 let mode:'live'|'reference'='live';
 const liveAssets:Record<string,{url:string;image?:string;playbackRate?:number}>={};
 let generationEpoch=0;
@@ -515,7 +516,7 @@ async function prepareDance(character:string,variant:string,epoch:number,cmd?:Co
  }catch(e){const message=variant==='face'?`Portrait generation failed: ${(e as Error).message}`:`Dance generation failed: ${(e as Error).message}`;report('generation-error',message);if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{feed?.close();progress.done();commandStatus.jobDone(feedback,jobKey);}
 }
 async function customDance(cmd:Command){
- const term=terminal();term.classList.add('custom-terminal');const character=cmd.sequenceMode==='modify'?(cmd.target||context.character):cmd.label||'custom';
+ const term=terminal();term.classList.add('custom-terminal');const character=(cmd.sequenceMode==='modify'&&(cmd.target||context.character))||cmd.label||'custom';
  placeWindow(term,{x:60,y:378,w:362,h:129,className:'terminal custom-terminal'});
  void type(`Computing ${character}...`);const epoch=++generationEpoch;
  if(!await prepareDance(character,'base',epoch,cmd))return false;
@@ -573,7 +574,7 @@ async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,rec
  }catch(e){if(token===run&&commandStatus.current(status))commandStatus.error(status,(e as Error).name==='TimeoutError'?'Transcription timed out. Settings → Replay mic to check the recording.':(e as Error).message);throw e;}
 }
 
-function reset(){awaitingCall=false;generationOverlay.clear();microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};desktop.classList.remove('alarm','flash');delete desktop.dataset.mode;clearWindows(false);started=false;replaying=false;setMicState('idle');fit();launch();}
+function reset(){awaitingCall=false;generationOverlay.clear();microphoneTurn?.cancel();microphoneTurn=undefined;closeTranscription();commandStatus.clear();scriptGuide.reset();run++;generationEpoch++;commandEpoch++;musicEpoch++;stopSpeech();recordingRequested=false;clearTimeout(stopRecordingTimer);if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;duckForMicrophone(false);clearTimers();typing++;music?.stop();music=null;ducks.clear();context={identity,character:'',pending:'',history:[]};desktop.classList.remove('alarm','flash');delete desktop.dataset.mode;clearWindows(false);started=false;replaying=false;setMicState('idle');fit();launch();}
 async function begin(){scriptGuide.reset();void unlockAudio();if(streamingTranscription){warmTranscription();void prepareTranscription(speechBus().context).catch(()=>{});}void api('warm',{profile,name:identity}).catch(()=>{});clearWindows(false);started=true;fit();terminal();void readyMicrophone().catch(()=>{});await dispatch('Good morning','boot');}
 function launch(){
  const existing=desktop.querySelector<HTMLElement>('.launch');if(existing){existing.classList.remove('minimized');existing.style.zIndex=String(++topZ);return;}
@@ -593,7 +594,7 @@ function launch(){
  });
  t.win.addEventListener('windowclose',()=>clearTimeout(warmTimer));
 }
-async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'celery',pending:'',history:[]};started=true;fit();replaying=true;terminal();let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){if(sound)void new Clip('/media/original/keyboard.wav').play().catch(()=>{});}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
+async function replay(){scriptGuide.reset();void unlockAudio();run++;const token=run;clearTimers();clearWindows();stopSpeech();musicEpoch++;music?.stop();music=null;ducks.clear();context={identity,character:'',pending:'',history:[]};started=true;fit();replaying=true;terminal();let origin=performance.now();for(const step of sketch){await delay(Math.max(0,step.at*1000-(performance.now()-origin)));if(token!==run)return;if('keyboard'in step){if(sound)void new Clip('/media/original/keyboard.wav').play().catch(()=>{});}const before=performance.now();await dispatch(step.text,'sketch');if(mode==='live'&&performance.now()-before>250)origin+=performance.now()-before;}replaying=false;}
 async function fileBase64(blob:Blob){return new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(blob);});}
 // Keep the input device active for the session; Space only gates recording.
 function readyMicrophone():Promise<MediaStream>{
