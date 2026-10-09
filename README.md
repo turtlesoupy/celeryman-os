@@ -4,7 +4,7 @@ https://github.com/user-attachments/assets/debd5697-6ab1-48c5-a088-6bac223182b6
 
 A working recreation of the Celery Man sketch's desktop software. Pick an identity (or add yourself), then talk to the computer: the sketch's lines play the original responses, and anything else generates a new dancer who looks like you, in an outfit and routine planned from your request.
 
-Live at **https://celeryman.fun**, deployed by [Fun Inc](https://fun.inc) with the creator's permission. The repository is private.
+Live at **https://celeryman.fun**.
 
 ## Using it
 
