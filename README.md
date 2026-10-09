@@ -83,23 +83,29 @@ The microphone opens once at Start and stays open for the session (avoiding Blue
 
 Production runs on Cloud Run behind a Cloudflare proxy, with a Turnstile session gating paid API routes and generated media persisted in Cloud Storage. See [deploy/README.md](deploy/README.md) for infrastructure, secrets and redeploy steps. After `npm run build`, `node --import tsx scripts/check-production.ts` verifies origin protection, static files, media range requests and rate limits.
 
-## Tests and benchmarks
+## Evals
 
-Most browser checks run against the dev server, mock the providers, and save screenshots under `output/` or `benchmarks/`. Scripts marked *paid* call real providers.
+Generation changes are decided by blind human comparison. Each eval has a `scripts/prepare-<name>.ts` script that generates candidates (paid), shuffles them into A/B rounds against the original sketch frame or clip and the identity photo, and builds a review page under `public/<name>/`. Model names and settings stay hidden until every round is rated. Ratings save in the browser and export as JSON, and results are archived in `benchmarks/<name>-<date>/`.
 
-| Command | Checks |
+| Eval | Compares |
 |---|---|
-| `npm test` | Sketch protocol and window interaction |
-| `npx tsx scripts/check-identity-launcher.ts` | Identity chooser, Add yourself, camera, responsive launcher |
-| `npx tsx scripts/check-window-layout.ts` | Window bounds on phones, tablets and keyboard-sized viewports |
-| `npx tsx scripts/check-input-panel.ts` | Recording controls, microphone selection, typed commands |
-| `npx tsx scripts/check-generation-stream.ts` | Generation SSE streams, rejoining and polling fallback |
-| `npx tsx scripts/check-speech-playback.ts` | Streamed speech buffering, cancellation and output readiness |
-| `npx tsx scripts/check-director.ts` | Director state offline, then text-only turns (*paid*) |
-| `npx tsx scripts/check-director-ui.ts` | Full sketch, pitch, taboo ladder, call and chaos in the browser (*paid*, text only) |
-| `node --import tsx scripts/check-uploaded-identity.ts <photo or preset id>` | Fresh celery, portrait, oyster and Tayne generations for visual review (*paid*) |
+| [`path-eval`](http://127.0.0.1:5173/path-eval/) | Identity photo straight to video against a costume image first, across image models |
+| [`text-motion-eval`](http://127.0.0.1:5173/text-motion-eval/) | Text-described dances generated from the identity photo or from a costume image |
+| [`choreography-eval`](http://127.0.0.1:5173/choreography-eval/) | Production choreography prompt against a movement-only prompt |
+| [`reference-eval`](http://127.0.0.1:5173/reference-eval/) | Choreography reference video against text motion, from the photo or a costume image |
+| [`resolution-eval`](http://127.0.0.1:5173/resolution-eval/) | Nano Banana 2 costume-frame resolutions |
+| [`image-ab`](http://127.0.0.1:5173/image-ab/), [`image-sweep`](http://127.0.0.1:5173/image-sweep/) | Nano Banana 2 against Lite; image models, prompts and resolutions |
+| [`turbo-eval`](http://127.0.0.1:5173/turbo-eval/) | Production H3 Max reference video against H3 Max Turbo from the photo |
+| [`voice-ab`](http://127.0.0.1:5173/voice-ab/), [`voice-lab`](http://127.0.0.1:5173/voice-lab/) | Computer voice candidates, level-matched |
 
-Benchmarks:
+Language behavior has labeled evals that run against the real models (paid, text only):
+
+- `npx tsx scripts/check-intent-router.ts`: routing accuracy and latency on labeled utterances at each reasoning effort
+- `npx tsx scripts/check-director.ts`: deterministic director checks, then scripted multi-turn conversations, saved to `benchmarks/director/smoke.json`
+
+Automated graders (`scripts/grade-*.mjs`) score contact sheets and audio against the identity photo and request. Treat their scores as supporting observations: human ratings decide. For a single identity, `node --import tsx scripts/check-uploaded-identity.ts <photo or preset id>` generates celery, portrait, oyster and Tayne clips for visual review.
+
+## Benchmarks
 
 ```sh
 npm run benchmark:audio          # Full sketch: spoken WAV → STT → app
@@ -109,11 +115,6 @@ npm run benchmark:voice          # Voice lab trials and blind grading (paid)
 npx tsx scripts/benchmark-responsive.ts  # Keyboard and microphone latency for fresh uploads (paid)
 ```
 
-The timed benchmark schedules real transcripts at the original response times, so it measures scene and audio timing, not generation latency. Fake-microphone tests exercise real capture and audio processing in Chromium; they don't replace listening tests on physical phones and headsets.
+The timed benchmark schedules real transcripts at the original response times, so it measures scene and audio timing, not generation latency. Fake-microphone runs exercise real capture and audio processing in Chromium; they don't replace listening tests on physical phones and headsets. http://127.0.0.1:5173/benchmarks/review.html collects sketch playback and fresh-upload results.
 
-Review pages on the dev server:
-
-- http://127.0.0.1:5173/benchmarks/review.html: sketch playback, fresh-upload videos and checks
-- http://127.0.0.1:5173/voice-lab/index.html: blind, level-matched voice comparisons with ratings export
-
-For generation quality decisions, prefer blind paired A/B comparisons with human ratings over output grids or automated scores; `scripts/build-generation-ab.mjs` builds one. Automated grades are supporting observations, not release gates.
+Browser regression checks (`scripts/check-*.ts`) mock the providers and run against the dev server.
