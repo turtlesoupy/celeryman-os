@@ -32,7 +32,7 @@ export function launchIdentity(options:LauncherOptions){
  try{const saved=JSON.parse(safeStorage.getItem('cinco-custom-identity')||'null');if(saved?.id&&saved?.name)custom={id:String(saved.id),name:String(saved.name),label:String(saved.name),thumbnail:typeof saved.thumbnail==='string'?saved.thumbnail:undefined};}catch{}
  if(!presets.some(p=>p.id===options.profile)&&options.name.trim())custom={id:options.profile,name:options.name,label:options.name,thumbnail:custom?.id===options.profile?custom.thumbnail:undefined};
  let selected=presets.find(p=>p.id===options.profile)||custom||presets[0];
- const t=windowBox({title:'Cinco Identity Generator 2.5',x:180,y:155,w:600,h:320,className:'launch'});
+ const t=windowBox({title:'Cinco Identity Generator 2.5',x:180,y:110,w:600,h:320,className:'launch'});
  t.content.innerHTML='<fieldset class="identity-group"><legend>Identity</legend><div class="identity-icons" role="group" aria-label="Identity"></div></fieldset><div class="buttons"><button type="button" class="classic-button start">Start</button></div><p class="launch-status" role="status"></p>';
  const icons=t.content.querySelector<HTMLElement>('.identity-icons')!,start=t.content.querySelector<HTMLButtonElement>('.start')!,status=t.content.querySelector<HTMLElement>('.launch-status')!;
  let uploadWindow:DesktopWindow|undefined,starting=false,startAfterSave=false;

@@ -24,7 +24,7 @@ import {scripted,type Context} from '../src/protocol.ts';
 import {costumes,motions} from '../src/dances.ts';
 import {interactiveVideo} from './interactive-video.ts';
 import {usesTextOnlyDance} from './text-motion.ts';
-import {COSTUME_FRAME_RESOLUTION} from './costume-frame.ts';
+import {COSTUME_FRAME_RESOLUTION,cacheProfile} from './costume-frame.ts';
 import {savedGeneration} from './saved-generation.ts';
 import {computerVoiceId,streamComputerVoice} from './computer-voice.ts';
 import {canonicalName,generationKey,finishChoreography,motionPrompt} from './choreography.ts';
@@ -45,7 +45,7 @@ function reference(profile:string){
  })();references.set(profile,pending);pending.catch(()=>references.delete(profile));return pending;
 }
 async function costumeFrame(profile:string,costume:string,closeup=false,canonical=''){
- const key=hash(JSON.stringify({profile,costume,closeup,canonical,resolution:COSTUME_FRAME_RESOLUTION,version:6,revision:canonical==='mozzarell-face'?4:canonical==='engaged'?1:canonical==='intro'?1:closeup?3:canonical==='oyster'?2:canonical==='flarhgunnstow'?2:0}));
+ const key=hash(JSON.stringify({profile:cacheProfile(profile),costume,closeup,canonical,resolution:COSTUME_FRAME_RESOLUTION,version:6,revision:canonical==='mozzarell-face'?4:canonical==='engaged'?1:canonical==='intro'?1:closeup?3:canonical==='oyster'?2:canonical==='flarhgunnstow'?2:0}));
  if(frameLocks.has(key))return frameLocks.get(key)!;
  const promise=(async()=>{
   const local=path.join(media,'generated',`frame-${key}.png`);

@@ -1,6 +1,7 @@
 // Draws the desktop link icons as 32x32 Windows 3.1-style objects that carry the
 // real brand marks: a computer showing the GitHub mark, a speech balloon with
-// Discord's Clyde, and a television playing the YouTube button.
+// Discord's Clyde, a television playing the YouTube button, and a medallion
+// stamped with the hand-drawn Fun.inc F.
 // Run: npx tsx scripts/make-desktop-icons.ts
 import {chromium} from 'playwright';
 import fs from 'node:fs/promises';
@@ -65,6 +66,15 @@ const icons:Record<string,string>={
   for(const sy of [23,25])rect(24,sy,5,1,'#5a2808');
   rect(3,29,4,2,K);rect(25,29,4,2,K);
  `,
+ // Raised white medallion stamped with the Fun.inc hand-drawn circle and F.
+ fun:`
+  const disc=mask(q=>{q.beginPath();q.arc(15,15,14,0,Math.PI*2);q.fill();},31,31);
+  stamp({...disc,at:(x,y)=>disc.at(x-1,y-1)},0,0,DG);
+  stamp(disc,0,0,W,W,LG,K);
+  const brand=q=>{q.translate(3.5,3.5);q.scale(23/120,23/120);q.lineWidth=13;q.lineCap='round';q.lineJoin='round';
+   for(const d of ['M73 8 C48 4 24 19 16 42 C7 64 16 85 35 99 C56 114 82 106 99 89 C114 74 115 48 103 29 C97 19 85 12 71 12','M81 29 L49 34 L45 86','M48 55 L75 50'])q.stroke(new Path2D(d));};
+  stamp(mask(brand,32,32),0,0,'#c64b25','#e8784f','#8a3018');
+ `,
 };
 
 const browser=await chromium.launch();const page=await browser.newPage();
@@ -73,4 +83,4 @@ for(const [name,draw] of Object.entries(icons)){
  await fs.writeFile(`src/assets/link-${name}.png`,Buffer.from(png.split(',')[1],'base64'));
 }
 await browser.close();
-console.log('Wrote src/assets/link-{github,discord,youtube}.png');
+console.log('Wrote src/assets/link-{github,discord,youtube,fun}.png');
