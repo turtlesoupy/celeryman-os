@@ -4,14 +4,15 @@ import {costumes, motions} from '../src/dances.ts';
 
 // Generates fresh media for visual identity review. API success alone is not
 // an identity score: inspect the returned portrait and video frames separately.
+// Pass a preset ID (such as obama) instead of a photo to check a bundled identity.
 const photo=process.argv[2];
-if(!photo)throw Error('Usage: node --import tsx scripts/check-uploaded-identity.ts /path/to/photo.jpg');
+if(!photo)throw Error('Usage: node --import tsx scripts/check-uploaded-identity.ts /path/to/photo.jpg|preset-id');
 const site=process.env.IDENTITY_SITE||'http://127.0.0.1:5173';
 const request=async(endpoint:string,body?:unknown)=>{
  const response=await fetch(site+'/api/'+endpoint,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',Origin:site},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(45000)});
  const value=await response.json();assert.ok(response.ok,value.error);return value;
 };
-const {id:profile}=await request('profile',{image:(await fs.readFile(photo)).toString('base64')});
+const profile=/^[a-z]+$/.test(photo)?photo:(await request('profile',{image:(await fs.readFile(photo)).toString('base64')})).id;
 const results=[];
 for(const [character,variant] of [['celery','base'],['celery','face'],['oyster','base'],['tayne','intro']]){
  const start=performance.now();

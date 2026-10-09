@@ -39,7 +39,7 @@ const dialog=page.getByRole('dialog',{name:'New identity'});
 try{
  await fs.mkdir('output/identity-launcher',{recursive:true});
  await page.goto('http://127.0.0.1:5173');
- await page.waitForFunction(()=>document.querySelectorAll('.identity-icon svg image').length===4);
+ await page.waitForFunction(()=>document.querySelectorAll('.identity-icon svg image').length===8);
  const bitmap=await page.locator('.identity-icon svg image').first().getAttribute('href');
  assert(bitmap?.startsWith('data:image/png;base64,'),'Preset portraits must render from processed photos');
  const bitmapInfo=await page.evaluate(async source=>{
@@ -56,13 +56,13 @@ try{
  assert.equal(await page.getByLabel('Experience',{exact:true}).count(),0);
  assert.equal(await page.getByLabel('Microphone input').count(),0);
  assert.equal(await page.locator('.launch .buttons button').count(),1);
- assert.equal((await page.locator('.launch .content').innerText()).replace(/\s+/g,' ').trim(),'Identity Paul Rudd Thomas Dimson Ian Silber Joey Flynn Upload Start');
+ assert.equal((await page.locator('.launch .content').innerText()).replace(/\s+/g,' ').trim(),'Identity Add yourself Paul Rudd Barack Obama Donald Trump Dario Amodei Sam Altman Thomas Dimson Ian Silber Joey Flynn Start');
  await page.getByRole('button',{name:'Thomas Dimson',exact:true}).click();
  assert.equal(await page.getByRole('button',{name:'Thomas Dimson',exact:true}).getAttribute('aria-pressed'),'true');
  assert.equal(await page.evaluate(()=>(window as any).cinco.state().started),false,'Single click only selects an identity');
  await page.screenshot({path:'output/identity-launcher/desktop.png'});
  await page.locator('.launch').screenshot({path:'output/identity-launcher/compact-picker.png'});
- await page.getByRole('button',{name:'Upload',exact:true}).click();
+ await page.getByRole('button',{name:'Add yourself',exact:true}).click();
  assert.equal(await dialog.getByRole('button',{name:'Save',exact:true}).isDisabled(),true);
  await dialog.getByLabel('Your name',{exact:true}).fill('  ');
  await dialog.getByLabel('Upload identity photo').setInputFiles('reference/thomas-dimson.jpg');
@@ -76,10 +76,12 @@ try{
  assert.equal(await dialog.getByRole('button',{name:'Save',exact:true}).isEnabled(),true);
  failUpload=false;await dialog.getByRole('button',{name:'Save',exact:true}).click();
  await dialog.waitFor({state:'detached'});
- assert.equal(await page.getByRole('button',{name:'My identity',exact:true}).getAttribute('aria-pressed'),'true');
+ // Saving a new identity starts the experience with it.
+ await page.locator('.launch').waitFor({state:'detached'});
+ assert.deepEqual(await page.evaluate(()=>[localStorage.getItem('cinco-profile'),localStorage.getItem('cinco-name')]),['test-identity','My identity']);
  await page.reload();await page.getByRole('button',{name:'My identity',exact:true}).waitFor();
  assert.match(await page.getByRole('button',{name:'My identity',exact:true}).locator('svg image').getAttribute('href')||'',/^data:image\/png;base64,/,'Uploaded photo icon must survive reload');
- await page.getByRole('button',{name:'Upload',exact:true}).click();
+ await page.getByRole('button',{name:'Add yourself',exact:true}).click();
  await dialog.getByRole('button',{name:'Use camera',exact:true}).click();
  await page.waitForFunction(()=>!document.querySelector<HTMLButtonElement>('.take-photo')?.disabled);
  assert.equal((await mediaCalls()).every(c=>c.audio===false),true,'Camera must not request microphone access');
@@ -87,7 +89,8 @@ try{
  assert.equal(await dialog.getByRole('button',{name:'Save',exact:true}).isDisabled(),true,'Camera photos also require a name');
  await dialog.getByLabel('Your name',{exact:true}).fill('Camera identity');
  await dialog.getByRole('button',{name:'Save',exact:true}).click();await dialog.waitFor({state:'detached'});
- await page.getByRole('button',{name:'Upload',exact:true}).click();await dialog.getByRole('button',{name:'Use camera',exact:true}).click();
+ await page.locator('.launch').waitFor({state:'detached'});await page.reload();
+ await page.getByRole('button',{name:'Add yourself',exact:true}).click();await dialog.getByRole('button',{name:'Use camera',exact:true}).click();
  await page.waitForFunction(()=>!document.querySelector<HTMLButtonElement>('.take-photo')?.disabled);
  await dialog.getByRole('button',{name:'Close window',exact:true}).click();await cameraStopped();
  assert.equal(await page.getByRole('button',{name:'Camera identity',exact:true}).getAttribute('aria-pressed'),'true');
@@ -96,7 +99,7 @@ try{
   await page.setViewportSize({width,height});
   await page.locator('.launch .start').scrollIntoViewIfNeeded();
   await page.screenshot({path:`output/identity-launcher/mobile-${width}.png`});
-  await page.getByRole('button',{name:'Upload',exact:true}).click();
+  await page.getByRole('button',{name:'Add yourself',exact:true}).click();
   const bounds=await dialog.boundingBox();assert(bounds&&bounds.x>=0&&bounds.x+bounds.width<=width&&bounds.y>=0&&bounds.y+bounds.height<=height);
   await dialog.getByLabel('Your name',{exact:true}).fill('Mobile');
   await dialog.getByRole('button',{name:'Cancel',exact:true}).scrollIntoViewIfNeeded();
@@ -128,7 +131,7 @@ try{
  const beforeKeyboard=await mediaCalls();await page.getByRole('button',{name:'Thomas Dimson',exact:true}).focus();await page.keyboard.press('Space');
  assert.equal(await page.getByRole('button',{name:'Thomas Dimson',exact:true}).getAttribute('aria-pressed'),'true');
  assert.equal((await mediaCalls()).length,beforeKeyboard.length,'Keyboard selection must not record audio');
- await page.getByRole('button',{name:'Upload',exact:true}).click();await page.keyboard.press('Escape');await dialog.waitFor({state:'detached'});
+ await page.getByRole('button',{name:'Add yourself',exact:true}).click();await page.keyboard.press('Escape');await dialog.waitFor({state:'detached'});
  assert.equal(await page.locator('.dock').isVisible(),true,'Closing the photo dialog must not toggle command controls');
  // Double-clicking an unselected preset or saved photo selects and starts it once.
  for(const [label,profile] of [['Paul Rudd','paul'],['Camera identity','test-identity']]){

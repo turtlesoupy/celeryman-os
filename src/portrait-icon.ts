@@ -2,8 +2,12 @@ import paulIcon from './assets/paul-icon.png?inline';
 import thomasIcon from './assets/thomas-icon.png?inline';
 import ianIcon from './assets/ian-icon.png?inline';
 import joeyIcon from './assets/joey-icon.png?inline';
+import obamaIcon from './assets/obama-icon.png?inline';
+import trumpIcon from './assets/trump-icon.png?inline';
+import darioIcon from './assets/dario-icon.png?inline';
+import samIcon from './assets/sam-icon.png?inline';
 
-const presetIcons:Record<string,string>={paul:paulIcon,thomas:thomasIcon,ian:ianIcon,joey:joeyIcon};
+const presetIcons:Record<string,string>={paul:paulIcon,thomas:thomasIcon,ian:ianIcon,joey:joeyIcon,obama:obamaIcon,trump:trumpIcon,dario:darioIcon,sam:samIcon};
 
 // A small indexed bitmap, like a custom Windows icon: keep enough warm shades
 // to recognize faces, alongside the gray, navy and teal desktop colors.

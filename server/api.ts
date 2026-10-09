@@ -35,7 +35,7 @@ const frameLocks=new Map<string,Promise<string>>();
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex').slice(0,20);
 const exists=async(p:string)=>fs.access(p).then(()=>true,()=>false);
 async function saveRemote(url:string,file:string){const r=await fetch(url,{signal:AbortSignal.timeout(60000)});if(!r.ok)throw Error('Media download failed');await fs.writeFile(file,Buffer.from(await r.arrayBuffer()));}
-const presetPhotos:Record<string,string>={paul:'reference/paul-rudd.png',thomas:'reference/thomas-dimson.jpg',ian:'reference/ian-silber.jpg',joey:'reference/joey-flynn.jpg'};
+const presetPhotos:Record<string,string>={paul:'reference/paul-rudd.png',thomas:'reference/thomas-dimson.jpg',ian:'reference/ian-silber.jpg',joey:'reference/joey-flynn.jpg',obama:'reference/barack-obama.jpg',trump:'reference/donald-trump.jpg',dario:'reference/dario-amodei.jpg',sam:'reference/sam-altman.jpg'};
 const references=new Map<string,Promise<string>>();
 function reference(profile:string){
  if(references.has(profile))return references.get(profile)!;
@@ -175,7 +175,7 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
    // Paid provider work requires a Turnstile-backed session (when configured),
    // checked before validation so unverified callers learn nothing else.
    if(['/api/command','/api/generate','/api/profile','/api/transcribe','/api/transcribe/session','/api/voice/stream','/api/voice'].includes(req.url))requireSession(req);
-   if(b.profile!==undefined&&(typeof b.profile!=='string'||!/^(paul|thomas|ian|joey|[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/.test(b.profile)))throw Error('Invalid profile');
+   if(b.profile!==undefined&&(typeof b.profile!=='string'||!/^(paul|thomas|ian|joey|obama|trump|dario|sam|[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/.test(b.profile)))throw Error('Invalid profile');
    if(req.url==='/api/generate'&&(typeof b.character!=='string'||!/^[-\w .]{1,80}$/.test(b.character)||!['base','face','engaged','hat','flarhgunnstow','intro','sway','smile'].includes(b.variant)))throw Error('Invalid sequence');
    if(req.url==='/api/session'){res.setHeader('Cache-Control','no-store');result=await startSession(b.turnstileToken,req);}
    else if(req.url==='/api/health')result={ok:true,providers:{openai:!!process.env.OPENAI_API_KEY,fal:!!process.env.FAL_KEY}};

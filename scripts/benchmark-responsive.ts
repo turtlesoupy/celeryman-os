@@ -11,7 +11,7 @@ const report:any={date:new Date().toISOString(),checks:[],commands:[],errors:[]}
 page.on('pageerror',e=>report.errors.push(e.message));
 try{
  await page.goto('http://127.0.0.1:5173');
- await page.getByRole('button',{name:'Upload',exact:true}).click();await page.getByLabel('Upload identity photo').setInputFiles('reference/thomas-dimson.jpg');
+ await page.getByRole('button',{name:'Add yourself',exact:true}).click();await page.getByLabel('Upload identity photo').setInputFiles('reference/thomas-dimson.jpg');
  await page.getByText('Photo ready. Add your name, then save.',{exact:true}).waitFor();
  await page.getByLabel('Your name',{exact:true}).fill('Thomas');await page.getByRole('button',{name:'Save',exact:true}).click();await page.getByRole('dialog',{name:'New identity'}).waitFor({state:'detached'});await page.getByRole('button',{name:'Start',exact:true}).click();
  await page.waitForFunction(()=>(window as any).cinco.events.some((e:any)=>e.kind==='audio-playing'));

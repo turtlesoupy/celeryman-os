@@ -19,7 +19,7 @@ COPY src ./src
 COPY scripts ./scripts
 COPY public/media/original ./public/media/original
 COPY public/media/motion ./public/media/motion
-COPY reference/paul-rudd.png reference/thomas-dimson.jpg reference/ian-silber.jpg reference/joey-flynn.jpg ./reference/
+COPY reference/paul-rudd.png reference/thomas-dimson.jpg reference/ian-silber.jpg reference/joey-flynn.jpg reference/barack-obama.jpg reference/donald-trump.jpg reference/dario-amodei.jpg reference/sam-altman.jpg ./reference/
 RUN ln -s /app/node_modules/ffmpeg-static/ffmpeg /usr/local/bin/ffmpeg \
  && ln -s /app/node_modules/ffprobe-static/bin/linux/x64/ffprobe /usr/local/bin/ffprobe \
  && node --version && ffmpeg -version && ffprobe -version \

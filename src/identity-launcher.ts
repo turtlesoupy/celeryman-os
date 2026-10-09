@@ -10,6 +10,8 @@ type LauncherOptions={
  upload:(image:string)=>Promise<{id:string}>;
  select:(identity:Identity)=>void;
  doubleClick:()=>void;
+ // Runs inside the Save click so audio unlocks before the upload ends the gesture.
+ prepare:()=>void;
  start:(identity:Identity,win:HTMLElement,feedback:Promise<void>)=>Promise<void>;
 };
 
@@ -25,18 +27,18 @@ function icon(kind:string){
 
 export function launchIdentity(options:LauncherOptions){
  const {windowBox,removeWindow}=options;
- const presets:Identity[]=[{id:'paul',name:'Paul',label:'Paul Rudd'},{id:'thomas',name:'Thomas',label:'Thomas Dimson'},{id:'ian',name:'Ian',label:'Ian Silber'},{id:'joey',name:'Joey',label:'Joey Flynn'}];
+ const presets:Identity[]=[{id:'paul',name:'Paul',label:'Paul Rudd'},{id:'obama',name:'Barack',label:'Barack Obama'},{id:'trump',name:'Donald',label:'Donald Trump'},{id:'dario',name:'Dario',label:'Dario Amodei'},{id:'sam',name:'Sam',label:'Sam Altman'},{id:'thomas',name:'Thomas',label:'Thomas Dimson'},{id:'ian',name:'Ian',label:'Ian Silber'},{id:'joey',name:'Joey',label:'Joey Flynn'}];
  let custom:Identity|undefined;
  try{const saved=JSON.parse(safeStorage.getItem('cinco-custom-identity')||'null');if(saved?.id&&saved?.name)custom={id:String(saved.id),name:String(saved.name),label:String(saved.name),thumbnail:typeof saved.thumbnail==='string'?saved.thumbnail:undefined};}catch{}
  if(!presets.some(p=>p.id===options.profile)&&options.name.trim())custom={id:options.profile,name:options.name,label:options.name,thumbnail:custom?.id===options.profile?custom.thumbnail:undefined};
  let selected=presets.find(p=>p.id===options.profile)||custom||presets[0];
- const t=windowBox({title:'Cinco Identity Generator 2.5',x:180,y:155,w:600,h:230,className:'launch'});
+ const t=windowBox({title:'Cinco Identity Generator 2.5',x:180,y:155,w:600,h:320,className:'launch'});
  t.content.innerHTML='<fieldset class="identity-group"><legend>Identity</legend><div class="identity-icons" role="group" aria-label="Identity"></div></fieldset><div class="buttons"><button type="button" class="classic-button start">Start</button></div><p class="launch-status" role="status"></p>';
  const icons=t.content.querySelector<HTMLElement>('.identity-icons')!,start=t.content.querySelector<HTMLButtonElement>('.start')!,status=t.content.querySelector<HTMLElement>('.launch-status')!;
- let uploadWindow:DesktopWindow|undefined,starting=false;
+ let uploadWindow:DesktopWindow|undefined,starting=false,startAfterSave=false;
  const render=()=>{
-  icons.replaceChildren();
-  for(const person of [...presets,...(custom?[custom]:[])]){
+  const upload=document.createElement('button');upload.type='button';upload.className='identity-icon';upload.innerHTML=icon('upload')+'<span>Add yourself</span>';upload.onclick=openUpload;icons.replaceChildren(upload);
+  for(const person of [...(custom?[custom]:[]),...presets]){
    const button=document.createElement('button');button.type='button';button.className='identity-icon';button.setAttribute('aria-pressed',String(person.id===selected.id));
    button.innerHTML=icon(presets.includes(person)?person.id:'custom');const label=document.createElement('span');label.textContent=person.label;button.append(label);
    void fillPortraitIcon(button,person.id,person.thumbnail);
@@ -50,12 +52,15 @@ export function launchIdentity(options:LauncherOptions){
    };
    button.ondblclick=()=>void startSelected(true);icons.append(button);
   }
-  const upload=document.createElement('button');upload.type='button';upload.className='identity-icon';upload.innerHTML=icon('upload')+'<span>Upload</span>';upload.onclick=openUpload;icons.append(upload);
  };
  const sync=()=>{start.disabled=starting||!!uploadWindow;icons.querySelectorAll('button').forEach(b=>b.disabled=starting);};
  function openUpload(){
   if(uploadWindow){uploadWindow.win.classList.remove('minimized');uploadWindow.win.dispatchEvent(new Event('pointerdown'));uploadWindow.content.querySelector('input')?.focus();return;}
-  uploadWindow=createUploadWindow(options,person=>{custom=selected=person;safeStorage.setItem('cinco-custom-identity',JSON.stringify(person));render();options.select(person);},()=>{uploadWindow=undefined;sync();icons.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();});sync();
+  uploadWindow=createUploadWindow(options,person=>{custom=selected=person;safeStorage.setItem('cinco-custom-identity',JSON.stringify(person));render();options.select(person);startAfterSave=true;},()=>{
+   uploadWindow=undefined;sync();
+   // Saving a new identity goes straight into the experience; Cancel just returns to the chooser.
+   if(startAfterSave){startAfterSave=false;void startSelected();}else icons.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();
+  });sync();
  }
  t.win.addEventListener('windowclose',()=>{if(uploadWindow)removeWindow(uploadWindow.win);});
  async function startSelected(doubleClick=false){
@@ -124,7 +129,7 @@ function createUploadWindow(options:LauncherOptions,saved:(identity:Identity)=>v
  };
  capture.onclick=()=>{if(video.videoWidth&&video.videoHeight){epoch++;setPhoto(video,video.videoWidth,video.videoHeight,true);}};
  save.onclick=async()=>{
-  const identityName=name.value.trim();if(busy||!image||!identityName)return;const current=++epoch;stopCamera();busy=true;sync();status.textContent='Saving identity…';
+  const identityName=name.value.trim();if(busy||!image||!identityName)return;options.prepare();const current=++epoch;stopCamera();busy=true;sync();status.textContent='Saving identity…';
   try{const result=await options.upload(image.split(',')[1]);if(current!==epoch||!t.win.isConnected)return;saved({id:result.id,name:identityName,label:identityName,thumbnail});options.removeWindow(t.win);}
   catch(error){if(current===epoch)status.textContent='Could not save: '+(error as Error).message;}
   finally{if(current===epoch){busy=false;sync();}}

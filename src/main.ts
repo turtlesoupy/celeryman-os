@@ -582,6 +582,7 @@ function launch(){
  const t=launchIdentity({profile,name:identity,compact,windowBox,removeWindow,upload:image=>api('profile',{image}),
   select:person=>{clearTimeout(warmTimer);warmTimer=window.setTimeout(()=>void api('warm',{profile:person.id,name:person.name}).catch(()=>{}),500);},
   doubleClick:()=>{if(sound)playDesktopDoubleClick();},
+  prepare:()=>{preparePlayAndRecord();void unlockAudio().catch(()=>{});},
   start:async(person,win,feedback)=>{
    // Start authorizes microphone setup; begin keeps the input warm for Space.
    preparePlayAndRecord();const ready=unlockAudio(),token=run;void microphone.refresh();
