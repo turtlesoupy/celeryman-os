@@ -92,6 +92,28 @@ async function costumeFrame(profile:string,costume:string,closeup=false,canonica
   await saveRemote(result.data.images[0].url,local);await fs.writeFile(local+'.json',JSON.stringify({profile,canonical,identityReviews:reviews,imageRequestId:result.requestId},null,2));return result.data.images[0].url;
  })();frameLocks.set(key,promise);promise.catch(()=>frameLocks.delete(key));return promise;
 }
+// The launcher already sends JPEG; direct uploads in other common formats are converted.
+// Identified by content, never by a claimed type, so only real images reach storage and providers.
+function photoFormat(image:Buffer){
+ const ascii=(start:number,end:number)=>image.subarray(start,end).toString('latin1');
+ if(image[0]===0xff&&image[1]===0xd8&&image[2]===0xff)return 'jpeg';
+ if(ascii(0,8)==='\x89PNG\r\n\x1a\n')return 'png';
+ if(ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP')return 'webp';
+ if(ascii(0,4)==='GIF8')return 'gif';
+ if(ascii(0,2)==='BM')return 'bmp';
+ if(ascii(0,4)==='II*\0'||ascii(0,4)==='MM\0*')return 'tiff';
+ if(ascii(4,8)==='ftyp'&&/^avi[fs]$/.test(ascii(8,12)))return 'avif';
+ return undefined;
+}
+async function uploadedJpeg(image:Buffer,id:string){
+ const format=image.length>=128?photoFormat(image):undefined;
+ if(!format)throw Error('Unsupported photo format. Use JPEG, PNG, WebP, GIF, BMP, TIFF or AVIF.');
+ if(format==='jpeg')return image;
+ const input=path.join(media,'profiles',`${id}.${format}`),output=path.join(media,'profiles',`${id}-converted.jpg`);
+ try{await fs.writeFile(input,image);await exec('ffmpeg',['-y','-loglevel','error','-i',input,'-frames:v','1','-q:v','2',output],{timeout:20000});return await fs.readFile(output);}
+ catch{throw Error('Could not read that photo. Try a JPEG image.');}
+ finally{await Promise.all([fs.rm(input,{force:true}),fs.rm(output,{force:true})]);}
+}
 // Saved media replays for free; only a fresh generation counts against the session.
 function startGeneration(req:IncomingMessage,id:string,body:any){
  return (job:Job)=>{
@@ -290,9 +312,8 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     else {const saved=await savedGeneration(media,id);result={id,...(saved||{status:'error',error:'Unknown job'})};}
    }
    else if(req.url==='/api/profile'){
-    // The launcher always encodes JPEG; reject anything else before it reaches storage or providers.
-    const image=Buffer.from(String(b.image||''),'base64');if(image.length<128||image[0]!==0xff||image[1]!==0xd8||image[2]!==0xff)throw Error('Photos must be JPEG images.');
-    const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),image);void reference(id).catch(()=>{});result={id};
+    const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});
+    await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),await uploadedJpeg(Buffer.from(String(b.image||''),'base64'),id));void reference(id).catch(()=>{});result={id};
    }else {res.statusCode=404;result={error:'Unknown endpoint'};}
    res.end(JSON.stringify(result));
   }catch(e){const rawError=e instanceof Error?e.message:'Request failed';logDiagnostic({event:'request-error',route:req.url?.split('?')[0],message:rawError});const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){if(String(res.getHeader('Content-Type')).startsWith('text/event-stream'))res.end(`event: error\ndata: ${JSON.stringify({error})}\n\n`);else res.end(JSON.stringify({type:'error',error})+'\n');}else{const verification=e instanceof VerificationError;res.statusCode=verification?e.status:500;res.end(JSON.stringify({error,...(verification?{code:'verification'}:{})}));}}

@@ -80,7 +80,7 @@ export function launchIdentity(options:LauncherOptions){
 function createUploadWindow(options:LauncherOptions,saved:(identity:Identity)=>void,closed:()=>void){
  const t=options.windowBox({title:'New identity',x:270,y:40,w:420,h:470,className:'identity-upload'});
  t.win.setAttribute('role','dialog');
- t.content.innerHTML=`<p>Choose a clear photo of yourself.</p><div class="photo-stage"><span class="photo-placeholder">${icon('custom')}</span><img class="identity-preview hidden" alt="Your selected identity photo"><video class="camera-source" autoplay playsinline muted></video><canvas class="camera-preview hidden" aria-label="Live camera preview"></canvas></div><div class="photo-actions"><button type="button" class="classic-button choose-photo">Choose photo…</button><button type="button" class="classic-button use-camera">Use camera</button><button type="button" class="classic-button take-photo hidden" disabled>Take photo</button></div><input class="photo-file hidden" type="file" accept="image/*" aria-label="Upload identity photo"><label class="identity-name">Your name <input aria-label="Your name" maxlength="35" required autocomplete="given-name"></label><p class="photo-status" role="status">Add a photo and a name to save your identity.</p><p class="identity-consent">By saving, you confirm this is a photo of you, or that you have the rights to it and the permission of the person in it.</p><div class="buttons"><button type="button" class="classic-button save-identity" disabled>Save</button><button type="button" class="classic-button cancel-identity">Cancel</button></div>`;
+ t.content.innerHTML=`<p>Choose a clear photo of yourself.</p><div class="photo-stage"><span class="photo-placeholder">${icon('custom')}</span><img class="identity-preview hidden" alt="Your selected identity photo"><video class="camera-source" autoplay playsinline muted></video><canvas class="camera-preview hidden" aria-label="Live camera preview"></canvas></div><div class="photo-actions"><button type="button" class="classic-button choose-photo">Choose photo…</button><button type="button" class="classic-button use-camera">Use camera</button><button type="button" class="classic-button take-photo hidden" disabled>Take photo</button></div><input class="photo-file hidden" type="file" accept="image/*,.heic,.heif" aria-label="Upload identity photo"><label class="identity-name">Your name <input aria-label="Your name" maxlength="35" required autocomplete="given-name"></label><p class="photo-status" role="status">Add a photo and a name to save your identity.</p><p class="identity-consent">By saving, you confirm this is a photo of you, or that you have the rights to it and the permission of the person in it.</p><div class="buttons"><button type="button" class="classic-button save-identity" disabled>Save</button><button type="button" class="classic-button cancel-identity">Cancel</button></div>`;
  const name=t.content.querySelector<HTMLInputElement>('[aria-label="Your name"]')!,file=t.content.querySelector<HTMLInputElement>('.photo-file')!,preview=t.content.querySelector<HTMLImageElement>('.identity-preview')!,video=t.content.querySelector<HTMLVideoElement>('video')!,live=t.content.querySelector<HTMLCanvasElement>('.camera-preview')!,placeholder=t.content.querySelector<HTMLElement>('.photo-placeholder')!;
  const status=t.content.querySelector<HTMLElement>('.photo-status')!,save=t.content.querySelector<HTMLButtonElement>('.save-identity')!,camera=t.content.querySelector<HTMLButtonElement>('.use-camera')!,capture=t.content.querySelector<HTMLButtonElement>('.take-photo')!,choose=t.content.querySelector<HTMLButtonElement>('.choose-photo')!;
  let image='',thumbnail='',cameraStream:MediaStream|undefined,epoch=0,busy=false,frame=0;
@@ -112,8 +112,17 @@ function createUploadWindow(options:LauncherOptions,saved:(identity:Identity)=>v
  file.onchange=async()=>{
   const photo=file.files?.[0];file.value='';if(!photo)return;const current=++epoch;stopCamera();busy=true;sync();status.textContent='Opening photo…';
   let url='';
-  try{if(!photo.type.startsWith('image/'))throw Error('Choose an image file.');url=URL.createObjectURL(photo);const img=new Image();img.src=url;await img.decode();if(current!==epoch||!t.win.isConnected)return;setPhoto(img,img.naturalWidth,img.naturalHeight);}
-  catch{if(current===epoch)status.textContent='Could not open that photo. Try a JPEG or PNG image.';}
+  const open=async(blob:Blob)=>{if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob);const img=new Image();img.src=url;await img.decode();return img;};
+  // Only Safari opens HEIC natively; elsewhere convert it with libheif, loaded on demand.
+  const heic=/image\/hei[cf]/i.test(photo.type)||/\.hei[cf]$/i.test(photo.name);
+  try{
+   if(!photo.type.startsWith('image/')&&!heic)throw Error('Choose an image file.');
+   let img:HTMLImageElement;
+   try{img=await open(photo);}
+   catch(error){if(!heic)throw error;status.textContent='Converting HEIC photo…';const {heicTo}=await import('heic-to');img=await open(await heicTo({blob:photo,type:'image/jpeg',quality:.92}));}
+   if(current!==epoch||!t.win.isConnected)return;setPhoto(img,img.naturalWidth,img.naturalHeight);
+  }
+  catch{if(current===epoch)status.textContent='Could not open that photo. Try a JPEG, PNG, WebP or HEIC image.';}
   finally{if(url)URL.revokeObjectURL(url);if(current===epoch){busy=false;sync();}}
  };
  camera.onclick=async()=>{

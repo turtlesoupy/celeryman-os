@@ -34,19 +34,21 @@ export async function startSession(token:unknown,req:IncomingMessage){
  return {session:`${payload}.${sign(payload)}`,expiresAt};
 }
 
-// Fresh generations each session may start. Instances count independently, so with N
-// instances a session can reach N times this; it still bounds what one Turnstile pass buys.
-const SESSION_GENERATION_LIMIT=Number(process.env.SESSION_GENERATION_LIMIT)||60;
-const generationCounts=new Map<string,{count:number;expiresAt:number}>();
+// Fresh generations each client may start per window. Keyed on the Cloudflare-reported
+// IP, not the session, so reloading for a new session does not reset it. Instances count
+// independently, so with N instances a client can reach N times this.
+const GENERATION_LIMIT=Number(process.env.SESSION_GENERATION_LIMIT)||60;
+const GENERATION_WINDOW_MS=2*60*60*1000;
+const generationCounts=new Map<string,{count:number;resetAt:number}>();
 
-/** Records a fresh generation for the request's session; returns an error message once over the limit. */
+/** Records a fresh generation for the requesting client; returns an error message once over the limit. */
 export function chargeGeneration(req:IncomingMessage){
  if(!secret)return undefined;
- const token=String(req.headers['x-cinco-session']||''),[expiresAt,id]=token.split('.');
- for(const [key,entry] of generationCounts)if(entry.expiresAt<Date.now())generationCounts.delete(key);
- const entry=generationCounts.get(id)||{count:0,expiresAt:Number(expiresAt)};
- if(entry.count>=SESSION_GENERATION_LIMIT)return 'You have made a lot of sequences. Reload the page to keep going.';
- entry.count++;generationCounts.set(id,entry);return undefined;
+ const now=Date.now(),client=clientIp(req);
+ for(const [key,entry] of generationCounts)if(entry.resetAt<now)generationCounts.delete(key);
+ const entry=generationCounts.get(client)||{count:0,resetAt:now+GENERATION_WINDOW_MS};
+ if(entry.count>=GENERATION_LIMIT)return `You have made a lot of sequences. Try again in ${Math.ceil((entry.resetAt-now)/60000)} minutes.`;
+ entry.count++;generationCounts.set(client,entry);return undefined;
 }
 
 /** Throws unless the request carries a valid, unexpired session (when Turnstile is on). */
