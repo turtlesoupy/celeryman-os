@@ -1,4 +1,4 @@
-import {fastVideoEndpoint,fastVideoReferenceInput} from './video-model.ts';
+import {fastVideoEndpoint,fastVideoModel,fastVideoReferenceInput} from './video-model.ts';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
@@ -36,7 +36,9 @@ function identityCostumeFrame(profile:string,costume:string,closeup:boolean,ref:
   return {file,url:result.data.images[0].url,requestId:result.requestId,saved,timings};
  })();costumeFrames.set(key,pending);pending.catch(()=>costumeFrames.delete(key));return pending;
 }
-export async function interactiveVideo(id:string,body:any,job:any,identity:()=>Promise<string>){
+// Turbo's first frames are its input photo; drop them (three frames at 24 fps).
+const TURBO_OPENING_SECONDS=0.125;
+export async function interactiveVideo(id:string,body:any,job:any,identity:()=>Promise<string>,canvas?:(aspect:string,color:string)=>Promise<string>){
  const start=performance.now(),timings:Record<string,number>={};
  job.stage='Rendering dance';job.started=Date.now();job.timings=timings;
  const canonical=canonicalName(body),motionFile=path.join(process.cwd(),'public/media/motion',canonical+'-5s.mp4');
@@ -50,6 +52,10 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  const hatWobble=/hat.*wobble|wobble.*hat/i.test(body.motion);
  const effectiveMotion=hatWobble&&body.playbackRate!==undefined&&body.playbackRate!==1?'Hat wobble: keep torso and head mostly upright and still while the hat itself rocks smoothly side to side on the head, then returns to level. Arms relaxed at sides. A regular rhythm with a clearly visible tilt of the actual hat.':body.motion;
  const closeup=['face','smile','hat','intro'].includes(body.variant);
+ const aspect=canonical==='mozzarell-face'?'16:9':canonical==='oyster'?'4:3':body.variant==='intro'?'9:16':closeup?'4:3':'9:16';
+ // Turbo ignores aspect_ratio and animates its input image, so give it the identity letterboxed to the requested shape.
+ const turbo=directDance&&fastVideoModel(body)==='turbo';
+ const startImage=turbo&&canvas?canvas(aspect,body.variant==='face'?'0xea5086':'0xc4c4c4'):undefined;startImage?.catch(()=>{});
  let prompt=`Image 1 is the identity reference for the adult performer. Generate the SAME recognizable person, preserving facial features, hair, body build and the presence or absence of facial hair and eyeglasses. Never invent a different performer based on the dance name. Render a coherent live-action performance with natural anatomy. No pasted head, collage or cutout. Dress the person in this complete outfit: ${String(body.costume).slice(0,900)}. ${closeup?'Head-and-shoulders portrait, head and upper chest fully visible with margins.':'Full body always visible including shoes, generous margins above head and below feet, performer occupies 80% of frame height.'} ${body.variant==='face'?'Solid hot pink background, edge to edge, no yellow or gray border.':'Seamless uniform very light gray studio backdrop, no floor line, no scenery.'} Locked static camera. Flat late-1990s low-budget desktop dance footage with soft analog texture, deadpan expression. No cuts, text, UI, or other people. Choreography: ${String(effectiveMotion).slice(0,1600)}. ${/backward/i.test(body.motion)?'Begin facing three-quarters toward screen left and take visibly backward sliding steps toward screen right with actual whole-body travel, not stepping in place.':''} ${/hat.*wobble|wobble.*hat/i.test(body.motion)?'The HAT ITSELF visibly rocks and tilts on the head; the head and torso remain mostly upright. '+(body.playbackRate===undefined&&/slow|half.*speed/i.test(body.motion)?'Exactly ONE slow tilt-and-return during the ENTIRE five seconds: gradually tilt the HAT to one side from second 0 to 2, return level from second 2 to 4, then hold level to second 5. This hat timing overrides any repeated cycles in the motion description. No quick bobbing or shuddering.':''):''} ${/shimmy/i.test(body.motion)?'Make the shoulder shimmy LARGE and unmistakable: raise the left shoulder toward the ear while dropping the right shoulder, then visibly reverse, continuously alternating with a strong rhythmic chest twist. Never just stand and shift feet.':''} Start moving immediately. Repeat a rhythmic five-second cycle, end in the starting pose without stopping or fading. Audio: continuous instrumental 1990s quirky MIDI dance groove, synthetic bass, cheap brass and drum machine at 122 BPM. No speech, no singing, no fade-out, no outro.`;
  if(transfer)prompt=motionPrompt(canonical)+` The same person from Image 1 wears this complete outfit: ${body.costume}. Video 1 supplies ONLY choreography, timing and camera framing, never the identity, face, hair or body build of its actor. Image 1 supplies the complete performer and costume. Preserve that person throughout; do not turn them into the actor in the motion reference. Exactly one dancer, entirely in frame.`;
  if(directDance&&body.canonical&&!['hat','intro','smile'].includes(body.variant))prompt=textMotionPrompt(String(body.costume).slice(0,900),String(effectiveMotion).slice(0,1600),body.variant==='face');
@@ -73,14 +79,14 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  if(costumeFrame&&!['face','smile'].includes(body.variant))prompt+=' Image 2 is the original photo of the same person in Image 1. Preserve their recognizable appearance from both images. Only Image 1 supplies the costume; do not copy the original photo clothing or scenery.';
  if(body.variant==='face'&&!directDance)prompt+=' Preserve the tight head-and-shoulders composition of Image 1 throughout. Hat at the top edge, upper chest at bottom edge. Never zoom out or show legs or feet. Solid hot pink backdrop.';
  const anchoredPortrait=['face','smile'].includes(body.variant)&&!!costumeFrame;
- const model=directDance?fastVideoEndpoint():anchoredPortrait?'minimax/h3-max-turbo/image-to-video':'minimax/h3-max/reference-to-video';
+ const model=directDance?fastVideoEndpoint(body):anchoredPortrait?'minimax/h3-max-turbo/image-to-video':'minimax/h3-max/reference-to-video';
  if(anchoredPortrait)prompt='Animate this exact head-and-shoulders portrait. Keep the camera fixed at this exact close-up scale, with the same face, clothing and accessories. Preserve the presence or absence of eyeglasses and headwear exactly. Tiny rhythmic head bobs and glances, subtle awkward smile. Solid hot pink background. No zoom, no cuts, no speech. Keep the upper chest at the bottom edge; do not show the waist, legs or feet. End in the initial pose for a seamless loop.';
  const motionWaitAt=performance.now(),motionResult=await motionPending;
  if('error' in motionResult)throw motionResult.error;
  const motionRef=motionResult.url;timings.motionWaitMs=performance.now()-motionWaitAt;
  // Synchronous inference avoids the hosted queue's poll/delivery round trips.
  const videoStarted=performance.now();
- const video:any=await fal.run(model,{input:{...(directDance?fastVideoReferenceInput(ref):anchoredPortrait?{image_url:costumeFrame!.url}:{reference_image_urls:costumeFrame?[costumeFrame.url,ref]:[ref],...(canonical==='oyster'&&costumeFrame?{image_url:costumeFrame.url}:{})}),...(motionRef?{reference_video_urls:[motionRef]}:{}),prompt,duration:5,resolution:'480P',aspect_ratio:canonical==='mozzarell-face'?'16:9':canonical==='oyster'?'4:3':body.variant==='intro'?'9:16':closeup?'4:3':'9:16',prompt_expansion_mode:'disabled'},abortSignal:AbortSignal.timeout(170000)});
+ const video:any=await fal.run(model,{input:{...(directDance?fastVideoReferenceInput(startImage?await startImage:ref,body):anchoredPortrait?{image_url:costumeFrame!.url}:{reference_image_urls:costumeFrame?[costumeFrame.url,ref]:[ref],...(canonical==='oyster'&&costumeFrame?{image_url:costumeFrame.url}:{})}),...(motionRef?{reference_video_urls:[motionRef]}:{}),prompt,duration:5,resolution:'480P',aspect_ratio:aspect,prompt_expansion_mode:'disabled'},abortSignal:AbortSignal.timeout(170000)});
  timings.videoMs=performance.now()-videoStarted;
  timings.previewMs=performance.now()-start;
  const downloadStarted=performance.now(),download=new VideoDownload(video.data.video.url);
@@ -89,7 +95,7 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  // while the local cache and poster are written independently below. The
  // sealed provider URL lets any instance serve the preview, not just this one.
  const live=isProviderMediaUrl(video.data.video.url)?sealMediaUrl(video.data.video.url):'1';
- Object.assign(job,{previewUrl:`/media/generated/${id}.mp4?live=${live}`,url:`/media/generated/${id}.mp4`});
+ Object.assign(job,{previewUrl:`/media/generated/${id}.mp4?live=${live}`,url:`/media/generated/${id}.mp4`,...(turbo?{previewStart:TURBO_OPENING_SECONDS}:{})});
  job.stage='Loading sequence';
  const dir=path.join(process.cwd(),'public/media/generated'),output=path.join(dir,id+'.mp4');
  // FFmpeg seeks and rewrites headers. Do that on local scratch, not a cloud
@@ -103,6 +109,7 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  let processing:any;
  const finishStarted=performance.now();
  if(transfer){job.stage='Finishing sequence';const finished=path.join(scratch,'finished.mp4');await exec('ffmpeg',['-y','-i',temp,'-t','5','-vf','scale=-2:360,gblur=sigma=0.3,fps=30000/1001','-an','-c:v','libx264','-preset','veryfast','-crf','18','-movflags','+faststart',finished,'-loglevel','error']);await fs.rename(finished,temp);processing={pipeline:'whole-frame-soft-video',note:'No segmentation, recoloring or body-dependent crop.'};}
+ if(turbo){job.stage='Finishing sequence';const trimmed=path.join(scratch,'trimmed.mp4');await exec('ffmpeg',['-y','-ss',String(TURBO_OPENING_SECONDS),'-i',temp,'-c:v','libx264','-preset','veryfast','-crf','18','-c:a','aac','-movflags','+faststart',trimmed,'-loglevel','error']);await fs.rename(trimmed,temp);processing={pipeline:'turbo-opening-trim',trimmedSeconds:TURBO_OPENING_SECONDS,canvas:aspect};}
  const image=path.join(dir,id+'.png');
  const poster=path.join(scratch,'poster.png');
  // A generated smile can establish its portrait framing during the clip.
@@ -110,8 +117,8 @@ export async function interactiveVideo(id:string,body:any,job:any,identity:()=>P
  await exec('ffmpeg',['-y',...(body.variant==='smile'?['-sseof','-0.1']:['-ss','0']),'-i',temp,'-frames:v','1',poster,'-loglevel','error']);
  timings.ffmpegMs=performance.now()-finishStarted;
  const saveStarted=performance.now();
- await Promise.all([fs.copyFile(temp,output+'.partial'),fs.copyFile(poster,image+'.partial'),costumeFrame?.saved,transfer?fs.writeFile(path.join(dir,id+'-preview.mp4.partial'),await download.completed):undefined]);
- await Promise.all([fs.rename(output+'.partial',output),fs.rename(image+'.partial',image),transfer?fs.rename(path.join(dir,id+'-preview.mp4.partial'),path.join(dir,id+'-preview.mp4')):undefined]);
+ await Promise.all([fs.copyFile(temp,output+'.partial'),fs.copyFile(poster,image+'.partial'),costumeFrame?.saved,transfer||turbo?fs.writeFile(path.join(dir,id+'-preview.mp4.partial'),await download.completed):undefined]);
+ await Promise.all([fs.rename(output+'.partial',output),fs.rename(image+'.partial',image),transfer||turbo?fs.rename(path.join(dir,id+'-preview.mp4.partial'),path.join(dir,id+'-preview.mp4')):undefined]);
  timings.persistMs=performance.now()-saveStarted;
  Object.assign(timings,costumeFrame?.timings);
  timings.totalMs=performance.now()-start;timings.finishMs=timings.totalMs-timings.previewMs-timings.downloadMs;

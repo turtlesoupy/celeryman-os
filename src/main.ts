@@ -25,6 +25,8 @@ import {installDesktopLinks} from './desktop-links';
 import {shareableFile,shareFile} from './save-media';
 // Fast generation is the default; use /?fastPath=0 for the anchored control.
 const fastPath=new URLSearchParams(location.search).get('fastPath')!=='0';
+// /?turbo=1 renders fast-path dances with H3 Max Turbo instead of the reference model.
+const videoModel=new URLSearchParams(location.search).get('turbo')==='1'?{videoModel:'turbo'}:{};
 // Compare streaming explicitly while full-recording transcription is the control.
 const streamingTranscription=new URLSearchParams(location.search).get('streamingTranscription')==='1';
 const app=document.querySelector<HTMLDivElement>('#app')!;
@@ -151,11 +153,19 @@ function terminal(large=false){let win=desktop.querySelector<HTMLElement>('[data
  return t.win;
 }
 async function type(text:string,large=false){const n=++typing,status=feedbackToken,key=`typing:${n}`,t=terminal(large),c=t.querySelector('.content')!;commandStatus.job(status,key,'Typing response');try{c.textContent='';const span=document.createElement('span'),cursor=document.createElement('i');cursor.className='cursor';c.append(span,cursor);for(const ch of text){if(n!==typing)return;span.textContent+=ch;await delay(22);}events.push({kind:'terminal',text,time:performance.now()});}finally{commandStatus.jobDone(status,key);}}
+// Turbo previews open on the provider's input photo: start just after it, and loop back there.
+const previewStarts=new Map<string,number>();
+function skipOpening(v:HTMLVideoElement){
+ const source=(v.getAttribute('src')||'').replace(/#.*$/,''),start=previewStarts.get(source);
+ if(!start){if(v.dataset.openingSkip){delete v.dataset.openingSkip;v.onended=null;v.loop=true;}return;}
+ v.dataset.openingSkip=String(start);v.src=`${source}#t=${start}`;v.loop=false;
+ v.onended=()=>{v.currentTime=start;void v.play().catch(()=>{});};
+}
 function videoSource(character:string,variant=''){if(mode==='reference')return `/media/original/${variant||character}.mp4`;const key=variant.endsWith('-face')?'face':variant==='tayne-intro'?'intro':variant==='tayne-squat'?'base':variant==='tayne-sway'?'sway':variant||'base';return liveAssets[`${profile}:${character}:${key}`]?.url||liveAssets[`${profile}:${character}:base`]?.url||'';}
 function dancer(character:string,o:Partial<W>={},variant='',url?:string,deferPlayback=false){
  const face=variant.includes('face')||variant==='hat';const title=character==='celery'?'CINCO ID':character==='oyster'?'OYSTER':'Tayne';
  const t=windowBox({title,x:520,y:12,w:282,h:502,menu:'',...o});
- const v=document.createElement('video');const source=url||videoSource(character,variant);if(!source){t.content.textContent='Sequence not loaded.';return t;}v.src=source;v.poster=mode==='live'?(liveAssets[`${profile}:${character}:${variant==='hat'?'hat':variant.includes('face')?'face':variant==='tayne-intro'?'intro':'base'}`]?.image||''):'';v.playbackRate=liveAssets[`${profile}:${character}:${variant||'base'}`]?.playbackRate||1;v.muted=true;v.loop=true;v.autoplay=!deferPlayback;v.playsInline=true;v.dataset.character=character;v.dataset.sequence=character==='celery'?'Celery Man':character;v.className=face?'face-video':mode==='live'&&variant==='tayne-intro'?'intro-video':'';t.content.append(v);
+ const v=document.createElement('video');const source=url||videoSource(character,variant);if(!source){t.content.textContent='Sequence not loaded.';return t;}v.src=source;v.poster=mode==='live'?(liveAssets[`${profile}:${character}:${variant==='hat'?'hat':variant.includes('face')?'face':variant==='tayne-intro'?'intro':'base'}`]?.image||''):'';v.playbackRate=liveAssets[`${profile}:${character}:${variant||'base'}`]?.playbackRate||1;v.muted=true;v.loop=true;v.autoplay=!deferPlayback;v.playsInline=true;skipOpening(v);v.dataset.character=character;v.dataset.sequence=character==='celery'?'Celery Man':character;v.className=face?'face-video':mode==='live'&&variant==='tayne-intro'?'intro-video':'';t.content.append(v);
  // Keep generated soundtrack URLs tied to this window, even if its asset cache changes.
  v.dataset.musicSource=sequenceMusicSource(character,source);installVideoSave(t.win,v,notify);queueMicrotask(syncSequenceMusic);
  const status=feedbackToken,key=`video:${++mediaStatusId}`;commandStatus.job(status,key,'Loading video');
@@ -276,7 +286,7 @@ function showHat(){
  hatTrack.forEach((box,i)=>{if(!i)return;schedule(()=>{if(i<=20&&i%5===0)front=create(box);const scale=box[2]/901;if(compact)placeWindow(front,{x:box[0]/2-23.5*scale,y:box[1]/2-56*scale,w:476,h:410,className:'portrait hat-cascade'});else Object.assign(front.style,{left:box[0]/2-23.5*scale+'px',top:box[1]/2-56*scale+'px',transform:`scale(${scale})`});if(i>20&&i%5===0)front=create(box);},i*1000/29.97);});
 }
 function desktopDancer(){
- const video=document.createElement('video');video.src=videoSource('tayne','flarhgunnstow');video.muted=true;video.loop=true;video.playsInline=true;void video.play();
+ const video=document.createElement('video');video.src=videoSource('tayne','flarhgunnstow');video.muted=true;video.loop=true;video.playsInline=true;skipOpening(video);void video.play();
  const canvas=document.createElement('canvas');canvas.width=266;canvas.height=434;canvas.className='free-dancer';desktop.append(canvas);const ctx=canvas.getContext('2d',{willReadFrequently:true})!;
  // Remove only the studio backdrop from a complete generated person, as in the sketch.
  const draw=()=>{if(!canvas.isConnected){video.pause();return;}if(video.readyState>=2){ctx.drawImage(video,0,0,266,434);const f=ctx.getImageData(0,0,266,434),d=f.data;for(let i=0;i<d.length;i+=4){const min=Math.min(d[i],d[i+1],d[i+2]),max=Math.max(d[i],d[i+1],d[i+2]);if(min>165&&max-min<35)d[i+3]=Math.max(0,255-(min-165)*8);}ctx.putImageData(f,0,0);}requestAnimationFrame(draw);};requestAnimationFrame(draw);return canvas;
@@ -398,7 +408,7 @@ async function apply(cmd:Command,acknowledged=false){
      const failed=()=>{cleanup();reject(Error('Engaged video could not load.'));};
      const timer=setTimeout(failed,30000);
      v.addEventListener('loadeddata',loaded);v.addEventListener('error',failed);
-     v.dataset.sequence='Celery Man / 4d3d3d3';v.src=videoSource('celery','engaged');
+     v.dataset.sequence='Celery Man / 4d3d3d3';v.src=videoSource('celery','engaged');skipOpening(v);
      if(v.requestVideoFrameCallback)frame=v.requestVideoFrameCallback(ready);
      void v.play().catch(failed);
     });
@@ -505,12 +515,12 @@ async function prepareDance(character:string,variant:string,epoch:number,cmd?:Co
  const describe=(stage:string)=>`${stage} (${variant==='face'?'portrait':variant==='base'?'dancer':variant})`;
  const progress=generationOverlay.begin(epoch,jobKey,variant==='face'?'Portrait':variant==='base'?'Dancer':variant==='smile'?'Printout':variant==='intro'?'Introduction':variant==='hat'?'Hat wobble':'Dance');
  commandStatus.job(feedback,jobKey,describe('Loading'));
- try{const req={profile,character,variant,fastPath,...(cmd?.playbackRate?{playbackRate:cmd.playbackRate}:{}),canonical:!cmd&&['celery','oyster','tayne','mozzarell'].includes(character),motion:variant==='intro'?`Tight head-and-shoulders close up. Face fills most of the vertical frame, head and upper chest only. Light gray background. Look at camera and say in a warm natural American voice: Hey ${identity}. I'm Tayne, your latest dancer. I can't wait to entertain you. Keep the same clothing, face, and fixed camera.`:cmd?.motion||motions[variant]||motions[character],costume:cmd?.costume||costumes[character]||costumes.tayne};
+ try{const req={profile,character,variant,fastPath,...videoModel,...(cmd?.playbackRate?{playbackRate:cmd.playbackRate}:{}),canonical:!cmd&&['celery','oyster','tayne','mozzarell'].includes(character),motion:variant==='intro'?`Tight head-and-shoulders close up. Face fills most of the vertical frame, head and upper chest only. Light gray background. Look at camera and say in a warm natural American voice: Hey ${identity}. I'm Tayne, your latest dancer. I can't wait to entertain you. Keep the same clothing, face, and fixed camera.`:cmd?.motion||motions[variant]||motions[character],costume:cmd?.costume||costumes[character]||costumes.tayne};
   // The command stream already follows a dance the server started early.
   feed=(cmd?.generationId&&takeCommandGeneration(cmd.generationId))||followGeneration(cmd?.generationId&&cmd.generationRequest?cmd.generationRequest:req);
   let job=await feed.first();generationId=job.id;events.push({kind:'generation',id:job.id,request:req,time:performance.now()});
   while(job.status==='working'&&(!job.previewUrl||variant==='smile')){if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');return false;}const elapsed=Math.floor((performance.now()-startedAt)/1000);if(elapsed>180)throw Error('Sequence is taking too long. Please try again.');const stage=job.providerStatus==='IN_QUEUE'?'Queued for video':job.stage||'Rendering dance';commandStatus.job(feedback,jobKey,describe(stage));progress.update(stage);job=await feed.next();}
-  if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');return false;}if(job.status==='error')throw Error(job.error||'Generation failed. Please retry the command.');liveAssets[key]={url:(job.status==='complete'?job.url:job.previewUrl||job.url)!,image:job.image,playbackRate:cmd?.playbackRate};
+  if(token!==run||epoch!==generationEpoch){report('generation-cancelled','Superseded by another sequence or reset');return false;}if(job.status==='error')throw Error(job.error||'Generation failed. Please retry the command.');if(job.status!=='complete'&&job.previewUrl&&job.previewStart)previewStarts.set(job.previewUrl,job.previewStart);liveAssets[key]={url:(job.status==='complete'?job.url:job.previewUrl||job.url)!,image:job.image,playbackRate:cmd?.playbackRate};
   if(variant==='hat')liveAssets[`${profile}:tayne:hat`]=liveAssets[key];
   report('generation-ready');events.push({kind:'generated-ready',url:job.url,previewUrl:job.previewUrl,id:job.id,playbackRate:cmd?.playbackRate||1,timings:job.timings,time:performance.now(),elapsedMs:performance.now()-startedAt,character,variant});return true;
  }catch(e){const message=variant==='face'?`Portrait generation failed: ${(e as Error).message}`:`Dance generation failed: ${(e as Error).message}`;report('generation-error',message);if(token===run&&epoch===generationEpoch){commandStatus.error(feedback,message);}events.push({kind:'generation-error',message:String(e)});return false;}finally{feed?.close();progress.done();commandStatus.jobDone(feedback,jobKey);}
@@ -537,7 +547,7 @@ async function dispatch(text:string,source='keyboard',feedback?:number){
   // Performances get the recorded "Okay." at once; other turns wait for their route.
   let acknowledged=false;const acknowledge=()=>{if(acknowledged||token!==run||order!==commandEpoch)return;acknowledged=true;void speak({action:'custom',response:'Okay.',audio:'okay'});void type('Computing sequence...');};
   if(!local&&requestsPerformance(text))acknowledge();
-  const cmd=local||await requestCommand<Command>({text,context,profile,fastPath},intent=>{if(intent.performance)acknowledge();});
+  const cmd=local||await requestCommand<Command>({text,context,profile,fastPath,...videoModel},intent=>{if(intent.performance)acknowledge();});
   if(token!==run||order!==commandEpoch||!commandStatus.current(status))return;
   if(acknowledged&&cmd.action==='custom'){typing++;const content=desktop.querySelector('[data-id="terminal"] .content');if(content)content.textContent=`Computing ${cmd.label||'sequence'}...`;}
   context.history.push(text);context.history=context.history.slice(-12);
@@ -727,7 +737,7 @@ function cancelHeldRecording(){if(pushToTalk||recordingPointer!==undefined){push
 document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelHeldRecording();});
 addEventListener('pagehide',()=>{stream?.getTracks().forEach(t=>t.stop());});
 addEventListener('blur',cancelHeldRecording);
-Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,fastPath,streamingTranscription,liveAssets,profile,context,lastPrint,started,replaying,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();syncSequenceMusic();},settle:()=>delay(1800)}});
+Object.assign(window,{cinco:{playInputAudio:(src:string)=>{const a=new Audio(src);routeAudio(a);void a.play();},startOutputCapture,stopOutputCapture,dispatch,receiveAudio,apply,events,reset,replay,state:()=>({music:music?.state(),ducks:[...ducks],mode,fastPath,videoModel,streamingTranscription,liveAssets,profile,context,lastPrint,started,replaying,windows:desktop.querySelectorAll('.window').length}),setIdentity:(id:string,name:string)=>{profile=id;identity=name;context.identity=name;},setMode:(v:'live'|'reference')=>{mode=v;},setSound:(v:boolean)=>{sound=v;if(!sound)stopSpeech();musicLevel();syncSequenceMusic();},settle:()=>delay(1800)}});
 // Verify with Turnstile while the identity launcher is open, off the command path.
 prewarmSession();
 launch();

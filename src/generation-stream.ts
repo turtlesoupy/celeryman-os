@@ -1,7 +1,7 @@
 import {requestJson} from './api-client';
 import {withSession} from './session';
 
-export type JobState={id:string;status:string;stage?:string;providerStatus?:string;previewUrl?:string;url?:string;image?:string;error?:string;timings?:Record<string,number>};
+export type JobState={id:string;status:string;stage?:string;providerStatus?:string;previewUrl?:string;previewStart?:number;url?:string;image?:string;error?:string;timings?:Record<string,number>};
 
 // The server heartbeats every 10s; a silent stream for longer has been lost.
 const IDLE_MS=30000,COMMAND_MS=45000,REJOIN_ATTEMPTS=2;

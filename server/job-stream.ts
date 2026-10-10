@@ -1,6 +1,6 @@
 import type {IncomingMessage,ServerResponse} from 'node:http';
 
-export type Job={previewUrl?:string;status:string;stage:string;url?:string;image?:string;music?:string;error?:string;started?:number;elapsed?:number;requestId?:string;providerStatus?:string;timings?:Record<string,number>};
+export type Job={previewUrl?:string;previewStart?:number;status:string;stage:string;url?:string;image?:string;music?:string;error?:string;started?:number;elapsed?:number;requestId?:string;providerStatus?:string;timings?:Record<string,number>};
 type Entry={job:Job;listeners:Set<()=>void>};
 
 // Jobs live only on the instance doing the work. Progress reaches the browser

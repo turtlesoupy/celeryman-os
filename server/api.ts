@@ -5,6 +5,7 @@ import {commandPlanFormat,validateCommandPlan} from './command-plan.ts';
 import {logDiagnostic} from './diagnostics.ts';
 import 'dotenv/config';
 import fs from 'node:fs/promises';
+import os from 'node:os';
 import {createReadStream} from 'node:fs';
 import {videoPreviews,serveVideoPreview,proxyProviderVideo} from './video-preview.ts';
 import {openMediaUrl} from './media-token.ts';
@@ -37,12 +38,26 @@ const exists=async(p:string)=>fs.access(p).then(()=>true,()=>false);
 async function saveRemote(url:string,file:string){const r=await fetch(url,{signal:AbortSignal.timeout(60000)});if(!r.ok)throw Error('Media download failed');await fs.writeFile(file,Buffer.from(await r.arrayBuffer()));}
 const presetPhotos:Record<string,string>={paul:'reference/paul-rudd.png',thomas:'reference/thomas-dimson.jpg',ian:'reference/ian-silber.jpg',joey:'reference/joey-flynn.jpg',obama:'reference/barack-obama.jpg',trump:'reference/donald-trump.jpg',dario:'reference/dario-amodei.jpg',sam:'reference/sam-altman.jpg'};
 const references=new Map<string,Promise<string>>();
+const identityFile=(profile:string)=>presetPhotos[profile]?path.join(root,presetPhotos[profile]):path.join(media,'profiles',`${profile.replace(/[^a-z0-9-]/g,'')}.jpg`);
 function reference(profile:string){
  if(references.has(profile))return references.get(profile)!;
  const pending=(async()=>{
- const p=presetPhotos[profile]?path.join(root,presetPhotos[profile]):path.join(media,'profiles',`${profile.replace(/[^a-z0-9-]/g,'')}.jpg`);
- return fal.storage.upload(new File([await fs.readFile(p)],'identity.jpg',{type:'image/jpeg'}));
+ return fal.storage.upload(new File([await fs.readFile(identityFile(profile))],'identity.jpg',{type:'image/jpeg'}));
  })();references.set(profile,pending);pending.catch(()=>references.delete(profile));return pending;
+}
+// Turbo animates its input image and its canvas follows that image's shape, so
+// letterbox the whole photo into the requested aspect on the studio backdrop.
+const canvases=new Map<string,Promise<string>>();
+function referenceCanvas(profile:string,aspect:string,color:string){
+ const key=`${profile}:${aspect}:${color}`;if(canvases.has(key))return canvases.get(key)!;
+ const pending=(async()=>{
+  const [w,h]=aspect.split(':').map(Number),long=1280,W=w>=h?long:Math.round(long*w/h/2)*2,H=w>=h?Math.round(long*h/w/2)*2:long;
+  const scratch=await fs.mkdtemp(path.join(os.tmpdir(),'cinco-canvas-')),out=path.join(scratch,'canvas.png');
+  try{
+   await exec('ffmpeg',['-y','-i',identityFile(profile),'-vf',`scale=${W}:${H}:force_original_aspect_ratio=decrease,pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2:${color}`,'-frames:v','1',out,'-loglevel','error']);
+   return await fal.storage.upload(new File([await fs.readFile(out)],'identity-canvas.png',{type:'image/png'}));
+  }finally{await fs.rm(scratch,{recursive:true,force:true});}
+ })();canvases.set(key,pending);pending.catch(()=>canvases.delete(key));return pending;
 }
 async function costumeFrame(profile:string,costume:string,closeup=false,canonical=''){
  const key=hash(JSON.stringify({profile:cacheProfile(profile),costume,closeup,canonical,resolution:COSTUME_FRAME_RESOLUTION,version:6,revision:canonical==='mozzarell-face'?4:canonical==='engaged'?1:canonical==='intro'?1:closeup?3:canonical==='oyster'?2:canonical==='flarhgunnstow'?2:0}));
@@ -87,7 +102,7 @@ async function generate(id:string,body:any,job:Job){
  const watchdog=setTimeout(()=>{if(job.status!=='working')return;Object.assign(job,{status:'error',stage:'Timed out',error:'The video provider took too long. Please try again.'});logDiagnostic({event:'generation-error',jobId:id,stage:'Timed out',message:job.error});},GENERATION_TIMEOUT_MS);
  if(activeJobCount()>MAX_ACTIVE_GENERATIONS){clearTimeout(watchdog);Object.assign(job,{status:'error',stage:'Busy',error:'The computer is busy with other sequences. Please try again shortly.'});logDiagnostic({event:'generation-error',jobId:id,stage:'Busy',message:job.error});return;}
  try{
-  if(usesTextOnlyDance(body)||body.profile!=='paul'||!body.canonical){await interactiveVideo(id,body,job,()=>reference(body.profile||'thomas'));return;}
+  if(usesTextOnlyDance(body)||body.profile!=='paul'||!body.canonical){await interactiveVideo(id,body,job,()=>reference(body.profile||'thomas'),(aspect,color)=>referenceCanvas(body.profile||'thomas',aspect,color));return;}
   job.stage='Building identity';
   const character=String(body.character||'tayne');
   const costume=String(body.costume||costumes[character]||costumes.tayne).slice(0,700);
@@ -212,7 +227,7 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
       const field=(name:string)=>{const match=new RegExp('"'+name+'"\\s*:\\s*("(?:[^"\\\\]|\\\\.)*")').exec(json);return match?JSON.parse(match[1]):undefined;};
       const outfit=field('costume'),motion=field('motion');
       if(!earlyStart&&/"action"\s*:\s*"custom"/.test(json)&&outfit&&motion&&typeof b.profile==='string'){
-       plannedBody={profile:b.profile,fastPath:b.fastPath===true,canonical:false,character:'custom',variant:'base',costume:keepEyewear(outfit),motion,playbackRate};
+       plannedBody={profile:b.profile,fastPath:b.fastPath===true,...(b.videoModel==='turbo'?{videoModel:'turbo'}:{}),canonical:false,character:'custom',variant:'base',costume:keepEyewear(outfit),motion,playbackRate};
        earlyJob=generationKey(plannedBody);generationRequest={...plannedBody};
        const id=earlyJob,body=plannedBody;
        earlyStart=fs.mkdir(path.join(media,'generated'),{recursive:true}).then(()=>startJob(id,()=>savedGeneration(media,id),job=>{job.stage='Rendering dance';void generate(id,body,job);}));

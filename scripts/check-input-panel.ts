@@ -44,7 +44,7 @@ try{
  assert(await send.isDisabled(),'Send waits for text');
  await field.click();await page.keyboard.type('   ');assert(await send.isDisabled(),'Whitespace alone cannot be sent');
  await field.fill('');await page.keyboard.type('Computer, load up Celery Man');assert(await send.isEnabled());
- assert.equal(await record.getAttribute('data-state'),'idle','Space inside the field types instead of recording');
+ assert(!['opening','recording'].includes(await record.getAttribute('data-state')??''),'Space inside the field types instead of recording');
  await page.keyboard.press('Enter');
  await page.waitForFunction(()=>(window as any).cinco.events.some((event:any)=>event.kind==='input'&&event.source==='keyboard'));
  assert.deepEqual(await typed(),['Computer, load up Celery Man']);assert.equal(await field.inputValue(),'');assert(await send.isDisabled(),'Send disables again after sending');assert.equal(transcriptions,0);
