@@ -75,9 +75,9 @@ Startup archives hashed bundles in `/data/cache/static-assets`; the origin can s
 
 `FAST_VIDEO_MODEL=reference` (default) uses `minimax/h3-max/reference-to-video`.
 `FAST_VIDEO_MODEL=turbo` uses `minimax/h3-max-turbo/image-to-video` directly with the original identity photo.
-This server-only flag applies to all fast-path variants and custom characters. The legacy non-fast pipeline is unchanged.
+This server-wide flag applies to all fast-path variants and custom characters. The legacy non-fast pipeline is unchanged. `?turbo=1` selects turbo for a single browser's requests without changing the server setting, which is the way to try it in production first.
 Turbo has its own generation cache keys; switching back reuses existing reference-model assets.
-Turbo can show the source photo for the first few frames and had weaker identity preservation in the initial ratings. Its output canvas follows the identity photo rather than the requested portrait/full-body aspect ratio. No automatic trimming or cropping is applied.
+Turbo animates its input image, so the whole identity photo is letterboxed onto the studio backdrop in the requested aspect (gray 9:16 for dancers, pink 4:3 for portraits) instead of following the photo's shape. Its opening frames show that input photo; they are trimmed from the saved clip and poster, and the live preview starts after them. Turbo had weaker identity preservation in the initial ratings.
 
 After deploying code containing this flag, switch production without rebuilding:
 
