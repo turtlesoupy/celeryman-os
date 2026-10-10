@@ -554,7 +554,7 @@ async function dispatch(text:string,source='keyboard',feedback?:number){
   context.conversation=[...(context.conversation||[]),{role:'user' as const,content:text},{role:'assistant' as const,content:cmd.response}].slice(-12);
   context.director=advanceDirector(context.director,cmd,context);
   const spoken=acknowledged&&(cmd.action==='custom'||(cmd.action==='director'&&cmd.beat?.kind==='reveal'));
-  commandStatus.phase(status,'Preparing sequence');const applied=await apply(cmd,spoken);if(applied===false)return;if(token===run&&order===commandEpoch){scriptGuide.observe(text,cmd.action);commandStatus.finish(status);}events.push({kind:'command-complete',text,action:cmd.action,time:performance.now()});return cmd;
+  commandStatus.phase(status,'Preparing sequence');const applied=await apply(cmd,spoken);if(applied===false)return;if(token===run&&order===commandEpoch){scriptGuide.observe(text,cmd.action,context.director,cmd.action==='director'?cmd.beat:undefined);commandStatus.finish(status);}events.push({kind:'command-complete',text,action:cmd.action,time:performance.now()});return cmd;
  }catch(e){if(token===run&&order===commandEpoch&&commandStatus.current(status)){const message=(e as Error).name==='TimeoutError'?'Computer timed out. Please try again.':(e as Error).message;commandStatus.error(status,message);typing++;const content=desktop.querySelector('[data-id="terminal"] .content');if(content)content.textContent='Command failed.';}throw e;}
 }
 async function receiveAudio(base64:string,mime='audio/webm',feedback?:number,recording?:{requestId:string;durationMs:number;peak:number;device:string},streaming?:TranscriptionTurn){
