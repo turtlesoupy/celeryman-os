@@ -9,7 +9,7 @@ import os from 'node:os';
 import {createReadStream} from 'node:fs';
 import {videoPreviews,serveVideoPreview,proxyProviderVideo} from './video-preview.ts';
 import {openMediaUrl} from './media-token.ts';
-import {requireSession,startSession,VerificationError} from './turnstile.ts';
+import {chargeGeneration,requireSession,startSession,VerificationError} from './turnstile.ts';
 import {activeJobCount,followJob,getJob,openEventStream,startJob,type Job} from './job-stream.ts';
 import path from 'node:path';
 import {execFile} from 'node:child_process';
@@ -91,6 +91,14 @@ async function costumeFrame(profile:string,costume:string,closeup=false,canonica
   }
   await saveRemote(result.data.images[0].url,local);await fs.writeFile(local+'.json',JSON.stringify({profile,canonical,identityReviews:reviews,imageRequestId:result.requestId},null,2));return result.data.images[0].url;
  })();frameLocks.set(key,promise);promise.catch(()=>frameLocks.delete(key));return promise;
+}
+// Saved media replays for free; only a fresh generation counts against the session.
+function startGeneration(req:IncomingMessage,id:string,body:any){
+ return (job:Job)=>{
+  const limited=chargeGeneration(req);
+  if(limited){Object.assign(job,{status:'error',stage:'Limit',error:limited});logDiagnostic({event:'generation-error',jobId:id,stage:'Limit',message:limited});return;}
+  void generate(id,body,job);
+ };
 }
 // Generation is provider-bound, so this is only a safety valve against runaway load.
 const MAX_ACTIVE_GENERATIONS=100;
@@ -230,7 +238,7 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
        plannedBody={profile:b.profile,fastPath:b.fastPath===true,...(b.videoModel==='turbo'?{videoModel:'turbo'}:{}),canonical:false,character:'custom',variant:'base',costume:keepEyewear(outfit),motion,playbackRate};
        earlyJob=generationKey(plannedBody);generationRequest={...plannedBody};
        const id=earlyJob,body=plannedBody;
-       earlyStart=fs.mkdir(path.join(media,'generated'),{recursive:true}).then(()=>startJob(id,()=>savedGeneration(media,id),job=>{job.stage='Rendering dance';void generate(id,body,job);}));
+       earlyStart=fs.mkdir(path.join(media,'generated'),{recursive:true}).then(()=>startJob(id,()=>savedGeneration(media,id),startGeneration(req,id,body)));
       }
      }
      result=validateCommandPlan(JSON.parse(json||'{}'),text,true);if(typeof result.costume==='string')result.costume=keepEyewear(result.costume);
@@ -271,7 +279,7 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
    else if(req.url==='/api/generate'){
     const id=generationKey(b);
     await fs.mkdir(path.join(media,'generated'),{recursive:true});
-    const job=await startJob(id,()=>savedGeneration(media,id),job=>void generate(id,b,job));
+    const job=await startJob(id,()=>savedGeneration(media,id),startGeneration(req,id,b));
     if(wantsEvents){const stream=openEventStream(req,res);await followJob(stream,id,job);stream.end();return;}
     result={id,...job};
    }else if(req.url.startsWith('/api/job/')){
@@ -282,7 +290,9 @@ export async function apiMiddleware(req:IncomingMessage,res:ServerResponse,next:
     else {const saved=await savedGeneration(media,id);result={id,...(saved||{status:'error',error:'Unknown job'})};}
    }
    else if(req.url==='/api/profile'){
-    const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),Buffer.from(b.image,'base64'));void reference(id).catch(()=>{});result={id};
+    // The launcher always encodes JPEG; reject anything else before it reaches storage or providers.
+    const image=Buffer.from(String(b.image||''),'base64');if(image.length<128||image[0]!==0xff||image[1]!==0xd8||image[2]!==0xff)throw Error('Photos must be JPEG images.');
+    const id=randomUUID();await fs.mkdir(path.join(media,'profiles'),{recursive:true});await fs.writeFile(path.join(media,'profiles',`${id}.jpg`),image);void reference(id).catch(()=>{});result={id};
    }else {res.statusCode=404;result={error:'Unknown endpoint'};}
    res.end(JSON.stringify(result));
   }catch(e){const rawError=e instanceof Error?e.message:'Request failed';logDiagnostic({event:'request-error',route:req.url?.split('?')[0],message:rawError});const error=/no credits|insufficient_quota|exceeded your current quota/i.test(rawError)?'OpenAI credits exhausted. Voice transcription and new command interpretation are unavailable.':rawError;if(res.destroyed)return;if(res.headersSent){if(String(res.getHeader('Content-Type')).startsWith('text/event-stream'))res.end(`event: error\ndata: ${JSON.stringify({error})}\n\n`);else res.end(JSON.stringify({type:'error',error})+'\n');}else{const verification=e instanceof VerificationError;res.statusCode=verification?e.status:500;res.end(JSON.stringify({error,...(verification?{code:'verification'}:{})}));}}
