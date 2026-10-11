@@ -6,7 +6,7 @@ A working recreation of the Celery Man sketch's desktop software. Pick an identi
 
 Live at **https://celeryman.fun**.
 
-[![Discord](https://img.shields.io/badge/Discord-join%20chat-5865F2?logo=discord&logoColor=white)](https://discord.gg/qYBbGmwBhr)
+[![Discord](https://img.shields.io/discord/1544483755685585028?label=Discord&logo=discord&logoColor=white&color=5865F2)](https://discord.gg/qYBbGmwBhr)
 
 ## Using it
 
