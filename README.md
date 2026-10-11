@@ -6,6 +6,8 @@ A working recreation of the Celery Man sketch's desktop software. Pick an identi
 
 Live at **https://celeryman.fun**.
 
+[![Discord](https://img.shields.io/badge/Discord-join%20chat-5865F2?logo=discord&logoColor=white)](https://discord.gg/qYBbGmwBhr)
+
 ## Using it
 
 - **Choose an identity.** **Add yourself** takes a photo (upload or camera) and a name, and starts right away. Presets: Paul Rudd, Barack Obama, Donald Trump, Dario Amodei, Sam Altman, Thomas, Ian and Joey.
